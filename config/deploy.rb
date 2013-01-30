@@ -4,6 +4,7 @@ require 'rvm/capistrano'
 require 'bundler/capistrano'
 require 'whenever/capistrano'
 require 'delayed/recipes'
+require 'secret_token_replacer/recipes'
 load    'deploy/assets'
 
 set :application,     'esCRM'

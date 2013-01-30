@@ -1,4 +1,10 @@
 GIT
+  remote: git://github.com/digineo/secret_token_replacer.git
+  revision: 34b37678e87c8e87632e37c7b3f5d1b17d15b76b
+  specs:
+    secret_token_replacer (0.1.0)
+
+GIT
   remote: git://github.com/reubenjs/ffcrm_merge.git
   revision: 7545be5fa09c2c1b743334cce1d9b3965cdd393e
   specs:
@@ -371,6 +377,7 @@ DEPENDENCIES
   saasu!
   sass (~> 3)
   sass-rails (~> 3.2.3)
+  secret_token_replacer!
   select2-rails
   simple_form (~> 2.0.1)
   spork
