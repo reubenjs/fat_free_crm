@@ -55,11 +55,11 @@ $sidebar_width: 210px;
   border-bottom: 1px silver solid;
   color: #2f2f2f;
   font: {
-    size: 14px;
+    size: 12px;
     weight: bold; };
   small {
     font-weight: normal;
-    font-size: 11px;
+    font-size: 10px;
     padding-left: 5px; }
   a:link, a:visited {
     color: $color_subtitle;
@@ -694,7 +694,14 @@ li.mobile {
     dt {
       color: #3f3f3f;
       font-size: 11px;
-      padding: 2px 0px 0px 0px; } } 
+      padding: 2px 0px 0px 0px; } }
+	li.version {
+		font-size: 11px;
+		font-weight: bold;
+		tt {
+			font-weight: normal;
+		}
+	}
   input[type=checkbox] {
     float: left;
     margin: 0px 4px 0px 0px; } 
