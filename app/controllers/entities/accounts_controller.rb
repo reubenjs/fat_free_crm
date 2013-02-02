@@ -32,6 +32,7 @@ class AccountsController < EntitiesController
   # AJAX /accounts/1
   #----------------------------------------------------------------------------
   def show
+    @sort = current_user.pref[:contacts_sort_by]
     @stage = Setting.unroll(:opportunity_stage)
     @comment = Comment.new
     @timeline = timeline(@account)
@@ -153,6 +154,28 @@ class AccountsController < EntitiesController
     respond_with(@accounts) do |format|
       format.js { render :index }
     end
+  end
+  
+  # POST /accounts/redraw                                                  AJAX
+  #----------------------------------------------------------------------------
+  def redraw_show
+    # current_user.pref[:contact_groups_per_page] = params[:per_page] if params[:per_page]
+    # current_user.pref[:contact_groups_outline]  = params[:outline]  if params[:outline]
+    current_user.pref[:contacts_sort_by]  = Contact::sort_by_map[params[:sort_by]] if params[:sort_by]
+    @sort = current_user.pref[:contacts_sort_by]
+    #set_options # Refresh options
+    @sort = current_user.pref[:contacts_sort_by]
+    if params[:query]
+      @query, @tags = parse_query_and_tags(params[:query])
+    end
+    scope = @account.contacts
+    scope = scope.text_search(@query) if @query.present?
+    scope = scope.tagged_with(@tags, :on => :tags) if @tags.present?
+    scope = scope.order(@sort) if @sort.present?
+    
+    @contacts = scope
+    
+    render :redraw_show
   end
 
   # POST /accounts/filter                                                  AJAX

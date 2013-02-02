@@ -27,6 +27,11 @@
 		padding: 10px;
 	}
 	
+	.search_form.show {
+		//float: left;
+		border-radius: 0 0 4px 4px;
+	}
+	
 	.search_form.mobile {
 			padding: 3px;
 	}

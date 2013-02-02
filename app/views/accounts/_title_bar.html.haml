@@ -3,7 +3,7 @@
   = link_to_inline(:edit_account, edit_account_path(@account), :text => t(:edit)) + " | "
   = link_to_function(t(:delete) + '?', confirm_delete(@account))
 .title_tools#buttons
-  = view_buttons
+  -#= view_buttons
 .title#edit_account_title
   = h(@account.name)
   = image_tag("loading.gif", :size => :thumb, :id => "loading", :style => "display: none;")

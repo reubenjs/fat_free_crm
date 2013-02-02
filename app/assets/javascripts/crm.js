@@ -420,6 +420,28 @@ var crm = {
     });
   },
 
+	//----------------------------------------------------------------------------
+
+  search_show: function(query, controller, related_id, list) {
+    // var list = controller;          // ex. "users"
+    //     if (list.indexOf("/") >= 0) {   // ex. "admin/users"
+    //       list = list.split("/")[1];
+    //     }
+    $("loading").show();
+    $(list).setStyle({ opacity: 0.4 });
+    if (this.searchRequest && this.searchRequest.readyState != -4) { this.searchRequest.abort(); }
+    this.searchRequest = jQuery.ajax({
+      url: this.base_url + "/" + controller + "/" + related_id + '/redraw_show.js',
+      type: 'POST',
+      data: { query : query },
+      success  : function() {
+        $("loading").hide();
+        $(list).setStyle({ opacity: 1 });
+        this.searchRequest = null;
+      }
+    });
+  },
+
   //----------------------------------------------------------------------------
   jumper: function(controller) {
     var name = controller.capitalize();

@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       get :versions
     end
     member do
+      post :redraw_show
       post :move_contact
       put  :attach
       post :discard
@@ -173,6 +174,7 @@ Rails.application.routes.draw do
       get :email
     end
     member do
+      post :redraw_show
       put  :attach
       post :discard
       post :subscribe

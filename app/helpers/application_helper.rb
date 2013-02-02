@@ -57,17 +57,37 @@ module ApplicationHelper
   end
 
   #----------------------------------------------------------------------------
-  def section(related, assets, no_select=false)
+  def section(related, assets, no_select=false, views=false, sort_by_model=Contact)
     asset = assets.to_s.singularize
     create_id  = "create_#{asset}"
     select_id  = "select_#{asset}"
     create_url = controller.send(:"new_#{asset}_path")
+    asset_count = related.try(assets).count
+    
+    if (views && related.present?)
+      sort_by_menu_items = sort_by_model.sort_by_fields.map { |field| options_menu_item(:sort_by, field, url_for(:controller => related.class.name.tableize.to_sym, :action => :redraw_show, :id => related.id, :remote => true), false) }
+      sort_by = current_user.pref[:"#{sort_by_model.name.tableize}_sort_by"]  || sort_by_model.sort_by
+      current_sort_by = t("option_" + sort_by_model.sort_by_map.invert[sort_by])
+    end
 
     html = tag(:br)
+    html << content_tag(:div, view_buttons, :class => :subtitle_tools, :id => "buttons") if views
+    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if views
+    html << content_tag(:div, t(:sort_by, :models => t(:"#{controller_name}_small"), :field => link_to(current_sort_by, "#", :id => :sort_by)).html_safe , :class => "subtitle_tools") if (views && related.present?)
+    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if (views && related.present?)
+    html << javascript_tag(
+      "new crm.Menu({
+        trigger   : \"sort_by\",
+        fade      : 0.5,
+        appear    : 0.5,
+        align     : \"left\",
+        menu_items: [ #{sort_by_menu_items.join(",")} ]
+      });" 
+    ) if (views && related.present?)
     html << content_tag(:div, link_to(t(select_id), "#", :id => select_id), :class => "subtitle_tools") unless no_select
     html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") unless no_select
     html << content_tag(:div, link_to_inline(create_id, create_url, :related => dom_id(related), :text => t(create_id)), :class => "subtitle_tools")
-    html << content_tag(:div, t(assets), :class => :subtitle, :id => "create_#{asset}_title")
+    html << content_tag(:div, (asset_count > 0 ? t(assets) + " (#{asset_count})" : t(assets)), :class => :subtitle, :id => "create_#{asset}_title")
     html << content_tag(:div, "", :class => :remote, :id => create_id, :style => "display:none;")
   end
 
@@ -288,12 +308,14 @@ module ApplicationHelper
   end
 
   #----------------------------------------------------------------------------
-  def options_menu_item(option, key, url = nil)
-    name = t("option_#{key}")
+  def options_menu_item(option, key, url = nil, query=true)
+    name = t("option_#{key.include?(".") ? key.split(".")[1] : key}")
+    with = query ? "'#{option}=#{key}&query=' + $(\"query\").value" : "'#{option}=#{key}'"
+    
     "{ name: \"#{name.titleize}\", on_select: function() {" +
     remote_function(
       :url       => url || send("redraw_#{controller.controller_name}_path"),
-      :with      => "'#{option}=#{key}&query=' + $(\"query\").value",
+      :with      => with,
       :condition => "$('#{option}').innerHTML != '#{name}'",
       :loading   => "$('#{option}').update('#{name}'); $('loading').show()",
       :complete  => "$('loading').hide()"
@@ -464,7 +486,8 @@ module ApplicationHelper
   # Return name of current view
   def current_view_name
     controller = (params['action'] == "move_contact" || params['action'] == "assign_contact") ? "contacts" : params['controller']
-    action = (params['action'] == 'show') ? 'show' : 'index' # create update redraw filter index actions all use index view
+    action = (params['action'] == 'show' || params['action'] == 'redraw_show') ? 'show' : 'index' # create update redraw filter index actions all use index view
+
     current_user.pref[:"#{controller}_#{action}_view"]
   end
 
@@ -472,7 +495,8 @@ module ApplicationHelper
   # Get template in current context with current view name
   def template_for_current_view
     controller = (params['action'] == "move_contact" || params['action'] == "assign_contact") ? "contacts" : params['controller']
-    action = (params['action'] == 'show') ? 'show' : 'index' # create update redraw filter index actions all use index view
+    action = (params['action'] == 'show' || params['action'] == 'redraw_show') ? 'show' : 'index' # create update redraw filter index actions all use index view
+
     template = FatFreeCRM::ViewFactory.template_for_current_view(:controller => controller, :action => action, :name => current_view_name)
     template
   end

@@ -169,7 +169,11 @@ private
     # Ignore this order when doing advanced search
     unless advanced_search
       order = current_user.pref[:"#{controller_name}_sort_by"] || klass.sort_by
-      scope = scope.order(order)
+      if controller_name == "contacts"
+        scope = scope.includes(:account_contact).order(order)
+      else
+        scope = scope.order(order)
+      end
     end
 
     @search_results_count = scope.count

@@ -1,10 +1,24 @@
+- show_views = (object.class == ContactGroup || object.class == Account) ? true : false
+= section(object, :contacts, false, show_views)
 
-= section(object, :contacts)
+#search{:style => "margin-top:0px"}
+  .search_form.show#basic_search{:style => "padding:0 4px 0 4px"}
+    %div.clearable-input{ :style => "margin: 4px 0px 4px 0px; display:inline-block;" }  
+      = text_field_tag('query', @current_query, :size => 32, :placeholder => "Search #{t(contacts)}", :class => "clear-ui")
+      %span.ui-icon-delete
+  
+      :javascript
+        new Form.Element.Observer('query', 1.5, function(element, value) {
+          crm.search_show(value, "#{object.class.name.tableize}", "#{object.id}", "contacts");
+        });
+    #search_results_count{:style => "display:inline; margin-left: 5px"}
+    = image_tag("loading.gif", :size => :thumb, :id => "loading", :style => "display: none;")
+
 .list#contacts
-  - if object.class == ContactGroup
-    - contacts = object.contacts.joins(:account).order("account_id DESC").paginate(:page => 1, :per_page => 100)
+  - if object.class == ContactGroup || object.class == Account
+    - contacts = object.contacts.order(@sort).paginate(:page => 1, :per_page => 1000)
   - else
-    - contacts = object.contacts.paginate(:page => 1, :per_page => 100)
+    - contacts = object.contacts.paginate(:page => 1, :per_page => 50, :per_page => 1000)
   = render :partial => "contacts/contact", :collection => contacts
 
 = will_paginate contacts, :id => 'contacts_pagination', :params => {:action => :contacts}

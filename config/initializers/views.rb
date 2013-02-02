@@ -22,8 +22,12 @@
   :controllers => ['accounts'], :actions => ['index'], :template => 'accounts/index_brief'}, # default
  {:name => 'accounts_index_long', :title => 'Long format', :icon => 'long.png',
   :controllers => ['accounts'], :actions => ['index'], :template => 'accounts/index_long'}, # default
- {:name => 'accounts_show_normal', :title => 'Normal format', :icon => 'long.png',
-   :controllers => ['accounts'], :actions => ['show'], :template => nil}, # default show view
+ # {:name => 'accounts_show_normal', :title => 'Normal format', :icon => 'long.png',
+ #   :controllers => ['accounts'], :actions => ['show'], :template => 'contacts/index_brief'}, # default show view
+ {:name => 'accounts_show_brief', :title => 'Brief format', :icon => 'brief.png',
+    :controllers => ['accounts'], :actions => ['show'], :template => 'contacts/index_brief'}, # default show view
+  {:name => 'accounts_show_long', :title => 'Long format', :icon => 'long.png',
+     :controllers => ['accounts'], :actions => ['show'], :template => 'contacts/index_long'}, # default show view
  
  {:name => 'leads_index_brief', :title => 'Brief format', :icon => 'brief.png',
   :controllers => ['leads'], :actions => ['index'], :template => 'leads/index_brief'}, # default
@@ -38,5 +42,10 @@
   :controllers => ['campaigns'], :actions => ['index'], :template => 'campaigns/index_long'},
  {:name => 'campaigns_show_normal', :title => 'Normal format', :icon => 'long.png',
    :controllers => ['campaigns'], :actions => ['show'], :template => nil}, # default show view
+   
+ {:name => 'contact_groups_show_brief', :title => 'Brief format', :icon => 'brief.png',
+   :controllers => ['contact_groups'], :actions => ['show'], :template => 'contacts/index_brief'}, # default
+  {:name => 'contact_groups_show_long', :title => 'Long format', :icon => 'long.png',
+   :controllers => ['contact_groups'], :actions => ['show'], :template => 'contacts/index_long'},
  
 ].each {|view| FatFreeCRM::ViewFactory.new(view)}
