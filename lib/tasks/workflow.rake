@@ -219,6 +219,10 @@ namespace :ffcrm do
             :cf_church_affiliation => row[:_church_if_you_attend_one],
             :cf_expected_grad_year => row[:_year_i_expect_to_graduate]
            )
+
+          if row[:_is_this_your_first_commencement_camp] == "Yes"
+            contact.tag_list << "first-ccamp-2013" unless contact.tag_list.include?("first-ccamp-2013")
+          end
           
           puts (log_string + contact.first_name + " " + contact.last_name)
           
@@ -233,9 +237,38 @@ namespace :ffcrm do
           
           group.contacts << contact unless group.contacts.include?(contact) #shouldn't happen, but just in case
         end
-      end
+      end  
+    end
+    
+    task :fix_tags => :environment do
+      require 'open-uri'
+      PaperTrail.whodunnit = 1
+      url = Setting.registration_api[:ccamp_link]
+      url_data = open(url).read()
       
+      group = ContactGroup.find_or_initialize_by_name(
+          :name => "Commencement Camp 2013",
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+        unless group.persisted?
+          group.save
+        end
+      
+      csv = CSV.parse(url_data, {:col_sep => ',', :headers => :first_row, :header_converters => :symbol}) 
+      csv.each do |row|
+        #unless group.contacts.find_by_email(row[:_email])
+        #sync has already brought this contact in and placed it in the group, skip...
+        contact = Contact.find_by_email(row[:_email])
+        
+        if row[:_is_this_your_first_commencement_camp] == "Yes"
+          contact.tag_list << "first-ccamp-2013" unless contact.tag_list.include?("first-ccamp-2013")
+        end
+        
+        puts (contact.first_name + " " + contact.last_name)
+        
+        contact.save
+      end
     end
   end
-  
 end
