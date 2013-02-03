@@ -20,7 +20,7 @@
       - if mandrill_email.sent_at
         = "sent at #{mandrill_email.sent_at.strftime("%I:%M %p %a %d %b")}"
       - if mandrill_email.scheduled && !mandrill_email.sent_at
-        = "scheduled to send at #{mandrill_email.sent_at.strftime("%I:%M %p %a %d %b")}"
+        = "scheduled to send at #{mandrill_email.scheduled_at.strftime("%I:%M %p %a %d %b")}"
       - if !mandrill_email.scheduled && !mandrill_email.sent_at
         = "message not sent yet"
       = " | ".html_safe
