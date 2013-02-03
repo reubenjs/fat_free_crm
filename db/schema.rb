@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130122134250) do
+ActiveRecord::Schema.define(:version => 20130203013952) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -414,6 +414,7 @@ ActiveRecord::Schema.define(:version => 20130122134250) do
     t.datetime "scheduled_at"
     t.string   "delayed_job_id"
     t.string   "response"
+    t.string   "from_name"
   end
 
   create_table "memberships", :force => true do |t|

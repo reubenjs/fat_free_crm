@@ -59,6 +59,7 @@ class SaasuObserver < ActiveRecord::Observer
     
     if response.errors.nil?
       c.saasu_uid = response.inserted_entity_uid
+      c.save!
       Delayed::Worker.logger.add(Logger::INFO, "Added #{c.full_name} to saasu")
     else
       Delayed::Worker.logger.add(Logger::INFO, "Error adding #{c.full_name} to saasu. #{response.errors}")

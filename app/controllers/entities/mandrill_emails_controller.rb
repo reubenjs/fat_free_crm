@@ -28,7 +28,7 @@ class MandrillEmailsController < EntitiesController
     end
   end
 
-  # GET /accounts/1
+  # GET /mandrill_emails/1
   #----------------------------------------------------------------------------
   def show
     mandrill = Mailchimp::Mandrill.new(Setting.mandrill[:api_key])
@@ -36,7 +36,10 @@ class MandrillEmailsController < EntitiesController
     
     @templates_list = list.map{|a| [a["name"],a["name"]]}
     respond_with(@mandrill_email) do |format|
-      @mandrill_email.from_address = @current_user.email
+      @mandrill_email.from_address ||= @current_user.email
+      @mandrill_email.from_name ||= "ES/AFES North Terrace"
+      @mandrill_email.message_subject ||= @mandrill_email.category == "prayer_points" ? "ES/AFES Prayer Points w/s #{Chronic::parse("next monday").strftime("%A %-d %B %Y")}" : ""     
+
       if !@mandrill_email.attached_files.exists?
         @mandrill_email.attached_files.build
       else

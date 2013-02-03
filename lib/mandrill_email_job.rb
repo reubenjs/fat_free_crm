@@ -27,6 +27,7 @@ class MandrillEmailJob < Struct.new(:mandrill_email_id)
                              :template_content => [:name => "body_content", :content => mandrill_mail.message_body.gsub(/(?:\n\r?|\r\n?)/, '<br>')],
                              :message => {
                                :subject => mandrill_mail.message_subject,
+                               :from_name => mandrill_mail.from_name,
                                :from_email => mandrill_mail.from_address,
                                :to => recipients_list,
                                :attachments => [{

@@ -337,6 +337,7 @@ DEPENDENCIES
   cancan
   capistrano_colors
   capybara (~> 1.1)
+  chronic
   cocaine
   coffee-rails (~> 3.2.1)
   combined_time_select (~> 0.0.1)

@@ -36,7 +36,12 @@
         = f.select :mailing_list, options_for_select([["TT Email", "terrace_times"],["Prayer Points","prayer_points"]], selected), {}, :style => 'width:200px;'
     %tr
       %td
-        .label.mid From:
+        .label.mid From Name:
+      %td
+        = f.text_field :from_name, :style => 'width:460px;'
+    %tr
+      %td
+        .label.mid From Email:
       %td
         = f.text_field :from_address, :style => 'width:460px;'    
     %tr
