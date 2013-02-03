@@ -23,9 +23,11 @@
       - if (lead = contact.lead) and lead.referred_by?
         &ndash;
         == #{t :referred_by_small} #{lead.referred_by}
-    - if contact.tag_list.present?
-      %dt{:style => "display:inline-block; padding:0px"}
+    
+    %dt{:style => "display:inline-block; padding:0px"}
+      - if contact.tag_list.present?
         .tags{:style => "margin-top:0px; margin-left:4px"}= tags_for_index(contact)
+    .mail_tools=link_to_tags(contact)
 
     %dt{ :style => "padding: 2px 0px 0px 0px" }
       - if can?(:read, contact)

@@ -1,0 +1,25 @@
+.confirm.mailing[@contact, :confirm]
+  = simple_form_for(@contact, :html => one_submit_only(:contact), :remote => true) do |f|
+    = f.hidden_field :user_id
+    = fields_for(@account) do |a|
+      = a.hidden_field :user_id
+      = a.hidden_field :assigned_to
+      = a.hidden_field :access, :value => Setting.default_access
+      = a.hidden_field :id
+      
+    - asset = controller_name.singularize
+    %table
+      %tr
+        %td{ :valign => :top }
+          = f.select :tag_list, Tag.all.map{|t| [t.name, t.name] }, {:value => f.object.tags.map{|t| t.name }}, {:multiple => true, :"data-placeholder" => t(:select_or_create_tags), :style => "width: #{mobile_device? ? "245" : "500"}px;"}
+
+          :javascript
+            crm.chosen_taglist('contact', 'contacts', "#{@contact.id}");
+    
+  
+    .buttonbar.mailing
+      = f.submit "Save", :onclick => "crm.save_contact()"
+      #{t :or}
+      = link_to_function("Cancel", "crm.flick('#{dom_id(@contact, :confirm)}', 'remove')")
+  
+  -#= link_to_confirm_delete(@contact) << " : "

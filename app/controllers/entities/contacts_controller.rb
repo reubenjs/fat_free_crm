@@ -31,6 +31,7 @@ class ContactsController < EntitiesController
     @account = @contact.account || Account.new(:user => current_user)
     respond_with(@contact)
   end
+  alias :tags :mailing_lists
   
   def mandrill_webhooks
     if request.post?

@@ -107,6 +107,14 @@ module ContactsHelper
             :remote => true)
   end
   
+  #----------------------------------------------------------------------------
+  def link_to_tags(contact)
+    link_to(image_tag("/assets/tag_blue_edit.png", :size => "12x12"), 
+            tags_contact_path(contact), 
+            :method => :get, 
+            :remote => true)
+  end
+  
   # Contact summary for RSS/ATOM feeds.
   #----------------------------------------------------------------------------
   def contact_summary(contact)
