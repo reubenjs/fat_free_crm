@@ -624,6 +624,7 @@ en-US:
   subject_contactgroup: group
   subject_accountcontact: contact
   subject_eventinstance: event occurrence
+  subject_mandrillemail: email
   subject_event: event
   tag_list: Tags
   create_past_participle: Record Creations
