@@ -165,7 +165,7 @@ namespace :ffcrm do
             contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
             log_string = "Contact found by mobile. updated: "
           end
-           
+          
           if row[:_course_year_in_2013] == "1"
             contact.cf_year_commenced = "2013"
           end
@@ -200,7 +200,7 @@ namespace :ffcrm do
           if !contact.persisted?
             contact.user_id = 1
             contact.access = Setting.default_access
-
+            contact.tag_list << "new@cc13" unless contact.tag_list.include?("new@cc13")
             log_string = "Created new contact: "
           else
             log_string = "Contact found by email. updated: " if log_string.nil?
@@ -270,5 +270,40 @@ namespace :ffcrm do
         contact.save
       end
     end
+    
+    task :non_cc => :environment do
+      PaperTrail.whodunnit = 1
+      
+      group = ContactGroup.find(10)
+      
+      registered = Contact.includes(:contact_groups).where('contact_groups.id IN (5)')
+      all_nt = Contact.includes(:account).where('accounts.id IN (3,2,1)')
+      
+      not_registered = all_nt - registered
+      
+      group.contacts << not_registered
+      
+    end
+    
   end
+  
+  task :fix_faculty => :environment do
+    PaperTrail.whodunnit = 1
+      
+      
+    csv = CSV.foreach(FatFreeCRM.root.join('db/data-import/adelaide-faculty.csv'), {:col_sep => ',', :headers => :first_row, :header_converters => :symbol}) do |row|
+      #unless group.contacts.find_by_email(row[:_email])
+      #sync has already brought this contact in and placed it in the group, skip...
+      contact = Contact.find(row[:id])
+        
+      contact.cf_faculty = row[:cf_faculty]
+      contact.cf_course_1 = row[:cf_course_1]
+      contact.cf_course_2 = row[:cf_course_2]
+        
+      puts (contact.first_name + " " + contact.last_name)
+        
+      contact.save
+    end
+  end
+  
 end
