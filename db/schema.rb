@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130203013952) do
+ActiveRecord::Schema.define(:version => 20130217083722) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -492,6 +492,11 @@ ActiveRecord::Schema.define(:version => 20130203013952) do
   end
 
   add_index "settings", ["name"], :name => "index_settings_on_name"
+
+  create_table "sync_logs", :force => true do |t|
+    t.string "sync_type"
+    t.string "synced_item"
+  end
 
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"

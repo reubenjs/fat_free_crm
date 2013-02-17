@@ -240,6 +240,109 @@ namespace :ffcrm do
       end  
     end
     
+    desc "sync oweek contacts from website registration data"
+    task :sync_oweek => :environment do
+      
+      require 'open-uri'
+      PaperTrail.whodunnit = 1
+      url = Setting.registration_api[:oweek_link]
+      url_data = open(url).read()
+      
+      group = ContactGroup.find_or_initialize_by_name(
+          :name => "OWeek 2013",
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+        unless group.persisted?
+          group.save
+        end
+      
+      csv = CSV.parse(url_data, {:col_sep => ',', :headers => :first_row, :header_converters => :symbol}) 
+      csv.each do |row|
+        unless SyncLog.find_by_sync_type_and_synced_item("ow13", row[:uniq_id])
+        #sync has already brought this contact in and placed it in the group, skip...
+          contact = Contact.find_by_email(row[:email])
+          if contact.nil?
+            contact = Contact.find_or_initialize_by_mobile(row[:mobile].gsub(/[\(\) ]/, ""))
+            contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
+            log_string = "Contact found by mobile. updated: "
+          end
+          
+          if row[:year] == "1"
+            contact.cf_year_commenced = "2013"
+          end  
+          
+          unless contact.assigned_to.present?
+            if (row[:add_to_email] == "checked" && row[:campus] == "City East" || row[:campus] == "City West")
+              contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+              user = User.find_by_first_name("dave")
+            elsif (row[:add_to_email] == "checked" && row[:campus] == "Adelaide")
+              contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+              user = (row[:gender] == "Male") ? User.find_by_first_name("reuben") : User.find_by_first_name("laura")
+            else
+              user = User.find_by_first_name("geoff")
+            end
+            contact.assigned_to = user.id#reuben or laura
+          end
+          
+          unless contact.account.present?
+            contact.account = Account.find_or_create_by_name(row[:campus]) 
+            contact.account.user = User.find(1)
+          end
+          
+          if !contact.persisted?
+            contact.user_id = 1
+            contact.access = Setting.default_access
+            contact.tag_list << "new@ow13" unless contact.tag_list.include?("new@ow13")
+            log_string = "Created new contact: "
+          else
+            log_string = "Contact found by email. updated: " if log_string.nil?
+          end
+          
+          if row[:learn_more] == "checked"
+            contact.tag_list << "learn_more" unless contact.tag_list.include?("learn_more")
+            contact.tag_list << row[:learn_more_option].gsub(/ /, "_") unless contact.tag_list.include?(row[:learn_more_option].gsub(/ /, "_"))
+          end
+           
+          if row[:international] == "checked"
+            contact.tag_list << "international" unless contact.tag_list.include?("international")
+          end
+          
+          contact.update_attributes(
+            :first_name => row[:first_name],
+            :last_name => row[:last_name],
+            :email => row[:email],
+            :cf_gender => row[:gender],
+            :mobile => row[:mobile].gsub(/[\(\) ]/, ""),
+            #address?
+            :cf_campus => row[:campus],
+            :cf_course_1 => row[:course],
+            :cf_church_affiliation => row[:church]
+           )
+          
+           unless row[:comments].blank?
+             contact.comments.create(:comment => row[:comments], :user_id => 1)
+           end
+           
+          puts (log_string + contact.first_name + " " + contact.last_name)
+          
+          contact.save
+          contact.touch
+          
+          SyncLog.create(:sync_type => "ow13", :synced_item => row[:uniq_id])
+          
+          contacts_with_name = Contact.where(:first_name => contact.first_name, :last_name => contact.last_name)
+          if contacts_with_name.size > 1
+            contact.tasks << Task.new(
+                  :name => "Possible duplicate from registration sync", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("reuben")
+                  )
+          end
+          
+          group.contacts << contact unless group.contacts.include?(contact) #shouldn't happen, but just in case
+        end
+      end  
+    end
+    
     task :fix_tags => :environment do
       require 'open-uri'
       PaperTrail.whodunnit = 1
