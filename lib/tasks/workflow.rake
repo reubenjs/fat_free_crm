@@ -261,11 +261,16 @@ namespace :ffcrm do
       csv.each do |row|
         unless SyncLog.find_by_sync_type_and_synced_item("ow13", row[:uniq_id])
         #sync has already brought this contact in and placed it in the group, skip...
-          contact = Contact.find_by_email(row[:email])
+          contact = row[:email].blank? ? nil : Contact.find_by_email(row[:email])
           if contact.nil?
-            contact = Contact.find_or_initialize_by_mobile(row[:mobile].gsub(/[\(\) ]/, ""))
-            contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
-            log_string = "Contact found by mobile. updated: "
+            if row[:mobile].blank?
+              contact = Contact.new
+              log_string = "Contact initialized"
+            else
+              contact = Contact.find_or_initialize_by_mobile(row[:mobile].gsub(/[\(\) ]/, ""))
+              contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
+              log_string = "Contact found by mobile. updated: "
+            end
           end
           
           if row[:year] == "1"
@@ -274,10 +279,10 @@ namespace :ffcrm do
           
           unless contact.assigned_to.present?
             if (row[:add_to_email] == "checked" && row[:campus] == "City East" || row[:campus] == "City West")
-              contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+              #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
               user = User.find_by_first_name("dave")
             elsif (row[:add_to_email] == "checked" && row[:campus] == "Adelaide")
-              contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+              #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
               user = (row[:gender] == "Male") ? User.find_by_first_name("reuben") : User.find_by_first_name("laura")
             else
               user = User.find_by_first_name("geoff")
@@ -317,19 +322,22 @@ namespace :ffcrm do
             #address?
             :cf_campus => row[:campus],
             :cf_course_1 => row[:course],
-            :cf_church_affiliation => row[:church]
+            :cf_church_affiliation => row[:church],
+            :cf_student_number => row[:student_id]
            )
-          
-           unless row[:comments].blank?
-             contact.comments.create(:comment => row[:comments], :user_id => 1)
-           end
            
           puts (log_string + contact.first_name + " " + contact.last_name)
           
-          contact.save
+          puts contact.save! ? "saved ok" : "save problem"
+          
+          unless row[:comments].blank?
+            contact.comments.create(:comment => row[:comments], :user_id => 1)
+          end
+          
           contact.touch
           
-          SyncLog.create(:sync_type => "ow13", :synced_item => row[:uniq_id])
+          sl = SyncLog.create(:sync_type => "ow13", :synced_item => row[:uniq_id])
+          sl.save
           
           contacts_with_name = Contact.where(:first_name => contact.first_name, :last_name => contact.last_name)
           if contacts_with_name.size > 1

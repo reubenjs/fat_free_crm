@@ -19,7 +19,7 @@
 set :output, 'log/rake_tasks.log'
 
 every "0 9-18 * * *" do
-  rake "ffcrm:registrations:sync"
+  rake "ffcrm:registrations:sync_oweek"
 end
 
 every 10.minutes do
