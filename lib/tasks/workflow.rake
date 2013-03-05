@@ -351,6 +351,133 @@ namespace :ffcrm do
       end  
     end
     
+    desc "sync bsg contacts from website registration data"
+    task :sync_bsg => :environment do
+      
+      require 'open-uri'
+      PaperTrail.whodunnit = 1
+      url = Setting.registration_api[:bsg_link]
+      url_data = open(url).read()
+      
+      adelaide_group = ContactGroup.find_or_initialize_by_name(
+          :name => "Adelaide BSG 2013",
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+      unless adelaide_group.persisted?
+        adelaide_group.save
+      end
+        
+      ce_group = ContactGroup.find_or_initialize_by_name(
+          :name => "City East BSG 2013",
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+      unless ce_group.persisted?
+        ce_group.save
+      end
+      
+      cw_group = ContactGroup.find_or_initialize_by_name(
+          :name => "City West BSG 2013",
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+      unless cw_group.persisted?
+        cw_group.save
+      end
+      
+      csv = CSV.parse(url_data, {:col_sep => ',', :headers => :first_row, :header_converters => :symbol}) 
+      csv.each do |row|
+        unless SyncLog.find_by_sync_type_and_synced_item("bsg13", row[:uniq_id])
+        #sync has already brought this contact in and placed it in the group, skip...
+          contact = row[:email].blank? ? nil : Contact.find_by_email(row[:email])
+          if contact.nil?
+            if row[:mobile].blank?
+              contact = Contact.new
+              log_string = "Contact initialized"
+            else
+              contact = Contact.find_or_initialize_by_mobile(row[:mobile].gsub(/[\(\) ]/, ""))
+              contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
+              log_string = "Contact found by mobile. updated: "
+            end
+          end
+          
+          if row[:year] == "1"
+            contact.cf_year_commenced = "2013"
+          end  
+          
+          unless contact.assigned_to.present?
+            if (row[:campus] == "City East" || row[:campus] == "City West")
+              #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+              user = User.find_by_first_name("dave")
+            elsif (row[:campus] == "Adelaide")
+              #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+              user = (row[:gender] == "Male") ? User.find_by_first_name("reuben") : User.find_by_first_name("laura")
+            else
+              user = User.find_by_first_name("geoff")
+            end
+            contact.assigned_to = user.id#reuben or laura
+          end
+          
+          unless contact.account.present?
+            contact.account = Account.find_or_create_by_name(row[:campus]) 
+            contact.account.user = User.find(1)
+          end
+          
+          if !contact.persisted?
+            contact.user_id = 1
+            contact.access = Setting.default_access
+            contact.tag_list << "new@bsg13" unless contact.tag_list.include?("new@bsg13")
+            log_string = "Created new contact: "
+          else
+            log_string = "Contact found by email. updated: " if log_string.nil?
+          end
+          
+          contact.tag_list << "posters" if row[:posters] == "checked" && !contact.tag_list.include?("posters")
+          contact.tag_list << "tbt-setup" if row[:tbt] == "checked" && !contact.tag_list.include?("tbt-setup")
+          contact.tag_list << "music" if row[:music] == "checked" && !contact.tag_list.include?("music")
+          contact.tag_list << "design" if row[:design] == "checked" && !contact.tag_list.include?("design")
+          contact.tag_list << "tech" if row[:tech] == "checked" && !contact.tag_list.include?("tech")
+          
+          faculty = row[:faculty] == "--Please select--" ? "" : row[:faculty]
+          
+          contact.update_attributes(
+            :first_name => row[:first_name],
+            :last_name => row[:last_name],
+            :email => row[:email],
+            :cf_gender => row[:gender],
+            :mobile => row[:mobile].gsub(/[\(\) ]/, ""),
+            #address?
+            :cf_campus => row[:campus],
+            :cf_course_1 => row[:course],
+            :cf_faculty => faculty
+           )
+          
+           contact.update_attributes(:cf_year_commenced => "2013") if row[:year] == "1"
+          
+          puts (log_string + contact.first_name + " " + contact.last_name)
+          
+          puts contact.save! ? "saved ok" : "save problem"
+          
+          contact.touch
+          
+          sl = SyncLog.create(:sync_type => "bsg13", :synced_item => row[:uniq_id])
+          sl.save
+          
+          contacts_with_name = Contact.where(:first_name => contact.first_name, :last_name => contact.last_name)
+          if contacts_with_name.size > 1
+            contact.tasks << Task.new(
+                  :name => "Possible duplicate from bsg registration sync", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("reuben")
+                  )
+          end
+          
+          adelaide_group.contacts << contact if row[:campus] == "Adelaide" && !adelaide_group.contacts.include?(contact) #shouldn't happen, but just in case
+          ce_group.contacts << contact if row[:campus] == "City East" && !adelaide_group.contacts.include?(contact) #shouldn't happen, but just in case
+          cw_group.contacts << contact if row[:campus] == "City West" && !adelaide_group.contacts.include?(contact) #shouldn't happen, but just in case
+        end
+      end  
+    end
+    
     task :fix_tags => :environment do
       require 'open-uri'
       PaperTrail.whodunnit = 1
