@@ -28,8 +28,8 @@
       = t('pluralize.contact', contact_group.contacts.count) << " | "
       -#= t('pluralize.opportunity', contact_group.opportunities.count)
 
-      - if contact_group.tag_list.present?
-        %dt
-          .tags= tags_for_index(contact_group)
+    - if contact_group.tag_list.present?
+      %dt{:style => "display:inline-block; padding:0px"}
+        .tags{:style => "margin-top:0px; margin-left:4px"}= tags_for_index(contact_group)
 
       = hook(:contact_group_bottom, self, :contact_group => contact_group)

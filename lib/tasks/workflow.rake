@@ -544,4 +544,33 @@ namespace :ffcrm do
     end
   end
   
+  task :import_bsg => :environment do
+    PaperTrail.whodunnit = 1
+      
+      
+    csv = CSV.foreach(FatFreeCRM.root.join('db/data-import/bsg-final.csv'), {:col_sep => ',', :headers => :first_row, :header_converters => :symbol}) do |row|
+      #unless group.contacts.find_by_email(row[:_email])
+      #sync has already brought this contact in and placed it in the group, skip...
+      contact = Contact.find_by_first_name_and_last_name(row[:fnam], row[:lnam])
+      
+      group = ContactGroup.find_or_initialize_by_name(
+          :name => "BSG13-Ad #{row[:gn]}-#{row[:time]}",
+          :access => Setting.default_access,
+          :user_id => 1,
+          :category => "bsg"
+          )
+      unless group.persisted?
+        group.save
+      end
+      
+      group.tag_list << "Adelaide" unless group.tag_list.include?("Adelaide")
+      group.save
+      
+      group.contacts << contact unless group.contacts.include?(contact)
+        
+      puts (contact.first_name + " " + contact.last_name)
+        
+    end
+  end
+  
 end
