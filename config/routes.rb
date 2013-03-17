@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       get :versions
     end
     member do
+      get :cold_contacts
       post :redraw_show
       post :move_contact
       put  :attach

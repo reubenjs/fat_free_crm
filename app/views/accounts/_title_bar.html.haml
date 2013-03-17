@@ -1,5 +1,6 @@
 #confirm{ hidden }
 .title_tools#menu
+  = link_to("Cold Contact Report", cold_contacts_account_path(@account, :format => :xls)) + " | "
   = link_to_inline(:edit_account, edit_account_path(@account), :text => t(:edit)) + " | "
   = link_to_function(t(:delete) + '?', confirm_delete(@account))
 .title_tools#buttons

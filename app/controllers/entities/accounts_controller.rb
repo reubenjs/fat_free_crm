@@ -87,6 +87,13 @@ class AccountsController < EntitiesController
     end
   end
   
+  def cold_contacts
+    # generates a report showing whether each contact has been to TBT or a BSG in the last two weeks
+    respond_with @account do |format|
+      format.xls { render :layout => 'header' }
+    end
+  end
+  
   #----------------------------------------------------------------------------
   def move_contact
     @contact = Contact.find(params[:contact_id])

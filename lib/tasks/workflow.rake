@@ -106,7 +106,7 @@ namespace :ffcrm do
       # Load fixtures
       require 'active_record/fixtures'
       campuses = []
-      #campuses << Account.find_by_name("Adelaide Uni")
+      campuses << Account.find_by_name("Adelaide")
       campuses << Account.find_by_name("City East")
       campuses << Account.find_by_name("City West")
       campuses -= [nil]
