@@ -152,6 +152,20 @@ class Contact < ActiveRecord::Base
     last_attendance = self.attendances.where('events.id IN (?)', events.each.map(&:id)).order('event_instances.starts_at DESC').includes(:event, :event_instance).first
     last_time = last_attendance.event_instance.starts_at unless last_attendance.nil?
   end
+  
+  def attendance_by_week_at_event_category(event_type)
+    events = Event.find_all_by_category(event_type)
+    attendances = self.attendances.where('events.id IN (?)', events.each.map(&:id)).order('event_instances.starts_at DESC').includes(:event, :event_instance)
+
+    attendance_array = Array.new(13){""} #will end up as something like ["", "", bullet, "" ...]
+    attendances.each do |a|
+      a.event_instance.name.scan(/week (\d+)/)
+      if $1
+        attendance_array[$1.to_i - 1] = "\u{2022}"
+      end
+    end
+    attendance_array
+  end
 
   # Backend handler for [Create New Contact] form (see contact/create).
   #----------------------------------------------------------------------------

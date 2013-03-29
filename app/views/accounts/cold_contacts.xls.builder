@@ -1,27 +1,114 @@
+xml.Styles do
+  xml.Style 'ss:ID' => "Default", 'ss:Name' => "Normal" do
+    xml.Alignment 'ss:Vertical' => "Bottom"
+  end
+  xml.Style 'ss:ID' => "s21" do
+    xml.Alignment 'ss:Horizontal' => "Center"
+  end
+  xml.Style 'ss:ID' => "s24" do
+    xml.Font 'ss:FontName' => "Verdana", 'ss:Bold' => 1
+  end
+  xml.Style 'ss:ID' => "s25" do
+    xml.Interior 'ss:Color' => "#FCF305", 'ss:Pattern' => "Solid"
+  end
+  xml.Style 'ss:ID' => "s26" do
+    xml.Interior 'ss:Color' => "#1FB714", 'ss:Pattern' => "Solid"
+    xml.Font 'ss:FontName' => "Verdana", 'ss:Bold' => 1
+  end
+  xml.Style 'ss:ID' => "s27" do
+    xml.Borders do
+      xml.Border 'ss:Position' => "Bottom", 'ss:LineStyle' => "Continuous", 'ss:Weight' => 2
+    end
+    xml.Font 'ss:FontName' => "Verdana", 'ss:Bold' => 1
+  end
+  xml.Style 'ss:ID' => "s28" do
+    xml.Borders do
+      xml.Border 'ss:Position' => "Left", 'ss:LineStyle' => "Continuous", 'ss:Weight' => 1
+    end
+    xml.Interior 'ss:Color' => "#FCF305", 'ss:Pattern' => "Solid"
+    xml.Font 'ss:FontName' => "Verdana", 'ss:Bold' => 1
+  end
+  xml.Style 'ss:ID' => "s29" do
+    xml.Borders do
+      xml.Border 'ss:Position' => "Bottom", 'ss:LineStyle' => "Continuous", 'ss:Weight' => 2
+      xml.Border 'ss:Position' => "Left", 'ss:LineStyle' => "Continuous", 'ss:Weight' => 1
+    end
+    xml.Font 'ss:FontName' => "Verdana", 'ss:Bold' => 1
+  end
+  xml.Style 'ss:ID' => "s30" do
+    xml.Borders do
+      xml.Border 'ss:Position' => "Left", 'ss:LineStyle' => "Continuous", 'ss:Weight' => 1
+    end
+    xml.Alignment 'ss:Horizontal' => "Center"
+  end
+  xml.Style 'ss:ID' => "s31" do
+    xml.Borders do
+      xml.Border 'ss:Position' => "Left", 'ss:LineStyle' => "Continuous", 'ss:Weight' => 1
+    end
+  end
+  xml.Style 'ss:ID' => "s32" do
+    xml.Borders do
+      xml.Border 'ss:Position' => "Left", 'ss:LineStyle' => "Continuous", 'ss:Weight' => 1
+    end
+    xml.Interior 'ss:Color' => "#1FB714", 'ss:Pattern' => "Solid"
+    xml.Font 'ss:FontName' => "Verdana", 'ss:Bold' => 1
+  end
+end
 xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
   xml.Table do
     unless @account.contacts.empty?
+      xml.Column 'ss:Index' => 4, 'ss:Width' => 51
+      xml.Column 'ss:Width' => 54
+      xml.Column 'ss:Width' => 44
+      xml.Column 'ss:Width' => 21, 'ss:Span' => 25
+
+      # Header 1
+      xml.Row 'ss:StyleID' => "s24" do
+        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 7 do
+          xml.Data "Semester 1 BSG", 
+                    'ss:Type' => 'String'
+        end
+        #yellow background
+        for i in 1..12
+          xml.Cell 'ss:StyleID' => "s25"
+        end
+        xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 20 do
+          xml.Data "Semester 1 TBT", 
+                    'ss:Type' => 'String'
+        end
+        #green background
+        for i in 1..12
+          xml.Cell 'ss:StyleID' => "s26"
+        end
+      end
       # Header.
-      xml.Row do
+      xml.Row 'ss:StyleID'=>"s27" do
+        numbers = *(1..13)
         heads = [I18n.t('name'),
                  I18n.t('email'),
                  I18n.t('mobile'),
                  "Last TBT",
                  "Last BSG",
-                 "Neither"]
+                 "Neither"
+               ]
+        heads.concat(numbers)
+        heads.concat(numbers)
         
         heads.each do |head|
-          xml.Cell do
+          hash = head == 1 ? {'ss:StyleID' => "s29"} : {}
+          xml.Cell hash do
             xml.Data head,
-                     'ss:Type' => 'String'
+                     'ss:Type' => "#{head.respond_to?(:abs) ? 'Number' : 'String'}"
           end
         end
       end
       
-      # Account rows.
-      @account.contacts.each do |contact|
+      # Contact rows.
+      @account.contacts.sort_by(&:first_name).each do |contact|
         tbt = contact.last_attendance_at_event_category("bible_talk")
         bsg = contact.last_attendance_at_event_category("bsg")
+        tbt_by_weeks = contact.attendance_by_week_at_event_category("bible_talk")
+        bsg_by_weeks = contact.attendance_by_week_at_event_category("bsg")
         xml.Row do
           data    = [contact.name,
                      contact.email,
@@ -30,11 +117,16 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
                      (!bsg.nil? && bsg > (Time.now - 4.weeks)) ? bsg.strftime("%d/%m") : "",
                      (tbt.nil? && bsg.nil?) ? "True" : "False"]
                      
-          
-          data.each do |value|
-            xml.Cell do
+          data.concat(bsg_by_weeks)
+          data.concat(tbt_by_weeks)
+                     
+          data.each_with_index do |value, index|
+            hash = (index > 5) ? {'ss:StyleID' => "s21"} : {}
+            hash = {'ss:StyleID' => "s30"} if (index == 6 || index == 19) 
+            xml.Cell hash do
               xml.Data value,
                        'ss:Type' => "#{value.respond_to?(:abs) ? 'Number' : 'String'}"
+            
             end
           end
         end
