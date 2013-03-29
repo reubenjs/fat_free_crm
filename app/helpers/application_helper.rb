@@ -1,20 +1,8 @@
-# Fat Free CRM
-# Copyright (C) 2008-2011 by Michael Dvorkin
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 #------------------------------------------------------------------------------
-
 module ApplicationHelper
 
   def tabs(tabs = nil)
@@ -98,7 +86,7 @@ module ApplicationHelper
       raw "document.observe('dom:loaded', function() { #{js} });"
     end
   end
-  
+
   def generate_js_for_popups(related, *assets)
     assets.map do |asset|
       render(:partial => "shared/select_popup", :locals => { :related => related, :popup => asset })
@@ -194,14 +182,20 @@ module ApplicationHelper
 
   # Bcc: to dropbox address if the dropbox has been set up.
   #----------------------------------------------------------------------------
-  def link_to_email(email, length = nil)
+  def link_to_email(email, length = nil, &block)
     name = (length ? truncate(email, :length => length) : email)
     if Setting.email_dropbox && Setting.email_dropbox[:address].present?
       mailto = "#{email}?bcc=#{Setting.email_dropbox[:address]}"
     else
       mailto = email
     end
-    link_to(h(name), "mailto:#{mailto}", :title => email)
+    if block_given?
+      link_to("mailto:#{mailto}", :title => email) do
+        yield
+      end
+    else
+      link_to(h(name), "mailto:#{mailto}", :title => email)
+    end
   end
 
   #----------------------------------------------------------------------------

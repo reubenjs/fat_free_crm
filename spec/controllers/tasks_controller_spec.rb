@@ -1,3 +1,8 @@
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
+#
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
+#------------------------------------------------------------------------------
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe TasksController do
@@ -74,9 +79,7 @@ describe TasksController do
 
       it "should render all tasks as JSON for #{view} view" do
         @tasks = produce_tasks(current_user, view)
-
-        request.env["HTTP_ACCEPT"] = "application/json"
-        get :index, :view => view
+        get :index, :view => view, :format => :json
 
         (assigns[:tasks].keys.map(&:to_sym) - @tasks.keys).should == []
         (assigns[:tasks].values.flatten - @tasks.values.flatten).should == []
@@ -93,9 +96,7 @@ describe TasksController do
 
       it "should render all tasks as xml for #{view} view" do
         @tasks = produce_tasks(current_user, view)
-
-        request.env["HTTP_ACCEPT"] = "application/xml"
-        get :index, :view => view
+        get :index, :view => view, :format => :xml
 
         (assigns[:tasks].keys.map(&:to_sym) - @tasks.keys).should == []
         (assigns[:tasks].values.flatten - @tasks.values.flatten).should == []

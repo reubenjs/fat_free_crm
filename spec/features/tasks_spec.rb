@@ -1,3 +1,8 @@
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
+#
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
+#------------------------------------------------------------------------------
 require File.expand_path("../acceptance_helper.rb", __FILE__)
 
 feature 'Tasks', %q{
@@ -68,9 +73,6 @@ feature 'Tasks', %q{
     fill_in 'task_name', :with => 'Updated Task'
     click_button 'Save Task'
     page.should have_content('Updated Task')
-    click_link 'Task'
-    page.should have_content('Updated Task')
-
     click_link 'Dashboard'
     page.should have_content('Bill Murray updated task Updated Task')
   end

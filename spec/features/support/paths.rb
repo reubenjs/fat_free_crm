@@ -1,3 +1,8 @@
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
+#
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
+#------------------------------------------------------------------------------
 module NavigationHelpers
   # Put helper methods related to the paths in your application here.
 
@@ -28,15 +33,15 @@ module NavigationHelpers
   def tasks_page
     tasks_path
   end
-  
+
   def groups_page
     admin_groups_path
   end
-  
+
   def opportunity_overview_page
     opportunities_overview_users_path
   end
-  
+
 end
 
-RSpec.configuration.include NavigationHelpers, :type => :request
+RSpec.configuration.include NavigationHelpers, :type => :feature

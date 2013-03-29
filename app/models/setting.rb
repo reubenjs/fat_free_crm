@@ -1,20 +1,8 @@
-# Fat Free CRM
-# Copyright (C) 2008-2011 by Michael Dvorkin
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
 #
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 #------------------------------------------------------------------------------
-
 # == Schema Information
 #
 # Table name: settings
@@ -125,6 +113,17 @@ class Setting < ActiveRecord::Base
   end
 end
 
+#
+# TODO: code smell - refactor loading of settings
+# The following code should be in a lazy load hook or Settings class initializer
+#
+
+#
+# We have fat_free_crm/syck_yaml which loads very early on in the bootstrap process
+# However, something else (possibly bundler) is reverting back to Psych later on so
+# we need to set it again here to ensure the files are read in the correct manner.
+#
+YAML::ENGINE.yamler = 'syck'
 
 # Load default settings, then override with custom settings, if present.
 setting_files = [FatFreeCRM.root.join("config", "settings.default.yml")]

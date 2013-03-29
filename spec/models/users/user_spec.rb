@@ -1,3 +1,8 @@
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
+#
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
+#------------------------------------------------------------------------------
 # == Schema Information
 #
 # Table name: users
@@ -122,7 +127,7 @@ describe User do
     describe "have_assigned_opportunities" do
       before :each do
         @user1 = FactoryGirl.create(:user)
-        FactoryGirl.create(:open_opportunity, :assignee => @user1)
+        FactoryGirl.create(:opportunity, :assignee => @user1, :stage => 'analysis')
 
         @user2 = FactoryGirl.create(:user)
 

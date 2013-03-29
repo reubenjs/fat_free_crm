@@ -1,4 +1,9 @@
-require File.expand_path("../acceptance_helper.rb", __FILE__)
+# Copyright (c) 2008-2013 Michael Dvorkin and contributors.
+#
+# Fat Free CRM is freely distributable under the terms of MIT license.
+# See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
+#------------------------------------------------------------------------------
+require 'features/acceptance_helper'
 
 feature 'Accounts', %q{
   In order to increase customer satisfaction
@@ -32,7 +37,7 @@ feature 'Accounts', %q{
     click_button 'Create Account'
 
     page.should have_content('My new account')
-    click_link 'My new account'
+    find('div#accounts').click_link('My new account') # avoid recent items link
     page.should have_content('+1 2345 6789')
     page.should have_content('http://www.example.com')
     page.should have_content('This account is very important')
@@ -58,10 +63,10 @@ feature 'Accounts', %q{
     page.should have_field("comment_body", :with => 'This account is very important')
   end
 
-  scenario 'should view and edit an account', :js => true do
+  scenario 'should view and edit an account', :js => true, :versioning => true do
     FactoryGirl.create(:account, :name => "A new account")
     visit accounts_page
-    click_link 'A new account'
+    find('div#accounts').click_link('A new account')
     page.should have_content('A new account')
     click_link 'Edit'
     fill_in 'account_name', :with => 'A new account *editted*'
@@ -75,7 +80,7 @@ feature 'Accounts', %q{
   scenario 'should delete an account', :js => true do
     FactoryGirl.create(:account, :name => "My new account")
     visit accounts_page
-    click_link 'My new account'
+    find('div#accounts').click_link('My new account')
     click_link 'Delete?'
     page.should have_content('Are you sure you want to delete this account?')
     click_link 'Yes'
@@ -89,12 +94,12 @@ feature 'Accounts', %q{
     find('#accounts').should have_content("Account 1")
     fill_in 'query', :with => "Account 0"
     find('#accounts').should have_content("Account 0")
-    find('#accounts').has_selector?('li', :count => 1)
+    find('#accounts').should_not have_content("Account 1")
     fill_in 'query', :with => "Account"
     find('#accounts').should have_content("Account 0")
     find('#accounts').should have_content("Account 1")
-    find('#accounts').has_selector?('li', :count => 2)
     fill_in 'query', :with => "Contact"
-    find('#accounts').has_selector?('li', :count => 0)
+    find('#accounts').should_not have_content("Account 0")
+    find('#accounts').should_not have_content("Account 1")
   end
 end
