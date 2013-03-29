@@ -87,6 +87,8 @@ class AccountsController < EntitiesController
     end
   end
   
+  # GET /accounts/1/cold_contacts.xls
+  #----------------------------------------------------------------------------
   def cold_contacts
     # generates a report showing whether each contact has been to TBT or a BSG in the last two weeks
     respond_with @account do |format|
