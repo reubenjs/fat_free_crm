@@ -239,6 +239,24 @@ var crm = {
       Effect.toggle(section, 'slide', { duration: 0.25, beforeStart: function() { intro.toggle(); } });
     }
   },
+  
+  //----------------------------------------------------------------------------
+  flip_subtitle2: function(el) {
+    var arrow = Element.down(el, "small");
+    //var intro = Element.down(Element.next(Element.up(el)), "small");
+    // Optionally, the intro might be next to the link.
+    //if(!intro){ intro = Element.next(el, "small");};
+    //var section = Element.down(Element.down(Element.next(Element.up(Element.up(el))), "div"), "div");
+    var section = Element.down(Element.next(Element.up(Element.up(el))), "div");
+
+    if (Element.visible(section)) {
+      arrow.update(this.COLLAPSED);
+      Effect.toggle(section, 'slide', { duration: 0.25 });
+    } else {
+      arrow.update(this.EXPANDED);
+      Effect.toggle(section, 'slide', { duration: 0.25 });
+    }
+  },
 
   //----------------------------------------------------------------------------
   flip_note_or_email: function(link, more, less) {

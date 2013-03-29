@@ -481,6 +481,21 @@ module ApplicationHelper
       content << content_tag("small", info_text.to_s, {:class => "subtitle_inline_info", :id => "#{id}_intro", :style => hidden ? "" : "display:none;"})
     end
   end
+  
+  #----------------------------------------------------------------------------
+  # Combines the 'subtitle' helper with the small info text on the same line.
+  def event_title(id, hidden = true, text = nil, info_text = nil)
+    text = id.to_s.split("_").last.capitalize if text == nil
+    content_tag("div", :class => "subtitle show_attributes", :style => "margin-top:0px;height:13px") do
+      content = link_to("<small>#{ hidden ? "&#9658;" : "&#9660;" }</small> #{text}".html_safe,
+        url_for(:controller => :home, :action => :toggle, :id => id),
+        :remote  => true,
+        :onclick => "crm.flip_subtitle2(this)"
+      )
+      content << content_tag("small", info_text.to_s, {:class => "subtitle_inline_info", :id => "#{id}_intro", :style => hidden ? "" : "display:none;"})
+    end
+  end
+  
 
   #----------------------------------------------------------------------------
   # Return name of current view

@@ -37,6 +37,7 @@ class EventInstancesController < EntitiesController
         @contacts << a.contact
       end  
     end
+    @contacts = @contacts.sort_by &:first_name
     respond_with(@event_instance) do |format|
       format.html do
         #@stage = Setting.unroll(:opportunity_stage)
