@@ -3,7 +3,7 @@
 # Fat Free CRM is freely distributable under the terms of MIT license.
 # See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 #------------------------------------------------------------------------------
-$:.unshift File.expand_path('./lib', ENV['rvm_path'])
+#$:.unshift File.expand_path('./lib', ENV['rvm_path'])
 
 require 'rvm/capistrano'
 require 'bundler/capistrano'
