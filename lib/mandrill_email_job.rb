@@ -17,23 +17,23 @@ class MandrillEmailJob < Struct.new(:mandrill_email_id)
         if mandrill_mail.attached_files.exists?
           attached_file_name = mandrill_mail.attached_files.first.attached_file_file_name
           attached_file = Base64.encode64(open(mandrill_mail.attached_files.first.attached_file.path, &:read))
+          attached_array = [{ :type => 'application/pdf', 
+                              :name => attached_file_name, 
+                              :content => attached_file}]
         else
-          attached_file_name = nil
-          attached_file = nil
+          attached_array = []
         end
+        
         
         response = mandrill.messages_send_template({
                              :template_name => mandrill_mail.template,
-                             :template_content => [:name => "body_content", :content => mandrill_mail.message_body.gsub(/(?:\n\r?|\r\n?)/, '<br>')],
+                             :template_content => [:name => "body_content", :content => mandrill_mail.message_body], #.gsub(/(?:\n\r?|\r\n?)/, '<br>')],
                              :message => {
                                :subject => mandrill_mail.message_subject,
                                :from_name => mandrill_mail.from_name,
                                :from_email => mandrill_mail.from_address,
                                :to => recipients_list,
-                               :attachments => [{
-                                 :type => 'application/pdf', 
-                                 :name => attached_file_name, 
-                                 :content => attached_file}]
+                               :attachments => attached_array
                              }
                             })
         #logger.info("RESPONSE >> " + response)

@@ -1,6 +1,7 @@
 - scheduled = @mandrill_email.scheduled
 - sent = @mandrill_email.sent_at
 - not_sent_or_scheduled = !sent && !scheduled
+= tinymce_assets
 #confirm{ hidden }
 .title_tools#menu
   = link_to_inline(:edit_mandrill_email, edit_mandrill_email_path(@mandrill_email), :text => t(:edit)) + " | "
@@ -70,10 +71,12 @@
               = f.text_field :scheduled_time, :style => "width:90px;", :autocomplete => :off, :class => 'time start', :value => @mandrill_email.scheduled_at_time
     %tr
       %td{:colspan => 2}
-        = f.text_area :message_body, :style => 'width:550px;'
+        = f.text_area :message_body, :style => 'width:550px;', :class => "tinymce"
   
   .buttonbar
     = f.submit "Save for later" unless sent
     = f.submit "Send!", :onclick => 'return confirm("Email is about to be added to the send queue. Are you sure?")', :name => "send" unless sent
     = "#{t :or}" unless sent 
     = link_to "Cancel", mandrill_emails_path
+  
+  = tinymce
