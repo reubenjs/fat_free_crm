@@ -53,8 +53,6 @@ if defined?(FatFreeCRM::Application)
     # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
     # config.assets.precompile += %w( search.js )
     config.assets.precompile += ['print.css', 'jquery_ui_datepicker/*.js']
-    config.assets.precompile += ['tinymce/themes/ribbon/*.js', 'tinymce/themes/ribbon/codemirror/css/*.js', 
-                                  'tinymce/themes/ribbon/skins/default/*.css']
 
     # Enable threaded mode
     # config.threadsafe!
