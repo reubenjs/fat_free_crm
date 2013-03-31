@@ -1,7 +1,7 @@
-
 = hook(:contact_top_section, self, :f => f) do
   .section
     %table
+      = render "template" if %w(new create).include?(controller.action_name)
       %tr
         %td
           .label.top.req{ :class => "#{Setting.require_first_names ? 'req' : nil}" } #{t :first_name}:

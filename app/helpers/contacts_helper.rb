@@ -117,5 +117,55 @@ module ContactsHelper
     summary << "#{t(:mobile_small)}: #{contact.mobile}" if contact.mobile.present?
     summary.join(', ')
   end
+  
+  def contact_template_link(template, text)
+    templates = { 
+        :adelaide => {:folder => "Adelaide", :weekly_emails => ["adelaide"], :supporter_emails => []},
+        :city_west => {:folder => "City West", :weekly_emails => ["city_west"], :supporter_emails => []},
+        :city_east => {:folder => "City East", :weekly_emails => ["city_east"], :supporter_emails => []},
+        :supporter => {:folder => "Supporters", :weekly_emails => [], :supporter_emails => ["tt_email","prayer_points"]}
+      }
+    
+      link_to(text, "", :remote => true, :onclick => 
+          contact_template_jscript(
+            templates[template.to_sym][:folder],
+            templates[template.to_sym][:weekly_emails],
+            templates[template.to_sym][:supporter_emails]
+          ))
+    
+  end
+  
+  def contact_template_jscript(template, weekly_emails=[], supporter_emails=[])
+    weekly_checkboxes = %w(adelaide city_west city_east)
+    supporter_checkboxes = %w(tt_email prayer_points)
+    
+    # seems that prototype update event is required...
+    script = "
+      $j('\#account_id').val(#{Account.find_by_name(template).id});
+      Event.fire($(\"account_id\"), \"liszt:updated\");
+      $j('\#account_id').trigger(\"change\");
+    "
+    
+    # clear all subscriptions
+    weekly_checkboxes.each do |box|
+      script = script + "$j('\#contact_cf_weekly_emails_#{box}').prop(\"checked\", false);"
+    end
+    
+    supporter_checkboxes.each do |box|
+      script = script + "$j('\#contact_cf_supporter_emails_#{box}').prop(\"checked\", false);"
+    end
+    
+    # subscribe according to template
+    weekly_emails.each do |email|
+      script = script + "$j('\#contact_cf_weekly_emails_#{email}').prop(\"checked\", true);"
+    end
+    
+    supporter_emails.each do |email|
+      script = script + "$j('\#contact_cf_supporter_emails_#{email}').prop(\"checked\", true);"
+    end
+    
+    script
+  end
+  
 end
 

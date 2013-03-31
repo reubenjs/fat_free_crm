@@ -4,3 +4,4 @@
 // See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 //------------------------------------------------------------------------------
 jQuery.noConflict();
+var $j = jQuery.noConflict();

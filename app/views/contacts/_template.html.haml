@@ -1,0 +1,16 @@
+%tr
+  %td
+    %div{:style => "height:10px"}
+%tr
+  %td(colspan=3){:style => "padding:10px;border:1px solid silver"}
+    = "Template: "
+    = contact_template_link(:adelaide, "Adelaide")
+    = " | "
+    = contact_template_link(:city_east, "City East")
+    = " | "
+    = contact_template_link(:city_west, "City West")
+    = " | "
+    = contact_template_link(:supporter, "Supporter")
+%tr
+  %td
+    %div{:style => "height:10px"}
