@@ -1,0 +1,30 @@
+= styles_for :registration
+%li.highlight[registration]
+  .strip{:class => (t = registration.part_time? ? "part_time" : "full_time")}= t.humanize
+
+  %ul.tools
+    = hook(:registration_tools_before, self, :registration => registration)
+    
+    - if can?(:update, registration)
+      %li= link_to_edit(registration)
+    
+    / - if shown_on_landing_page?
+    /   %li= link_to_discard(registration)
+
+    - if can?(:destroy, registration)
+      %li= link_to_delete(registration)
+
+  .indent
+    - link_object = controller.controller_name == "events" ? registration.contact : registration.event
+    = link_to_if can?(:read, link_object), link_object.full_name, link_object
+    &ndash;
+    %tt
+      -#= registration.location << ", " unless registration.location.blank?
+      = t(:added_by, :time_ago => time_ago_in_words(registration.created_at), :user => (registration.user.id == @current_user.id ? t(:me) : registration.user.full_name))
+      -#= t('pluralize.opportunity', registration.opportunities.count)
+
+    - if registration.tag_list.present?
+      %dt{:style => "display:inline-block; padding:0px"}
+        .tags{:style => "margin-top:0px; margin-left:4px"}= tags_for_index(registration)
+
+      = hook(:registration_bottom, self, :registration => registration)

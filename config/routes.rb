@@ -252,6 +252,19 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :registrations, :id => /\d+/ do
+    collection do
+      #post :redraw
+      get :versions
+    end
+    member do
+      put  :attach
+      post :discard
+      post :subscribe
+      post :unsubscribe
+    end
+  end
+  
   namespace :admin do
     resources :groups
     

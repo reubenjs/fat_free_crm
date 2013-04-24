@@ -4,6 +4,7 @@ class Event < ActiveRecord::Base
   belongs_to :user
   belongs_to :assignee, :class_name => "User", :foreign_key => :assigned_to
   has_many :tasks, :as => :asset, :dependent => :destroy#, :order => 'created_at DESC'
+  has_many :registrations, :dependent => :destroy
   has_many    :emails, :as => :mediator
   belongs_to :contact_group
   has_many :contacts, :through => :attendances
@@ -44,6 +45,10 @@ class Event < ActiveRecord::Base
   #----------------------------------------------------------------------------
   def self.per_page ; 20 ; end
   def self.outline ; "long" ; end
+  
+  def full_name
+    self.name
+  end
 
   # Attach given attachment to the account if it hasn't been attached already.
   #----------------------------------------------------------------------------

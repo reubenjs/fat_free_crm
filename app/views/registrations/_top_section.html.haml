@@ -1,0 +1,90 @@
+= hook(:registration_top_section, self, :f => f) do
+  .section
+    .subtitle{:style => "padding-top:10px"} Attendance Details
+    %table
+      %tr
+        %td
+          .label 
+            First time
+            = f.check_box :first_time, :style => "float:left;"
+      %tr
+        %td
+          .label 
+            Part time
+            = f.check_box :part_time, :style => "float:left;"
+    %div{:style => "padding-top:10px"}
+    %table{ :width => "100%", :cellpadding => 0, :cellspacing => 0 }
+      %tr
+        %td= spacer
+        - days = []
+        - Date::DAYNAMES[1..5].each{|d| days << [d.first(3), d.first(3)]}
+        - %w(breakfasts lunches dinners sleeps).each do |kind|
+          %td= f.input kind.to_sym, as: :check_boxes, collection: days
+    
+    .subtitle{:style => "padding-top:10px"} Transport Details
+    %table
+      %tr
+        %td
+          .label 
+            Transport required
+            = f.check_box :transport_required, :style => "float:left"
+      %tr
+        %td
+          .label Can transport this many others:
+          = f.text_field :can_transport
+      %tr
+        %td(colspan="3")
+          .label Driver for:
+          = f.text_area :driver_for, :style =>"width:500px", :rows => 3
+    
+    .subtitle{:style => "padding-top:10px"} Dietary/Health
+    = f.simple_fields_for :contact do |c|
+      %table
+        %tr
+          %td
+            .label 
+              Has dietary or health issues
+              = c.check_box :cf_has_dietary_or_health_issues, :style => "float:left;"
+        %tr
+          %td(colspan="3")
+            .label Details
+            = c.text_area :cf_dietary_health_issue_details, :style =>"width:500px", :rows => 3
+        %tr
+          %td
+            .label Emergency contact
+            = c.text_field :cf_emergency_contact
+          %td= spacer
+          %td
+            .label Emegency contact relationship
+            = c.text_field :cf_emergency_contact_relationship
+        %tr
+          %td
+            .label Emergency contact number
+            = c.text_field :cf_emergency_contact_number
+          
+    .subtitle{:style => "padding-top:10px"} Payment Details
+    %table
+      %tr
+        %td
+          .label 
+            Financial assistance required
+            = f.check_box :need_financial_assistance, :style => "float:left;"
+      %tr
+        %td
+          .label Amount donated
+          = f.text_field :donate_amount
+        %td= spacer
+        %td
+          .label Total fee
+          = f.text_field :fee
+      %tr
+        %td
+          .label Payment Method
+          = f.select :payment_method, options_for_select([["Cash", "Cash"],["PayPal", "PayPal"]]), { :style => "width:160px" }
+    
+    
+            
+
+      = render :partial => "/shared/tags", :locals => {:f => f, :span => 3}
+
+      = hook(:registration_top_section_bottom, self, :f => f)

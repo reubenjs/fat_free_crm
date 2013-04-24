@@ -42,6 +42,7 @@ class Contact < ActiveRecord::Base
   belongs_to  :assignee, :class_name => "User", :foreign_key => :assigned_to
   has_one     :account_contact, :dependent => :destroy
   has_one     :account, :through => :account_contact
+  has_many    :registrations, :dependent => :destroy
   has_many    :contact_opportunities, :dependent => :destroy
   has_many    :opportunities, :through => :contact_opportunities, :uniq => true, :order => "opportunities.id DESC"
   has_many    :tasks, :as => :asset, :dependent => :destroy#, :order => 'created_at DESC'

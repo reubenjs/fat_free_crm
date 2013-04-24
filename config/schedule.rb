@@ -18,8 +18,8 @@
 # end
 set :output, 'log/rake_tasks.log'
 
-every "0 9-18 * * *" do
-  rake "ffcrm:registrations:sync_bsg"
+every 10.minutes do
+  rake "ffcrm:registrations:sync"
 end
 
 every 10.minutes do

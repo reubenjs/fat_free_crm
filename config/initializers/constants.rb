@@ -4,4 +4,4 @@
 # See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 #------------------------------------------------------------------------------
 #ENTITIES = %w(Account Campaign Contact Lead Opportunity).freeze
-ENTITIES = %w(Account Campaign Contact Lead Opportunity ContactGroup Event MandrillEmail).freeze
+ENTITIES = %w(Account Campaign Contact Lead Opportunity ContactGroup Event MandrillEmail Registration).freeze

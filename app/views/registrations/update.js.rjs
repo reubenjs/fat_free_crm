@@ -1,0 +1,17 @@
+id = called_from_landing_page? ? "edit_registration" : dom_id(@registration)
+
+if @registration.errors.empty?
+  if called_from_landing_page?
+    page.call "crm.flip_form", :edit_registration
+    page.call "crm.set_title", :edit_registration, @registration.contact.full_name
+    page << refresh_sidebar(:show, :summary)
+  else
+    page[id].replace :partial => "registration", :collection => [ @registration ]
+    page[id].visual_effect :highlight, :duration => 1.0
+    page << refresh_sidebar(:index, :filters)
+  end
+else  
+  page[id].replace_html :partial => "edit"
+  page[id].visual_effect :shake, :duration => 0.25, :distance => 6
+  page[:registration_name].focus
+end

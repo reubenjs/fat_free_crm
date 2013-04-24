@@ -32,7 +32,11 @@
   - if models.include?(:event)
     - Setting.event_category_color.each do |key, value|
       li.event .#{key} { background:#{value}; }
-
+      
+  - if models.include?(:registration)
+    - Setting.registration_type_color.each do |key, value|
+      li.registration .#{key} { background:#{value}; }
+      
   - if models.include?(:user)
     li.user .admin     { background: lightblue; }
     li.user .suspended { background: gainsboro; }

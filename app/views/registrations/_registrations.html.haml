@@ -1,0 +1,11 @@
+-#= section(object, :registrations)
+%br
+.subtitle
+  Registrations
+  = " (#{object.registrations.count})" if object.registrations.present?
+.remote#create_registration{:style => "display: none; height:auto"}
+.list#registrations
+  - registrations = object.registrations.paginate(:page => 1, :per_page => 20)
+  = render :partial => "registrations/registration", :collection => registrations
+
+= will_paginate registrations, :id => 'registrations_pagination', :params => {:action => :registrations}

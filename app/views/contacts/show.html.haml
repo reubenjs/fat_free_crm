@@ -16,8 +16,10 @@
     = render :partial => "tasks/tasks", :locals => {:object => @contact}
 
     -#= render :partial => "opportunities/opportunities", :locals => {:object => @contact}
-  
+
     = render :partial => "contact_groups/contact_groups", :locals => {:object => @contact}
+  
+    = render :partial => "registrations/registrations", :locals => {:object => @contact}
   
     = render :partial => "attendances/attendances", :locals => {:object => @contact, :bsg_attendances => @bsg_attendances, :tbt_attendances => @tbt_attendances, :other_attendances => @other_attendances}
   

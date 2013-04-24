@@ -15,6 +15,8 @@
 = hook(:show_event_bottom, self) do
 
   = render :partial => "tasks/tasks", :locals => {:object => @event}
+  
+  = render :partial => "registrations/registrations", :locals => {:object => @event} if @event.has_registrations
 
   = render :partial => "event_instances/event_instances", :locals => {:object => @event}
 

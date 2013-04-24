@@ -123,7 +123,21 @@ class ContactGroupsController < EntitiesController
   # PUT /accounts/1/discard
   #----------------------------------------------------------------------------
   # Handled by EntitiesController :discard
-
+  def discard
+    
+    #remove corresponding registrations (if any) when discarding from contact_group
+    
+    if params[:attachment] == "Contact"
+      contact = Contact.find(params[:attachment_id])
+      @contact_group.events.each do |e|
+        if e.has_registrations
+          e.registrations.find_by_contact_id(contact.id).destroy
+        end
+      end
+    end
+    super
+  end
+  
   # POST /accounts/auto_complete/query                                     AJAX
   #----------------------------------------------------------------------------
   # Handled by ApplicationController :auto_complete

@@ -1,0 +1,35 @@
+id = dom_id(@registration)
+
+if params[:cancel].true? # <--------------------- Hide [Edit registration]
+
+  if called_from_landing_page?
+    page.call "crm.flip_form", :edit_registration
+    page.call "crm.set_title", :edit_registration, @registration.name
+  else                                            # Called from registrations list item...
+    page[id].replace :partial => "registration", :collection => [ @registration ]
+  end
+
+else # <----------------------------------------  Show [Edit registration] form.
+
+  if params[:cancel].blank?                       # Called from registrations list item...
+    if @previous                                  # Hide open [Edit registration] form if any.
+      if @previous.is_a?(Registration)
+        page[dom_id(@previous)].replace :partial => "registration", :collection => [ @previous ]
+      else
+        page.call "crm.flick", "registration_#{@previous}", :remove
+      end
+    end
+    page.call "crm.highlight_off", id             # Disable onMouseOver for the list item.
+    page.call "crm.hide_form", :create_registration    # Hide [Create registration] form if any.
+    page[id].replace_html :partial => "edit"      # Show [Edit registration] form.
+    #page.call "crm.init_chosen_fields"
+
+  elsif params[:cancel].false?                    # Called from title of the registration landing page...
+    page[:edit_registration].replace_html :partial => "edit"
+    #page.call "crm.init_chosen_fields"
+    page.call "crm.flip_form", :edit_registration
+    page.call "crm.set_title", :edit_registration, "#{t :edit} #{@registration.name}"
+  end
+  page[:registration_name].focus
+
+end

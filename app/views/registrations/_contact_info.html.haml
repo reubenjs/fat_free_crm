@@ -1,0 +1,32 @@
+- edit ||= false
+- collapsed = (@registration.errors.empty? && session[:registration_contact].nil?)
+= subtitle :registration_contact, collapsed, t(:contact_info)
+.section
+  %small#registration_contact_intro{ hidden_if(!collapsed) }
+    = t(:intro, t(:account_small)) unless edit
+  #registration_contact{ hidden_if(collapsed) }
+    =f.simple_fields_for :contact do |c|
+      %table
+        %tr
+          %td{ :colspan => 3 }
+            %table{ :width => "100%", :cellpadding => 0, :cellspacing => 0 }
+              %tr
+                %td
+                  .label First name:
+                  = c.text_field :first_name, :style => "width:154px"
+                %td= spacer
+                %td
+                  .label Last name:
+                  = c.text_field :last_name, :style => "width:154px"
+                %td= spacer
+                %td
+                  .label Email:
+                  = c.text_field :email, :style => "width:154px"
+        %tr
+          %td
+            .label.top #{t :website}:
+            = c.text_field :mobile
+          %td= spacer
+          %td
+            .label.top Email:
+            = c.text_field :email
