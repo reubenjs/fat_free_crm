@@ -287,7 +287,7 @@ namespace :ffcrm do
           
           # Pull in registration data
           #---------------------------
-          binding.pry
+          
           registration.update_attributes(
             :transport_required => (row[:_will_you_require_transport] == "Yes"),
             :driver_for => row[:_i_am_the_driver_for_thisthese_persons],
@@ -295,14 +295,17 @@ namespace :ffcrm do
             :part_time => (row[:_are_you_attending_parttime] == "Yes"),
             :donate_amount => row[:_id_like_to_donate_this_amount_to_assist_others_in_financial_need_enter_numbers_only_in_000_format],
             :comments => row[:_comment],
-            :payment_method => row[:_eb_payment_status],
+            :payment_method => (row[:_eb_payment_status] == "Paid" ? "PayPal" : "Cash"),
             :fee => row[:_amount],
             :breakfasts => row[:_breakfast].split(" "),
             :lunches => row[:_lunch].split(" "),
             :dinners => row[:_dinner].split(" "),
             :sleeps => row[:_sleeping_onsite].split(" ")
           )
-          binding.pry
+          
+          # There is now enough info in registration for observers/registration_observer 
+          # to raise an invoice
+          #-------------------------
           
           registration.save
           

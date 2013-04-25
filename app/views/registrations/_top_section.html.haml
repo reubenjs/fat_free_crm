@@ -80,7 +80,7 @@
       %tr
         %td
           .label Payment Method
-          = f.select :payment_method, options_for_select([["Cash", "Cash"],["PayPal", "PayPal"]]), { :style => "width:160px" }
+          = f.select :payment_method, [["Cash","Cash"],["PayPal","PayPal"]], { :style => "width:160px" }
     
     
             
