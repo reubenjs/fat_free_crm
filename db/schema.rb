@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130420082239) do
+ActiveRecord::Schema.define(:version => 20130426152707) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -515,6 +515,7 @@ ActiveRecord::Schema.define(:version => 20130420082239) do
     t.datetime "deleted_at"
     t.datetime "created_at",                                                   :null => false
     t.datetime "updated_at",                                                   :null => false
+    t.integer  "assigned_to"
   end
 
   create_table "sessions", :force => true do |t|

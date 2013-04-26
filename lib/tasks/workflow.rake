@@ -279,7 +279,7 @@ namespace :ffcrm do
           if row[:_do_you_need_to_request_financial_assistance] == "Yes"
             registration.update_attributes(:need_financial_assistance => true)
             contact.tasks << Task.new(
-                  :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("dave")
+                  :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("geoff")
                   )
           end
             
