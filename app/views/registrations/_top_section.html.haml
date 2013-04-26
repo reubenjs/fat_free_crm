@@ -11,15 +11,15 @@
         %td
           .label 
             Part time
-            = f.check_box :part_time, :style => "float:left;"
-    %div{:style => "padding-top:10px"}
-    %table{ :width => "100%", :cellpadding => 0, :cellspacing => 0 }
-      %tr
-        %td= spacer
-        - days = []
-        - Date::DAYNAMES[1..5].each{|d| days << [d.first(3), d.first(3)]}
-        - %w(breakfasts lunches dinners sleeps).each do |kind|
-          %td= f.input kind.to_sym, as: :check_boxes, collection: days
+            = f.check_box :part_time, :style => "float:left;", :onclick => "crm.update_part_time($('registration_part_time').checked)"
+    %div#part_time{ hidden_if(!@registration.part_time) }
+      %table{ :width => "100%", :cellpadding => 0, :cellspacing => 0 }
+        %tr
+          %td= spacer
+          - days = []
+          - Date::DAYNAMES[1..5].each{|d| days << [d.first(3), d.first(3)]}
+          - %w(breakfasts lunches dinners sleeps).each do |kind|
+            %td= f.input kind.to_sym, as: :check_boxes, collection: days
     
     .subtitle{:style => "padding-top:10px"} Transport Details
     %table

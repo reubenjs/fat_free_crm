@@ -196,6 +196,16 @@ var crm = {
   show_comments: function(value) {
       $("com_contact_" + value ).toggle(); // show/hide comments section for attendances
   },
+  
+	//----------------------------------------------------------------------------
+  update_part_time: function(value) {
+    if(value) {
+      $("part_time").show(); 
+    } else {
+      $("part_time").hide(); 
+    }
+      
+  },
 
 
   //----------------------------------------------------------------------------
