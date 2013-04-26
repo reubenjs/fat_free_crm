@@ -231,6 +231,9 @@ $sidebar_width: 210px;
           display: inline;
           width: 90px;
       }}
+      &.pad {
+        padding: 5px;
+      }
       div.input {
         display: inline;
         padding: 3px; }

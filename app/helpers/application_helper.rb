@@ -45,8 +45,9 @@ module ApplicationHelper
   end
 
   #----------------------------------------------------------------------------
-  def section(related, assets, no_select=false, views=false, sort_by_model=Contact)
+  def section(related, assets, no_select=false, views=false, sort_by_model=Contact, no_create=false)
     asset = assets.to_s.singularize
+    asset_title = (related.class == Event && assets == :contacts) ? "Registrations" : assets
     create_id  = "create_#{asset}"
     select_id  = "select_#{asset}"
     create_url = controller.send(:"new_#{asset}_path")
@@ -62,7 +63,7 @@ module ApplicationHelper
     html << content_tag(:div, view_buttons, :class => :subtitle_tools, :id => "buttons") if views
     html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if views
     html << content_tag(:div, t(:sort_by, :models => t(:"#{controller_name}_small"), :field => link_to(current_sort_by, "#", :id => :sort_by)).html_safe , :class => "subtitle_tools") if (views && related.present?)
-    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if (views && related.present?)
+    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if (views && related.present? && !no_create)
     html << javascript_tag(
       "new crm.Menu({
         trigger   : \"sort_by\",
@@ -74,8 +75,8 @@ module ApplicationHelper
     ) if (views && related.present?)
     html << content_tag(:div, link_to(t(select_id), "#", :id => select_id), :class => "subtitle_tools") unless no_select
     html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") unless no_select
-    html << content_tag(:div, link_to_inline(create_id, create_url, :related => dom_id(related), :text => t(create_id)), :class => "subtitle_tools")
-    html << content_tag(:div, (asset_count > 0 ? t(assets) + " (#{asset_count})" : t(assets)), :class => :subtitle, :id => "create_#{asset}_title")
+    html << content_tag(:div, link_to_inline(create_id, create_url, :related => dom_id(related), :text => t(create_id)), :class => "subtitle_tools") unless no_create
+    html << content_tag(:div, (asset_count > 0 ? t(asset_title) + " (#{asset_count})" : t(assets)), :class => :subtitle, :id => "create_#{asset}_title")
     html << content_tag(:div, "", :class => :remote, :id => create_id, :style => "display:none;")
   end
 
@@ -126,9 +127,10 @@ module ApplicationHelper
   def link_to_edit(record, options = {})
     object = record.is_a?(Array) ? record.last : record
     related = (options[:related] ? "&related=#{options[:related]}" : '')
+    edit_text = options[:edit_text] ? options[:edit_text] : t(:edit)
     
     name = (params[:klass_name] || object.class.name).underscore.downcase
-    link_to(t(:edit),
+    link_to(edit_text,
       options[:url] || polymorphic_url(record, :action => :edit),
       :remote  => true,
       :onclick => "this.href = this.href.split('?')[0] + '?previous='+crm.find_form('edit_#{name}') + '#{related}';"
@@ -150,11 +152,11 @@ module ApplicationHelper
   end
 
   #----------------------------------------------------------------------------
-  def link_to_discard(object)
+  def link_to_discard(object, discard_text="Discard")
     current_url = (request.xhr? ? request.referer : request.fullpath)
     parent, parent_id = current_url.scan(%r|/(\w+)/(\d+)|).flatten
 
-    link_to(t(:discard),
+    link_to(discard_text,
       url_for(:controller => parent, :action => :discard, :id => parent_id, :attachment => object.class.name, :attachment_id => object.id),
       :method  => :post,
       :remote  => true,

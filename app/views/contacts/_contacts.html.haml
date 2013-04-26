@@ -1,5 +1,6 @@
-- show_views = (object.class == ContactGroup || object.class == Account) ? true : false
-= section(object, :contacts, false, show_views)
+- show_views = (object.class == ContactGroup || object.class == Account || object.class == Event) ? true : false
+- no_select_create = object.class == Event ? true : false
+= section(object, :contacts, no_select_create, show_views, Contact, no_select_create)
 
 #search{:style => "margin-top:0px"}
   .search_form.show#basic_search{:style => "padding:0 4px 0 4px"}
@@ -15,10 +16,10 @@
     = image_tag("loading.gif", :size => :thumb, :id => "loading", :style => "display: none;")
 
 .list#contacts
-  - if object.class == ContactGroup || object.class == Account
+  - if object.class == ContactGroup || object.class == Account || object.class == Event
     - contacts = object.contacts.order(@sort).paginate(:page => 1, :per_page => 1000)
   - else
-    - contacts = object.contacts.paginate(:page => 1, :per_page => 50, :per_page => 1000)
-  = render :partial => "contacts/contact", :collection => contacts
+    - contacts = object.contacts.paginate(:page => 1, :per_page => 50)
+  = render :partial => "contacts/contact", :collection => contacts, :locals => {:object => object}
 
 = will_paginate contacts, :id => 'contacts_pagination', :params => {:action => :contacts}

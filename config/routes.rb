@@ -226,6 +226,9 @@ Rails.application.routes.draw do
       get :toggle_comments
     end
     member do
+      get :reports
+      get :generate_report
+      post :redraw_show
       put  :attach
       #put :mark
       #put :unmark

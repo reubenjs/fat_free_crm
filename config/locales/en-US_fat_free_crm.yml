@@ -339,6 +339,7 @@ en-US:
   #----------------------------------------------------------------------------
   create_event: Create Event
   select_event: Select Event
+  save_event: Save Event
   event: Event
   select_an_event: event
   event_small: event
@@ -352,6 +353,10 @@ en-US:
   save_event_instance: Save Occurrence
   create_event_instance: Create Occurrence
   munchies: Munchies
+
+  # Registrations
+  #----------------------------------------------------------------------------
+  save_registration: Save Registration
 
   # Views -> Accounts.
   #----------------------------------------------------------------------------

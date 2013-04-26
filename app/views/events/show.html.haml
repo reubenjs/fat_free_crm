@@ -3,11 +3,13 @@
 
 #confirm{ hidden }
 .title_tools#menu
+  = link_to_inline(:report_event, reports_event_path(@event), :text => "Reports") + " | " if @event.has_registrations
   = link_to_inline(:edit_event, edit_event_path(@event), :text => t(:edit)) + " | "
   = link_to_function(t(:delete) + '?', confirm_delete(@event))
 .title#edit_event_title= h(@event.name)
 
 %div#edit_event{ hidden }
+%div#report_event{ hidden }
 
 = render "comments/new", :commentable => @event
 = render :partial => "shared/timeline", :collection => @timeline
@@ -16,9 +18,11 @@
 
   = render :partial => "tasks/tasks", :locals => {:object => @event}
   
-  = render :partial => "registrations/registrations", :locals => {:object => @event} if @event.has_registrations
-
+  -#= render :partial => "registrations/registrations", :locals => {:object => @event} if @event.has_registrations
+  
   = render :partial => "event_instances/event_instances", :locals => {:object => @event}
+  
+  = render :partial => "contacts/contacts", :locals => {:object => @event} if @event.has_registrations
 
   -#= render :partial => "opportunities/opportunities", :locals => {:object => @event}
 

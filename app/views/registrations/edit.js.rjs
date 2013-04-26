@@ -1,4 +1,4 @@
-id = dom_id(@registration)
+id = dom_id(@registration.contact)
 
 if params[:cancel].true? # <--------------------- Hide [Edit registration]
 
@@ -6,30 +6,30 @@ if params[:cancel].true? # <--------------------- Hide [Edit registration]
     page.call "crm.flip_form", :edit_registration
     page.call "crm.set_title", :edit_registration, @registration.name
   else                                            # Called from registrations list item...
-    page[id].replace :partial => "registration", :collection => [ @registration ]
+    page[id].replace :partial => "contacts/contact", :collection => [ @registration.contact ], :locals => {:object => @registration.event}
   end
 
 else # <----------------------------------------  Show [Edit registration] form.
 
   if params[:cancel].blank?                       # Called from registrations list item...
     if @previous                                  # Hide open [Edit registration] form if any.
-      if @previous.is_a?(Registration)
-        page[dom_id(@previous)].replace :partial => "registration", :collection => [ @previous ]
+      if @previous.is_a?(Contact)
+        page[dom_id(@previous)].replace :partial => "contacts/contact", :collection => [ @previous ]
       else
-        page.call "crm.flick", "registration_#{@previous}", :remove
+        page.call "crm.flick", "contact_#{@previous}", :remove
       end
     end
     page.call "crm.highlight_off", id             # Disable onMouseOver for the list item.
-    page.call "crm.hide_form", :create_registration    # Hide [Create registration] form if any.
+    page.call "crm.hide_form", :create_contact    # Hide [Create registration] form if any.
     page[id].replace_html :partial => "edit"      # Show [Edit registration] form.
     #page.call "crm.init_chosen_fields"
 
   elsif params[:cancel].false?                    # Called from title of the registration landing page...
-    page[:edit_registration].replace_html :partial => "edit"
+    page[:edit_contact].replace_html :partial => "edit"
     #page.call "crm.init_chosen_fields"
-    page.call "crm.flip_form", :edit_registration
-    page.call "crm.set_title", :edit_registration, "#{t :edit} #{@registration.name}"
+    page.call "crm.flip_form", :edit_contact
+    page.call "crm.set_title", :edit_contact, "#{t :edit} #{@registration.name}"
   end
-  page[:registration_name].focus
+  page[:contact_name].focus
 
 end

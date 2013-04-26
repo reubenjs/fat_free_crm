@@ -208,6 +208,33 @@ class EventsController < EntitiesController
   # PUT /accounts/1/discard
   #----------------------------------------------------------------------------
   # Handled by EntitiesController :discard
+  def discard
+    
+    #remove corresponding memberships (if any) when discarding from event
+    
+    if params[:attachment] == "Contact"
+      contact = Contact.find(params[:attachment_id])
+      if @event.contact_group
+        @event.contact_group.memberships.find_by_contact_id(contact.id).destroy
+      end
+    end
+    super
+  end
+  
+  def reports
+    
+  end
+  
+  def generate_report
+    # generates xls file using builder template corresponding to
+    # params[:reqested_report]
+    
+    respond_with @event do |format|
+      filename = "#{@event.name} #{params[:requested_report].humanize}"
+      headers["Content-Disposition"] = "attachment; filename=\"#{filename}\""
+      format.xls { render params[:requested_report], :layout => 'header'}
+    end
+  end
 
   # POST /accounts/auto_complete/query                                     AJAX
   #----------------------------------------------------------------------------
@@ -221,6 +248,26 @@ class EventsController < EntitiesController
     @current_user.pref[:events_sort_by]  = Event::sort_by_map[params[:sort_by]] if params[:sort_by]
     @events = get_events(:page => 1)
     render :index
+  end
+  
+  # POST /accounts/redraw                                                  AJAX
+  #----------------------------------------------------------------------------
+  def redraw_show
+    # current_user.pref[:contact_groups_per_page] = params[:per_page] if params[:per_page]
+    # current_user.pref[:contact_groups_outline]  = params[:outline]  if params[:outline]
+    current_user.pref[:contacts_sort_by]  = Contact::sort_by_map[params[:sort_by]] if params[:sort_by]
+    @sort = current_user.pref[:contacts_sort_by]
+    if params[:query]
+      @query, @tags = parse_query_and_tags(params[:query])
+    end
+    scope = @event.contacts
+    scope = scope.text_search(@query) if @query.present?
+    scope = scope.tagged_with(@tags, :on => :tags) if @tags.present?
+    scope = scope.order(@sort) if @sort.present?
+    
+    @contacts = scope
+    set_options # Refresh options
+    render :show    
   end
 
   # POST /accounts/filter                                                  AJAX

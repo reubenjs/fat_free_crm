@@ -1,0 +1,16 @@
+.remote
+  .section
+    %table
+      %tr
+        %td.pad
+          = link_to "&bull; Contact list".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "contact_list")
+      %tr
+        %td.pad
+          = link_to "&bull; Accommodation Usage (who slept on site for each day)".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "accommodation_usage")
+      %tr
+        %td.pad
+          = link_to "&bull; Catering (people at each meal, dietary requirements)".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "catering")
+      %tr
+        %td.pad
+          = link_to "&bull; Health issues and emergency contacts".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "health_issues")
+  

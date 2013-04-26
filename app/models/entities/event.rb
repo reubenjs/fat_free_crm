@@ -7,7 +7,7 @@ class Event < ActiveRecord::Base
   has_many :registrations, :dependent => :destroy
   has_many    :emails, :as => :mediator
   belongs_to :contact_group
-  has_many :contacts, :through => :attendances
+  has_many :contacts, :through => :registrations
   has_many :event_instances, :dependent => :destroy
   accepts_nested_attributes_for :event_instances
   
@@ -65,6 +65,19 @@ class Event < ActiveRecord::Base
       attachment.update_attribute(:asset, nil)
     else # Contacts, Opportunities
       self.send(attachment.class.name.tableize).delete(attachment)
+    end
+  end
+  
+  def contacts_accommodated_on(day)
+    if self.registrations.any?
+      contacts = self.contacts.where('registrations.sleeps LIKE (?) OR registrations.part_time = false', "%#{day}%") #.map{|r| r.contact} 
+    end   
+  end
+  
+  def contacts_eating_at(meal, day)
+    if self.registrations.any?
+      t = Registration.arel_table
+      contacts = self.contacts.where(t[meal.pluralize.to_sym].matches("%#{day}%").or(t[:part_time] == false))#.map{|r| r.contact}
     end
   end
 

@@ -52,5 +52,10 @@
    :controllers => ['contact_groups'], :actions => ['show'], :template => 'contacts/index_brief'}, # default
   {:name => 'contact_groups_show_long', :title => 'Long format', :icon => 'long.png',
    :controllers => ['contact_groups'], :actions => ['show'], :template => 'contacts/index_long'},
+   
+ {:name => 'events_show_brief', :title => 'Brief format', :icon => 'brief.png',
+   :controllers => ['events'], :actions => ['show'], :template => 'contacts/index_brief'}, # default
+  {:name => 'events_show_long', :title => 'Long format', :icon => 'long.png',
+   :controllers => ['events'], :actions => ['show'], :template => 'contacts/index_long'},
  
 ].each {|view| FatFreeCRM::ViewFactory.new(view)}

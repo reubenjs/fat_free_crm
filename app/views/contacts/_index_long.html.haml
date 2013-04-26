@@ -1,3 +1,4 @@
+- object = defined?(object) ? object : nil
 %li.highlight[contact]
   = avatar_for(contact, :size => "30x30")
   %ul.tools
@@ -7,10 +8,14 @@
       %li= link_to_graduate(contact)
     
     - if can?(:update, contact)
-      %li= link_to_edit(contact)
+      - if object.try(&:class) == Event
+        %li= link_to_edit(object.registrations.find_by_contact_id(contact.id), :edit_text => "Edit registration")
+      - else
+        %li= link_to_edit(contact)
 
     - if shown_on_landing_page?
-      %li= link_to_discard(contact)
+      - discard_text = (object.try(&:class) == Event ? "Unregister" : "Discard")
+      %li= link_to_discard(contact, discard_text)
 
     - if can?(:destroy, contact)
       %li= link_to_confirm(contact)
@@ -27,7 +32,7 @@
     %dt{:style => "display:inline-block; padding:0px"}
       - if contact.tag_list.present?
         .tags{:style => "margin-top:0px; margin-left:4px"}= tags_for_index(contact)
-    .mail_tools=link_to_tags(contact)
+    .mail_tools=link_to_tags(contact) unless object.try(&:class) == Event
 
     %dt{ :style => "padding: 2px 0px 0px 0px" }
       - if can?(:read, contact)
@@ -49,10 +54,10 @@
           = image_tag "/assets/sub-tt.png", :size => "16x12" if contact.cf_supporter_emails.include? "TT Email"
           = image_tag "/assets/sub-ttm.png", :size => "16x12" if contact.cf_supporter_emails.include? "TT Mail"
           = image_tag "/assets/sub-pp.png", :size => "16x12" if contact.cf_supporter_emails.include? "Prayer Points"
-          .mail_tools= link_to_mailing_lists(contact)
+          .mail_tools= link_to_mailing_lists(contact) unless object.try(&:class) == Event
           |
         - elsif !contact.has_subscription? && contact.email.present?
-          .mail_tools= link_to_mailing_lists(contact)
+          .mail_tools= link_to_mailing_lists(contact) unless object.try(&:class) == Event
         - assigned = User.find(contact.assigned_to) unless contact.assigned_to.blank?
         - if assigned.present?
           = "[#{link_to assigned.first_name, assigned}] |".html_safe
