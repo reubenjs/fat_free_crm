@@ -48,7 +48,7 @@
   .remote#options{ hidden }
 
   %ul.list#activities
-    - unless @activities.empty?
+    - unless @activities.empty? || @current_user.groups.collect(&:name).include?("Conference Manager")
       = render :partial => "activity", :collection => @activities
     - else
       #{t :no_activity_records}

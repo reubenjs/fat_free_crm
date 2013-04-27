@@ -1,4 +1,5 @@
 - object = defined?(object) ? object : nil
+- registration = object.present? ? object.registrations.find_by_contact_id(contact.id) : nil
 %li.highlight[contact]
   = avatar_for(contact, :size => "30x30")
   %ul.tools
@@ -7,11 +8,12 @@
     - if !shown_on_landing_page?
       %li= link_to_graduate(contact)
     
-    - if can?(:update, contact)
+    - if registration.present? && can?(:update, registration)
       - if object.try(&:class) == Event
-        %li= link_to_edit(object.registrations.find_by_contact_id(contact.id), :edit_text => "Edit registration")
-      - else
-        %li= link_to_edit(contact)
+        %li= link_to_edit(registration, :edit_text => "Edit registration")
+    
+    - if can?(:update, contact) && !object.try(&:class) == Event
+      %li= link_to_edit(contact)
 
     - if shown_on_landing_page?
       - discard_text = (object.try(&:class) == Event ? "Unregister" : "Discard")

@@ -3,7 +3,7 @@
 .panel#lists
   .caption #{t :lists}
   %ul
-    - if @lists.none?
+    - if @lists.none? || @current_user.groups.collect(&:name).include?("Conference Manager")
       %div #{t :no_saved_lists}
     - else
       - @lists.sort.each_with_index do |list, i|

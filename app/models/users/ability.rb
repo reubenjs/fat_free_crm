@@ -10,7 +10,10 @@ class Ability
 
   def initialize(user)
     if user.present?
-      entities = [Account, Campaign, Contact, Lead, Opportunity, ContactGroup, Event, EventInstance, Attendance, Registration]
+      entities = [Event, EventInstance, Registration]
+      
+      [Account, Campaign, Contact, Lead, Opportunity, ContactGroup, Attendance].each{|e| entities << e} unless user.groups.collect(&:name).include? "Conference Manager"
+      
       entities << MandrillEmail if user.mandrill?
       
       can :create, :all

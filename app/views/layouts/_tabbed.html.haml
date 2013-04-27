@@ -1,7 +1,10 @@
 .tabs
   %ul
+    - conference_manager_hidden = [:tab_tasks, :tab_accounts, :tab_contacts, :tab_groups]
+    - mandrill = @current_user.mandrill?
+    - conference = @current_user.groups.collect(&:name).include? "Conference Manager"
     - tabs.each do |tab|
-      -unless (tab[:text] == :tab_mandrill && !@current_user.mandrill?)
+      -unless (tab[:text] == :tab_mandrill && !mandrill) || (conference_manager_hidden.include?(tab[:text]) && conference)
         %li
           = link_to(tab[:url], :class => tab[:active] ? "active" : nil) do
             - unless request.fullpath.include?("/admin")
