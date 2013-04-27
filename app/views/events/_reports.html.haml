@@ -13,4 +13,7 @@
       %tr
         %td.pad
           = link_to "&bull; Health issues and emergency contacts".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "health_issues")
+      %tr
+        %td.pad
+          = link_to "&bull; Transport (who can drive, who needs a lift)".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "transport")
   

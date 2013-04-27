@@ -17,6 +17,10 @@
 class EventsController < EntitiesController
   before_filter :get_data_for_sidebar, :only => :index
 
+  def single_access_allowed?
+    (action_name == "generate_report")
+  end
+
   # GET /accounts
   #----------------------------------------------------------------------------
   def index
