@@ -32,7 +32,7 @@ class RegistrationObserver < ActiveRecord::Observer
     i.invoice_type = "Sale Invoice"
     i.tags = "myc"
     i.summary = "MYC 2013 Registration"
-    i.notes = "Registration added my Mojo for #{registration.contact.full_name}"
+    i.notes = "Registration added by Mojo for #{registration.contact.full_name}"
     
     if registration.contact.present? && !registration.contact.saasu_uid.blank?
       i.contact_uid = registration.contact.saasu_uid
