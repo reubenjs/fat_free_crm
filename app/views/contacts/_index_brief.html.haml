@@ -1,5 +1,5 @@
 - object = defined?(object) ? object : nil
-- registration = object.present? ? object.registrations.find_by_contact_id(contact.id) : nil
+- registration = (object.present? && object.class == Event) ? object.registrations.find_by_contact_id(contact.id) : nil
 %li.highlight[contact]
   = avatar_for(contact, :size => "16x16")
 
