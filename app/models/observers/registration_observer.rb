@@ -45,6 +45,15 @@ class RegistrationObserver < ActiveRecord::Observer
     
     i.invoice_items = [fee]
     
+    if registration.payment_method != "PayPal"
+      discount = Saasu::ServiceInvoiceItem.new
+      discount.description = "Online payment discount (if paid before 19th July)"
+      discount.account_uid = Setting.saasu[:myc_income_account]
+      discount.total_amount_incl_tax = -5
+      
+      i.invoice_items << discount
+    end
+    
     if registration.donate_amount.to_i > 0
       donation = Saasu::ServiceInvoiceItem.new
       donation.description = "Donation"
@@ -79,6 +88,7 @@ class RegistrationObserver < ActiveRecord::Observer
       Delayed::Worker.logger.add(Logger::INFO, "Added invoice for #{registration.contact.full_name} to saasu")
     else
       Delayed::Worker.logger.add(Logger::INFO, "Error adding invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
+      UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
     end
   end
   

@@ -23,6 +23,17 @@ class UserMailer < ActionMailer::Base
          :to => entity.assignee.email,
          :from => "Mojo <mojo@nt.es.org.au>"
   end
+  
+  def saasu_registration_error(entity, error_text)
+    @entity_url = url_for(entity)
+    @entity_name = entity.name
+    @entity_type = entity.class.name
+    @error_text = error_text
+    mail :subject => "Mojo Error: Saasu invoice creation failed for #{@entity_type} \"#{@entity_name}\"",
+          :to => User.find_by_first_name("Reuben").email,
+          :from => "Mojo <mojo@nt.es.org.au>"
+          
+  end
 
 end
 

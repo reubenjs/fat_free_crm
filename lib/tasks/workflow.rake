@@ -307,7 +307,7 @@ namespace :ffcrm do
           # to raise an invoice
           #-------------------------
           
-          registration.save
+          #registration.save #not necessary??
           
           # Log that this registration has been imported
           #----------------------------------------------

@@ -626,6 +626,7 @@ en-US:
   subject_task: task
   subject_user: user
   subject_membership: member
+  subject_registration: registration to
   subject_contactgroup: group
   subject_accountcontact: contact
   subject_eventinstance: event occurrence
