@@ -1,4 +1,4 @@
-id = called_from_landing_page? ? "edit_registration" : dom_id(@registration.contact)
+id = called_from_landing_page?(:contacts) ? dom_id(@registration) : dom_id(@registration.contact)
 
 if @registration.errors.empty?
   if called_from_landing_page?
@@ -6,7 +6,11 @@ if @registration.errors.empty?
     page.call "crm.set_title", :edit_registration, @registration.contact.full_name
     page << refresh_sidebar(:show, :summary)
   else
-    page[id].replace :partial => "contacts/contact", :collection => [ @registration.contact ], :locals => {:object => @registration.event}
+    if called_from_landing_page?(:contacts)
+      page[id].replace :partial => "registrations/registration", :collection => [ @registration ], :locals => {:object => @registration.event}
+    else
+      page[id].replace :partial => "contacts/contact", :collection => [ @registration.contact ], :locals => {:object => @registration.event}
+    end
     page[id].visual_effect :highlight, :duration => 1.0
     page << refresh_sidebar(:index, :filters)
   end
