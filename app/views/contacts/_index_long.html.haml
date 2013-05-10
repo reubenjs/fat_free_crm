@@ -12,8 +12,9 @@
       - if object.try(&:class) == Event
         %li= link_to_edit(registration, :edit_text => "Edit registration")
     
-    - if can?(:update, contact) && !object.try(&:class) == Event
-      %li= link_to_edit(contact)
+    - if can?(:update, contact)
+      - unless (object.present? && object.try(&:class) == Event)
+        %li= link_to_edit(contact)
 
     - if shown_on_landing_page?
       - discard_text = (object.try(&:class) == Event ? "Unregister" : "Discard")
