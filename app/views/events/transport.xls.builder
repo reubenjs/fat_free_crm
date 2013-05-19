@@ -21,7 +21,7 @@ xml.Worksheet 'ss:Name' => (@event.name + " contact list") do
                   registration.contact.last_name, 
                   registration.contact.email,
                   registration.contact.mobile,
-                  registration.transport_required, 
+                  registration.transport_required == true ? "Y" : "N", 
                   registration.can_transport,
                   registration.driver_for
                   ]

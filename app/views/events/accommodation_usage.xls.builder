@@ -1,7 +1,7 @@
 xml.Worksheet 'ss:Name' => (@event.name + " contact list") do
   xml.Table do
     unless @event.contacts.empty?
-      day_names = %w(Mon Tue Wed Thu Fri)
+      day_names = %w(Mon Tue Wed Thu)
       # Header.
       xml.Row do
         ["Day","First Name","Last Name"].each do |head|

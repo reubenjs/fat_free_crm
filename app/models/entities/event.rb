@@ -77,7 +77,7 @@ class Event < ActiveRecord::Base
   def contacts_eating_at(meal, day)
     if self.registrations.any?
       t = Registration.arel_table
-      contacts = self.contacts.where(t[meal.pluralize.to_sym].matches("%#{day}%").or(t[:part_time] == false))#.map{|r| r.contact}
+      contacts = self.contacts.where(t[meal.pluralize.to_sym].matches("%#{day}%").or(t[:part_time].eq(false)))#.map{|r| r.contact}
     end
   end
 
