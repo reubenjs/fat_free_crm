@@ -229,6 +229,16 @@ class EventsController < EntitiesController
     
   end
   
+  def email_registrants
+  
+  end
+  
+  def send_emails
+    
+    
+    Delayed::Job.enqueue(ConferenceEmailJob.new(params[:id], params[:message_subject], params[:from_name], params[:from_address], params[:message_body], params[:send_invoices]))
+  end
+  
   def generate_report
     # generates xls file using builder template corresponding to
     # params[:reqested_report]

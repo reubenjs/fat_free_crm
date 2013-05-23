@@ -70,6 +70,16 @@ class RegistrationObserver < ActiveRecord::Observer
     
     i.trading_terms = tt
     
+    email = Saasu::EmailMessage.new
+    email.to = registration.contact.email
+    email.from = Setting.conference[:email_address]
+    email.subject = Setting.conference[:email_subject]
+    email.body = "Dear #{registration.contact.first_name},\r\n\r\n
+      Please find your invoice/receipt attached. If you have not already paid, the invoice contains a link to pay online that you can use at any time.\r\n\r\n
+      Pay online before the 19th of July to receive a $5 early-bird discount.\r\n\r\n
+      In Christ,\r\n\r\n
+      The MYC Team"
+    
     if registration.payment_method == "PayPal"
       qp = Saasu::QuickPayment.new
       qp.date_paid = Time.now.strftime("%Y-%m-%d")
@@ -80,7 +90,7 @@ class RegistrationObserver < ActiveRecord::Observer
       i.quick_payment = [qp]
     end
     
-    response = Saasu::Invoice.insert(i)
+    response = Saasu::Invoice.insert_and_email(i, email, Setting.conference[:email_template])
     
     if response.errors.nil?
       registration.saasu_uid = response.inserted_entity_uid

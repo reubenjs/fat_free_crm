@@ -4,12 +4,14 @@
 #confirm{ hidden }
 .title_tools#menu
   = link_to_inline(:report_event, reports_event_path(@event), :text => "Reports") + " | " if @event.has_registrations
+  = link_to_inline(:email_event, email_registrants_event_path(@event), :text => "Email registrants") + " | " if @event.has_registrations
   = link_to_inline(:edit_event, edit_event_path(@event), :text => t(:edit)) + " | "
   = link_to_function(t(:delete) + '?', confirm_delete(@event))
 .title#edit_event_title= h(@event.name)
 
 %div#edit_event{ hidden }
 %div#report_event{ hidden }
+%div#email_event{ hidden }
 
 = render "comments/new", :commentable => @event
 = render :partial => "shared/timeline", :collection => @timeline

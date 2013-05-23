@@ -1,0 +1,37 @@
+= tinymce_assets
+.remote
+  = simple_form_for(@event, :url => {:action => "send_emails"}, :remote => true) do |f|
+    = f.error_messages :object_name => t('event')
+    %table{:style => 'border-spacing: 5px 15px;width:400px;'}
+      %tr
+        %td
+          .label.mid From Name:
+        %td
+          = text_field_tag :from_name, Setting.conference[:email_from] ,:style => 'width:460px;'
+      %tr
+        %td
+          .label.mid From Email:
+        %td
+          = text_field_tag :from_address, Setting.conference[:email_address] ,:style => 'width:460px;'    
+      %tr
+        %td
+          .label.mid Subject:
+        %td
+          = text_field_tag :message_subject, "" , :style => 'width:460px;'
+      %tr
+        %td
+        %td
+          .label.mid
+            = check_box_tag :send_invoices
+            Send invoices
+      %tr
+        %td{:colspan => 2}
+          = text_area_tag :message_body, "Dear *|FNAME|*,",:style => 'width:550px;', :class => "tinymce"
+
+    .buttonbar
+      = f.submit "Send!", :onclick => 'return confirm("Email is about to be added to the send queue. Are you sure?")', :name => "send"
+      = "#{t :or}"
+      = link_to_cancel email_registrants_event_path(@event)
+
+    = tinymce
+      

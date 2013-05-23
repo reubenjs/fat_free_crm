@@ -227,6 +227,8 @@ Rails.application.routes.draw do
     end
     member do
       get :reports
+      get :email_registrants
+      put :send_emails
       get :generate_report
       post :redraw_show
       put  :attach
