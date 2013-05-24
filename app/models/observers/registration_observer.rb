@@ -91,7 +91,7 @@ class RegistrationObserver < ActiveRecord::Observer
       i.quick_payment = [qp]
     end
     
-    response = Saasu::Invoice.insert_and_email(i, email, Setting.conference[:email_template])
+    response = Saasu::Invoice.insert_and_email(i, email, Setting.conference[:email_template].to_i)
     
     if response.errors.nil?
       registration.saasu_uid = response.inserted_entity_uid
