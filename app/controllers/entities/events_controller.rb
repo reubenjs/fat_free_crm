@@ -244,7 +244,7 @@ class EventsController < EntitiesController
     # params[:reqested_report]
     
     respond_with @event do |format|
-      filename = "#{@event.name} #{params[:requested_report].humanize}"
+      filename = "#{@event.name} #{params[:requested_report].humanize}.xls"
       headers["Content-Disposition"] = "attachment; filename=\"#{filename}\""
       format.xls { render params[:requested_report], :layout => 'header'}
     end

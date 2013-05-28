@@ -95,6 +95,10 @@ class Contact < ActiveRecord::Base
     where('contacts.assigned_to IN (?)' + (filters.delete('other') ? ' OR contacts.assigned_to IS NULL ' : ''), filters)
   }
   
+  scope :in_accounts, lambda { |accounts|
+    includes(:account_contact).where('account_contacts.account_id IN (?)', accounts)
+  }
+  
   uses_user_permissions
   acts_as_commentable
   uses_comment_extensions
