@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git://github.com/reubenjs/ffcrm_merge.git
-  revision: 7545be5fa09c2c1b743334cce1d9b3965cdd393e
+  revision: 7aa82ed965590d3eb681603e6796223f015a35b3
   specs:
     ffcrm_merge (1.2)
 
