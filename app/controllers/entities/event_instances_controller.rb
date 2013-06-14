@@ -77,7 +77,7 @@ class EventInstancesController < EntitiesController
   def create
     #@users = User.except(@current_user)
     #@comment_body = params[:comment_body]
-    
+    @event_instance.event.touch
     respond_with(@event_instance) do |format|
       if @event_instance.save_with_event_and_permissions(params)
         #@event_instance.add_comment_by_user(@comment_body, current_user)
@@ -92,6 +92,7 @@ class EventInstancesController < EntitiesController
   # PUT /accounts/1
   #----------------------------------------------------------------------------
   def update
+    @event_instance.event.touch
     respond_with(@event_instance) do |format|
       # Must set access before user_ids, because user_ids= method depends on access value.
       @event_instance.access = params[:event_instance][:access] if params[:event_instance][:access]
@@ -152,7 +153,7 @@ class EventInstancesController < EntitiesController
       end
     end
     #@attendance.save
-
+    @event_instance.event.touch
     #update_sidebar unless params[:bucket].blank?
     respond_with(@contact)
   end
@@ -170,7 +171,7 @@ class EventInstancesController < EntitiesController
       @event_instance.attendances.delete(a)
     end
     #@attendance.save
-
+    @event_instance.event.touch
     #update_sidebar unless params[:bucket].blank?
     respond_with(@contact)
   end
