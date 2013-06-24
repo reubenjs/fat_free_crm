@@ -34,7 +34,7 @@
         .label.mid To:
       %td
         - selected = @mandrill_email.mailing_list.nil? ? @mandrill_email.category : @mandrill_email.mailing_list
-        = f.select :mailing_list, options_for_select([["TT Email", "terrace_times"],["Prayer Points","prayer_points"]], selected), {}, :style => 'width:200px;'
+        = f.select :mailing_list, options_for_select([["TT Email", "terrace_times"],["Prayer Points","prayer_points"],["PP + TT Email","both"]], selected), {}, :style => 'width:200px;'
     %tr
       %td
         .label.mid From Name:

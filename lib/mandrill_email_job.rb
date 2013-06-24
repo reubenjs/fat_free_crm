@@ -6,12 +6,15 @@ class MandrillEmailJob < Struct.new(:mandrill_email_id)
       mandrill = Mailchimp::Mandrill.new(Setting.mandrill[:api_key])
       recipients = []
 
-      if mandrill_mail.mailing_list == "terrace_times"
+      case mandrill_mail.mailing_list 
+      when "terrace_times"
         recipients = Contact.where('cf_supporter_emails LIKE (?)', "%TT Email%")
-      elsif mandrill_mail.mailing_list == "prayer_points"
+      when "prayer_points"
         recipients = Contact.where('cf_supporter_emails LIKE (?)', "%Prayer Points%")
+      when "both"
+        recipients = Contact.where('cf_supporter_emails LIKE (?) OR cf_supporter_emails LIKE (?)', "%TT Email%", "%Prayer Points%")
       end
-    
+      
       unless recipients.nil?
         recipients_list = recipients.collect{|r| {:email => r.email, :name => r.full_name}}
         if mandrill_mail.attached_files.exists?
