@@ -4,33 +4,47 @@ class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :f
       registration = Registration.find(registration_id)
     
       mandrill = Mailchimp::Mandrill.new(Setting.mandrill[:api_key])
-        
+      
+      attached_array = [] 
+      
       if send_invoices && registration.saasu_uid.present?
         
         retries = 3;
         begin
-          puts "ConferenceEmailJob: getting pdf for #{registration.contact.name}"
-          pdf = Saasu::Invoice.get_pdf(registration.saasu_uid, Setting.conference[:email_template])
+          Delayed::Worker.logger.add(Logger::INFO, "ConferenceEmailJob: getting pdf for #{registration.contact.name}")
+          response = Saasu::Invoice.get_pdf(registration.saasu_uid, Setting.conference[:email_template])
+          if response.errors.nil?
+            pdf = response.pdf
+          else
+            pdf = nil
+          end
         rescue Exception => e
-            puts "WARN-ConferenceEmailJob: getting pdf for #{registration.contact.name} failed"
-            puts "retrying"
+            Delayed::Worker.logger.add(Logger::INFO, "WARN-ConferenceEmailJob: getting pdf for #{registration.contact.name} failed")
+            Delayed::Worker.logger.add(Logger::INFO, "retrying")
             retries -= 1
             retry if retries > 0
             raise e if retries <= 0
-        end          
-        attached_file = Base64.encode64(pdf)
-        attached_array = [{ 
-          :type => 'application/pdf', 
-          :name => "#{registration.event.name.parameterize("_")}_#{registration.contact.name.parameterize("_")}.pdf", 
-          :content => attached_file
-        }]
-      else
-        attached_array = []
+        end
+        
+        unless pdf.nil?          
+          attached_file = Base64.encode64(pdf)
+          attached_array = [{ 
+            :type => 'application/pdf', 
+            :name => "#{registration.event.name.parameterize("_")}_#{registration.contact.name.parameterize("_")}.pdf", 
+            :content => attached_file
+          }]
+        end
+      end
+      
+      if pdf.nil?
+        # notify admin if invoice not found. This is just a warning as people who get full discount will
+        # not have an invoice
+        UserMailer.delay.saasu_registration_error(registration.contact, "[WARN: pdf/invoice not found] #{response.errors[0].message}")
       end
       
       retries = 3 
       begin        
-        puts "ConferenceEmailJob: emailing #{registration.contact.name}"            
+        Delayed::Worker.logger.add(Logger::INFO, "ConferenceEmailJob: emailing #{registration.contact.name}")            
         response = mandrill.messages_send_template({
           :template_name => "conference-plain",
           :template_content => [:name => "body_content", :content => email_body],
@@ -44,8 +58,8 @@ class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :f
           }
         })
       rescue Exception => e
-          puts "WARN-ConferenceEmailJob: emailing #{registration.contact.name} failed"
-          puts "retrying"
+          Delayed::Worker.logger.add(Logger::INFO, "WARN-ConferenceEmailJob: emailing #{registration.contact.name} failed")
+          Delayed::Worker.logger.add(Logger::INFO, "retrying")
           retries -= 1
           retry if retries > 0
           raise e if retries <= 0

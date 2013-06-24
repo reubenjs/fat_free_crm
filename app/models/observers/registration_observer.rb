@@ -1,17 +1,17 @@
 class RegistrationObserver < ActiveRecord::Observer
   observe :registration
   
-  def after_create(registration) 
+  def before_create(registration) 
     if registration.fee.to_i > 0
-      self.delay.add_saasu(registration) 
-      registration.update_attributes(:saasu_uid => "delayed")
+      #registration.update_attributes(:saasu_uid => "delayed")
+      add_saasu(registration) 
     end
   end
   
-  def after_update(registration)
+  def before_update(registration)
     if (registration.saasu_uid.blank? && registration.fee.to_i > 0)
-      self.delay.add_saasu(registration) 
-      registration.update_attributes(:saasu_uid => "delayed")
+      add_saasu(registration) 
+      #registration.update_attributes(:saasu_uid => "delayed")
     end
   end
   
@@ -34,10 +34,10 @@ class RegistrationObserver < ActiveRecord::Observer
     i.summary = "MYC 2013 Registration"
     i.notes = "Registration added by Mojo for #{registration.contact.full_name}"
     
-    if registration.contact.present? && !registration.contact.saasu_uid.blank?
-      i.contact_uid = registration.contact.saasu_uid
+    if registration.contact.present?
+      i.contact_uid = find_or_add_to_saasu(registration.contact)
     end
-    
+
     fee = Saasu::ServiceInvoiceItem.new
     fee.description = "MYC registration fee"
     fee.account_uid = Setting.saasu[:myc_income_account]
@@ -95,9 +95,9 @@ class RegistrationObserver < ActiveRecord::Observer
     
     if response.errors.nil?
       registration.saasu_uid = response.inserted_entity_uid
-      registration.save!
       Delayed::Worker.logger.add(Logger::INFO, "Added invoice for #{registration.contact.full_name} to saasu")
     else
+      registration.saasu_uid = nil
       Delayed::Worker.logger.add(Logger::INFO, "Error adding invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
       UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
     end
@@ -109,6 +109,44 @@ class RegistrationObserver < ActiveRecord::Observer
   
   def delete_saasu(saasu_uid)
 
+  end
+  
+  private
+  
+  def find_or_add_to_saasu(contact)
+    if contact.saasu_uid.blank?
+      add_to_saasu(contact)
+    else
+      response = Saasu::Contact.find(contact.saasu_uid)
+      
+      if response.errors.present? && response.errors.first.type == "RecordNotFoundException"
+        add_to_saasu(contact)
+      end
+    end
+    
+    contact.saasu_uid
+    
+  end
+  
+  def add_to_saasu(contact)
+    sc = Saasu::Contact.new
+    sc.given_name = contact.first_name
+    sc.family_name = contact.last_name
+    sc.email_address = contact.email
+    sc.email = contact.email
+    sc.mobile_phone = contact.mobile
+    sc.main_phone = contact.mobile
+    sc.home_phone = contact.phone
+    response = Saasu::Contact.insert(sc)
+    
+    if response.errors.nil?
+      contact.saasu_uid = response.inserted_entity_uid
+      contact.save!
+      Delayed::Worker.logger.add(Logger::INFO, "Added #{contact.full_name} to saasu")
+    else
+      Delayed::Worker.logger.add(Logger::INFO, "Error adding #{contact.full_name} to saasu. #{response.errors}")
+      UserMailer.saasu_registration_error(contact, "[add_saasu] #{response.errors[0].message}").deliver
+    end
   end
   
 end

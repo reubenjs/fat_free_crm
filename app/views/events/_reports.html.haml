@@ -21,5 +21,5 @@
           = link_to "&bull; BSG members registered (people who have and haven't registered grouped by BSG)".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "bsg_members_registered")
       %tr
         %td.pad
-          = link_to "&bull; To call (not registered, not in a BSG)".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "contact_list_phone")
+          = link_to "&bull; To call (not registered, not in a BSG, has phone or mobile details)".html_safe, generate_report_event_path(@event, :format => :xls, :requested_report => "contact_list_phone")
       
