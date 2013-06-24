@@ -13,6 +13,11 @@ if @contact.errors.empty?
       page[id].replace :partial => "contact", :collection => [ @contact ]
       page[id].visual_effect :highlight, :duration => 1.0
     end
+
+    if called_from_landing_page? :contact_groups
+      page.replace_html :email_group_link, "#{mail_to(@current_user.email, 'Email group', :bcc => @contact_group.email_addresses)} | "
+    end
+    
     if called_from_index_page?
       page << refresh_sidebar(:index)
     else

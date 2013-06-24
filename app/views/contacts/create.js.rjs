@@ -10,6 +10,11 @@ if @contact.valid?
     page.insert_html :top, :contacts, :partial => "contact", :collection => [ @contact ]
   end
   page[dom_id(@contact)].visual_effect :highlight, :duration => 1.5
+  
+  if called_from_landing_page? :contact_groups
+    page.replace_html :email_group_link, "#{mail_to(@current_user.email, 'Email group', :bcc => @contact_group.email_addresses)} | "
+  end
+  
   if called_from_index_page?
     page << refresh_sidebar(:index)
     page[:paginate].replace_html render(:partial => "shared/paginate_with_per_page")

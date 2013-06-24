@@ -189,6 +189,11 @@ class ContactsController < EntitiesController
         @contact.add_comment_by_user(@comment_body, current_user)
         @contacts = get_contacts if called_from_index_page?
         get_data_for_sidebar
+        
+        # used in create.rjs to refresh the "Email Group" link
+        if request.referer =~ /\/contact_groups\/(.+)$/
+          @contact_group = ContactGroup.find($1) # related contact_group
+        end
       else
         unless params[:account][:id].blank?
           @account = Account.find(params[:account][:id])
@@ -207,6 +212,7 @@ class ContactsController < EntitiesController
   # PUT /contacts/1
   #----------------------------------------------------------------------------
   def update
+    # used for contact/edit in event_instance (attendance) view
     if params[:related]
       model = params[:related].sub(/_\d+/, "")
       id = params[:related].split('_').last #change required for models with _ in name e.g. contact_group
@@ -215,6 +221,11 @@ class ContactsController < EntitiesController
       else
         respond_to_related_not_found(model) and return
       end
+    end
+    
+    # used in update.rjs to refresh the "Email Group" link
+    if request.referer =~ /\/contact_groups\/(.+)$/
+      @contact_group = ContactGroup.find($1) # related contact_group
     end
     
     respond_with(@contact) do |format|
@@ -237,6 +248,11 @@ class ContactsController < EntitiesController
   # DELETE /contacts/1
   #----------------------------------------------------------------------------
   def destroy
+    # used in destroy.rjs to refresh the "Email Group" link
+    if request.referer =~ /\/contact_groups\/(.+)$/
+      @contact_group = ContactGroup.find($1) # related contact_group
+    end
+    
     @contact.destroy
 
     respond_with(@contact) do |format|

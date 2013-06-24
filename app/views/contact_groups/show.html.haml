@@ -2,7 +2,8 @@
 
 #confirm{ hidden }
 .title_tools#menu
-  = mail_to("", "Email group", :bcc => @contact_group.email_addresses) + " | "
+  .email_group#email_group_link{ :style => "display: inline"}
+    = mail_to(@current_user.email, "Email group", :bcc => @contact_group.email_addresses) + " | "
   = link_to_inline(:edit_contact_group, edit_contact_group_path(@contact_group), :text => t(:edit)) + " | "
   = link_to_function(t(:delete) + '?', confirm_delete(@contact_group))
 .title#edit_contact_group_title= h(@contact_group.name)
