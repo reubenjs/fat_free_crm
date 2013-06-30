@@ -1,13 +1,15 @@
 class SaasuObserver < ActiveRecord::Observer
   observe :contact
   
-  def before_create(contact)
-    #contact.saasu_uid = "locked"
-    add_saasu(contact) if !in_excluded_account?(contact)
+  def after_create(contact)
+    add_saasu(contact, true) if !in_excluded_account?(contact)
   end
   
   def before_update(contact)
-    if contact.saasu_uid != "locked"
+    if !contact.changed.include? "saasu_uid" 
+      # ignore the instances when saasu_uid has just been updated
+      # e.g. add_saasu called from after_create (which does a save and lands us here)
+      
       if contact.saasu_uid.present? && contact.account.present? && in_excluded_account?(contact)
         # moved into an excluded account - time to delete from saasu
         Delayed::Worker.logger.add(Logger::INFO, "[moved] Requesting that #{contact.full_name} be deleted from saasu (uid = #{contact.saasu_uid})")
@@ -15,8 +17,7 @@ class SaasuObserver < ActiveRecord::Observer
         contact.saasu_uid = nil
       
       elsif !in_excluded_account?(contact)
-        # saasu_uid.nil? prevents a "locked" contact from being added twice
-        # also triggers when a contacts is moved back into a non-excluded account
+        # saasu_uid.nil? triggers when a contact is moved back into a non-excluded account
         if (contact.saasu_uid.nil? ||
             contact.email_changed? || 
             contact.first_name_changed? || 
@@ -50,7 +51,7 @@ class SaasuObserver < ActiveRecord::Observer
     !Contact.includes(:account).where('contacts.id = ? AND accounts.id IN (?)', contact.id, excluded_accounts).empty?
   end
 
-  def add_saasu(c)
+  def add_saasu(c, save = false)
     sc = Saasu::Contact.new
     sc.given_name = c.first_name
     sc.family_name = c.last_name
@@ -62,8 +63,9 @@ class SaasuObserver < ActiveRecord::Observer
     response = Saasu::Contact.insert(sc)
     
     if response.errors.nil?
-      c.saasu_uid = response.inserted_entity_uid
       Delayed::Worker.logger.add(Logger::INFO, "Added #{c.full_name} to saasu")
+      c.saasu_uid = response.inserted_entity_uid
+      c.save! if save
     else
       Delayed::Worker.logger.add(Logger::INFO, "Error adding #{c.full_name} to saasu. #{response.errors}")
       UserMailer.saasu_registration_error(c, "[add_saasu] #{response.errors[0].message}").deliver
