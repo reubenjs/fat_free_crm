@@ -201,7 +201,7 @@ namespace :ffcrm do
           # Create the registration
           #-------------------------
           
-          registration = Registration.create(
+          registration = Registration.new(
             :contact => contact, 
             :event => event,
             :access => Setting.default_access,
@@ -273,11 +273,11 @@ namespace :ffcrm do
 
           if row[:_is_this_your_first_myc] == "Yes"
             contact.tag_list << "first-myc-2013" unless contact.tag_list.include?("first-myc-2013")
-            registration.update_attributes(:first_time => true)
+            registration.assign_attributes(:first_time => true)
           end
           
           if row[:_do_you_need_to_request_financial_assistance] == "Yes"
-            registration.update_attributes(:need_financial_assistance => true)
+            registration.assign_attributes(:need_financial_assistance => true)
             contact.tasks << Task.new(
                   :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("geoff")
                   )
@@ -288,7 +288,7 @@ namespace :ffcrm do
           # Pull in registration data
           #---------------------------
           
-          registration.update_attributes(
+          registration.assign_attributes(
             :transport_required => (row[:_will_you_require_transport] == "Yes"),
             :driver_for => row[:_i_am_the_driver_for_thisthese_persons],
             :can_transport => row[:_i_can_transport_this_many_others_for_full_license_drivers_only],
@@ -302,32 +302,36 @@ namespace :ffcrm do
             :dinners => row[:_dinner].split(" "),
             :sleeps => row[:_sleeping_onsite].split(" ")
           )
-          
+                    
           # There is now enough info in registration for observers/registration_observer 
           # to raise an invoice
           #-------------------------
           
-          #registration.save #not necessary??
+          if registration.save #only synclog if successful (save will trigger registration observer which might fail if connection to saasu is down etc.)
           
-          # Log that this registration has been imported
-          #----------------------------------------------
+            # Log that this registration has been imported
+            #----------------------------------------------
           
-          sl = SyncLog.create(:sync_type => "myc13", :synced_item => row[:transaction_id])
-          sl.save
+            sl = SyncLog.create(:sync_type => "myc13", :synced_item => row[:transaction_id])
+            sl.save
           
-          puts (log_string + contact.first_name + " " + contact.last_name)
+            puts (log_string + contact.first_name + " " + contact.last_name)
           
-          # Check for suspected duplicate contacts after syncing this item
-          # --------------------------------------------------------------- 
+            # Check for suspected duplicate contacts after syncing this item
+            # --------------------------------------------------------------- 
           
-          contacts_with_name = Contact.where(:first_name => contact.first_name, :last_name => contact.last_name)
-          if contacts_with_name.size > 1
-            contact.tasks << Task.new(
-                  :name => "Possible duplicate from registration sync", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("reuben")
-                  )
+            contacts_with_name = Contact.where(:first_name => contact.first_name, :last_name => contact.last_name)
+            if contacts_with_name.size > 1
+              contact.tasks << Task.new(
+                    :name => "Possible duplicate from registration sync", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("reuben")
+                    )
+            end
+          
+            group.contacts << contact unless group.contacts.include?(contact) 
+          else
+            puts "Registration failed for #{contact.first_name} #{contact.last_name}"
+            UserMailer.delay.saasu_registration_error(contact, "workflow/registration.save failed")
           end
-          
-          group.contacts << contact unless group.contacts.include?(contact) 
         end
       end  
     end

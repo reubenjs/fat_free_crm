@@ -71,8 +71,12 @@ class RegistrationObserver < ActiveRecord::Observer
     i.trading_terms = tt
     
     email = Saasu::EmailMessage.new
-    email.to = registration.contact.email
-    email.bcc = Setting.conference[:bcc]
+    if Rails.env.production?
+      email.to = registration.contact.email
+      email.bcc = Setting.conference[:bcc]
+    else
+      email.to = Setting.conference[:bcc]
+    end
     email.from = Setting.conference[:email_address]
     email.subject = Setting.conference[:email_subject]
     email.body = "Dear #{registration.contact.first_name},\r\n\r\n
