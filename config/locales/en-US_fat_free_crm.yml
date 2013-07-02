@@ -457,6 +457,7 @@ en-US:
   contacts: Contacts
   contacts_options: Contacts Options
   contacts_small: contacts
+  contact_summary: Contact Summary
   create_contact: Create Contact
   department: Department
   department_small: '%{value} department'
@@ -723,6 +724,7 @@ en-US:
   # Advanced search
   accounts_advanced_search: Accounts Advanced search
   advanced_search: Advanced search
+  basic_search: Basic search
   search_results_count:
     one: Search found %{count} result.
     other: Search found %{count} results.
@@ -943,8 +945,8 @@ en-US:
   # Simple Form translations
   #----------------------------------------------------------------------------
   simple_form:
-    "yes": 'Yes'
-    "no": 'No'
+    yes: 'Yes'
+    no: 'No'
     required:
       text: 'required'
       mark: '*'

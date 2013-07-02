@@ -54,13 +54,13 @@ feature 'Tasks', %q{
     page.should have_content('The task has been created and assigned to Another User')
 
     click_link 'Tasks'
-    check_filter 'tomorrow'
+    page.uncheck('filters_due_tomorrow')
     page.should_not have_content('Task For Someone Else')
 
     click_filter_tab('Assigned')
-    check_filter 'tomorrow'
-    page.should have_content('Task For Someone Else')
-    page.should have_content('Another User')
+    page.check('filters_due_tomorrow')
+    find('#main').should have_content('Task For Someone Else')
+    find('#main').should have_content('Another User')
 
     click_link 'Dashboard'
     page.should have_content('Bill Murray created task Task For Someone Else')

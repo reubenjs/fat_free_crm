@@ -27,6 +27,8 @@ Design
 .idea/
 .DS_Store
 .rvmrc
+.ruby-version
+.ruby-gemset
 .sass-cache
 *~
 *.swp

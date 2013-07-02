@@ -42,7 +42,6 @@ class HomeController < ApplicationController
     current_user.pref[:activity_user] = params[:user] if params[:user]
     current_user.pref[:activity_duration] = params[:duration] if params[:duration]
 
-    @activities = get_activities
     render :index
   end
 

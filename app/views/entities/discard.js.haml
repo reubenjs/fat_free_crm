@@ -1,0 +1,8 @@
+jQuery('##{dom_id(@attachment)}').slideUp(250);
+
+- if called_from_landing_page?(:accounts)
+  = refresh_sidebar_for(:accounts, :show, :summary)
+- elsif called_from_landing_page? :contact_groups
+  jQuery('#email_group_link').html('#{mail_to(@current_user.email, "Email group", :bcc => entity.email_addresses)} | ');
+- elsif called_from_landing_page?(:campaigns)
+  = refresh_sidebar_for(:campaigns, :show, :summary)

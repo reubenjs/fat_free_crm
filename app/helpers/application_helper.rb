@@ -133,7 +133,7 @@ module ApplicationHelper
     link_to(edit_text,
       options[:url] || polymorphic_url(record, :action => :edit),
       :remote  => true,
-      :onclick => "this.href = this.href.split('?')[0] + '?previous='+crm.find_form('edit_#{name}') + '#{related}';"
+      :onclick => "this.href = this.href.split('?')[0] + '?previous='+crm.find_form('edit_#{name}');".html_safe
     )
   end
 
@@ -146,7 +146,6 @@ module ApplicationHelper
       options[:url] || url_for(record),
       :method => :delete,
       :remote => true,
-      :onclick => visual_effect(:highlight, dom_id(object), :startcolor => "#ffe4e1"),
       :confirm => confirm
     )
   end
@@ -159,8 +158,7 @@ module ApplicationHelper
     link_to(discard_text,
       url_for(:controller => parent, :action => :discard, :id => parent_id, :attachment => object.class.name, :attachment_id => object.id),
       :method  => :post,
-      :remote  => true,
-      :onclick => visual_effect(:highlight, dom_id(object), :startcolor => "#ffe4e1")
+      :remote  => true
     )
   end
 
@@ -222,8 +220,8 @@ module ApplicationHelper
   def visible;   { :style => "visibility:visible;" }; end
 
   #----------------------------------------------------------------------------
-  def one_submit_only(form)
-    { :onsubmit => "$$('#'+this.id+' input[type=\"submit\"]')[0].disabled = true" }
+  def one_submit_only(form='')
+    { :onsubmit => "jQuery('#'+this.id+' input[type=\\'submit\\']').disable()".html_safe }
   end
 
   #----------------------------------------------------------------------------
@@ -245,11 +243,10 @@ module ApplicationHelper
   def confirm_delete(model, params = {})
     question = %(<span class="warn">#{t(:confirm_delete, model.class.to_s.downcase)}</span>).html_safe
     yes = link_to(t(:yes_button), params[:url] || model, :method => :delete)
-    no = link_to_function(t(:no_button), "$('menu').update($('confirm').innerHTML)")
-    update_page do |page|
-      page << "$('confirm').update($('menu').innerHTML)"
-      page[:menu].replace_html "#{question} #{yes} : #{no}"
-    end
+    no = link_to_function(t(:no_button), "jQuery('#menu').html(jQuery('#confirm').html());")
+    text = "jQuery('#confirm').html( jQuery('#menu').html() );\n"
+    text << "jQuery('#menu').html('#{question} #{yes} : #{no}');"
+    text.html_safe
   end
 
   #----------------------------------------------------------------------------
@@ -266,10 +263,10 @@ module ApplicationHelper
   # Refresh sidebar using the action view within an arbitrary controller.
   #----------------------------------------------------------------------------
   def refresh_sidebar_for(view, action = nil, shake = nil)
-    update_page do |page|
-      page[:sidebar].replace_html :partial => "layouts/sidebar", :locals => { :view => view, :action => action }
-      page[shake].visual_effect(:shake, :duration => 0.2, :distance => 3) if shake
-    end
+    text = ""
+    text << "jQuery('#sidebar').html('#{ j render(:partial => "layouts/sidebar", :locals => { :view => view, :action => action }) }');"
+    text << "jQuery('##{j shake.to_s}').effect('shake', { duration:200, distance: 3 });" if shake
+    text.html_safe
   end
 
   # Display web presence mini-icons for Contact or Lead.

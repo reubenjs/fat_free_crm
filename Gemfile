@@ -47,23 +47,37 @@ group :development do
   # Uncomment the following two gems to deploy via Capistrano
   gem 'rvm-capistrano'
   gem 'capistrano_colors'
+
+  # Use zeus and guard gems to speed up development
+  # Run 'zeus start' and 'bundle exec guard' to get going
+  unless ENV["CI"]
+    gem 'guard'
+    gem 'guard-rspec'
+    gem 'guard-rails'
+    gem 'rb-inotify', :require => false
+    gem 'rb-fsevent', :require => false
+    gem 'rb-fchange', :require => false
+  end
 end
 
 group :development, :test do
   gem 'rspec-rails'
   gem 'headless'
   gem 'debugger' unless ENV["CI"]
-  gem 'pry-rails'
-  gem 'pry-nav'
-  gem 'pry-stack_explorer'
-  gem 'awesome_print'
+  gem 'pry-rails' unless ENV["CI"]
+  gem 'pry-nav' unless ENV["CI"]
+  gem 'pry-stack_explorer' unless ENV["CI"]
+  gem 'awesome_print' unless ENV["CI"]
 end
 
 group :test do
-  gem 'capybara'
+  gem 'capybara', '~> 2.0.3'
+  gem 'selenium-webdriver'
   gem 'database_cleaner'
   gem "acts_as_fu"
   gem 'factory_girl_rails'
+  gem 'zeus' unless ENV["CI"]
+  gem 'coveralls', :require => false
 end
 
 group :heroku do

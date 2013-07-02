@@ -71,14 +71,14 @@ class Account < ActiveRecord::Base
   ransack_can_autocomplete
 
   validates_presence_of :name, :message => :missing_account_name
-  validates_uniqueness_of :name, :scope => :deleted_at
+  validates_uniqueness_of :name, :scope => :deleted_at if Setting.require_unique_account_names
   validate :users_for_shared_access
   before_save :nullify_blank_category
 
   # Default values provided through class methods.
   #----------------------------------------------------------------------------
   def self.per_page ; 20 ; end
-  
+
   # Extract last line of billing address and get rid of numeric zipcode.
   #----------------------------------------------------------------------------
   def location
@@ -139,4 +139,6 @@ class Account < ActiveRecord::Base
   def nullify_blank_category
     self.category = nil if self.category.blank?
   end
+
+  ActiveSupport.run_load_hooks(:fat_free_crm_account, self)
 end
