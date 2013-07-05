@@ -113,7 +113,7 @@ class SaasuObserver < ActiveRecord::Observer
       Delayed::Worker.logger.add(Logger::INFO, "Deleted contact with saasu_uid #{saasu_uid}")
     else
       Delayed::Worker.logger.add(Logger::INFO, "Error deleting contact with saasu_uid #{saasu_uid}. #{response.errors}")
-      UserMailer.saasu_registration_error(c, "[delete_saasu] #{response.errors[0].message}").deliver
+      UserMailer.saasu_registration_error(Contact.first, "*ignore contact* [delete_saasu] #{response.errors[0].message}").deliver
     end
   end
   
