@@ -1,0 +1,6 @@
+- id = dom_id(@contact, :confirm)
+
+if (jQuery('##{id}').length > 0) {
+crm.flick('#{id}', 'remove');
+} else {
+jQuery('##{dom_id(@contact)}').prepend('#{ j render(:partial => "confirm") }'); }

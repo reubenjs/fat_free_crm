@@ -1,0 +1,8 @@
+- contacts = @contacts.present? ? @contacts : @account.contacts
+- if contacts.any?
+  jQuery('#contacts').html('#{ j render(:partial => "contacts/contact", :collection => contacts ) }');
+- else
+  jQuery('#contacts').html('#{ j render(:partial => "shared/empty") }');
+jQuery('#search_results_count').html('#{ t('search_results_count', :count => contacts.count) }');
+  
+  

@@ -1,0 +1,5 @@
+- id = dom_id(@contact)
+
+jQuery('##{id}').replaceWith('#{ j render(:partial => "contacts/contact", :collection => [ @contact ]) }');
+jQuery('##{id}').effect("highlight", { duration:1500 });
+= refresh_sidebar_for(:contacts, :index, :filters)

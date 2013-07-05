@@ -1,0 +1,3 @@
+- if @contact_groups.any?
+  - emails = @contact_groups.each.collect{|cg| cg.email_addresses}.join(", ")
+  crm.copyToClipboard('#{emails}')

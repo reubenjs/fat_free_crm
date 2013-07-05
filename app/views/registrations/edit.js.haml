@@ -1,0 +1,43 @@
+- entity_name = controller.controller_name.singularize.underscore #registration
+- @entity = instance_variable_get("@#{entity_name}")
+- if called_from_landing_page?(:contacts)
+  - id = dom_id(@entity)
+- else
+  - id = dom_id(@entity.contact)
+
+- if params[:cancel].true? # <--------------------- Hide [Edit]
+
+  - if called_from_landing_page?
+    crm.flip_form('edit_#{entity_name}');
+    crm.set_title('edit_#{entity_name}', '#{h @entity.name}');
+  - else                                            # Called from index page...
+    - if params[:from_contact]
+      jQuery('##{id}').replaceWith('#{ j render(:partial => "registrations/registration", :collection => [ @entity ], :locals => {:object => @registration.event}) }');
+    - else
+      jQuery('##{id}').replaceWith('#{ j render(:partial => "contacts/contact", :collection => [ @entity.contact ], :locals => {:object => @registration.event}) }');
+
+- else # <----------------------------------------  Show [Edit] form.
+
+  - if params[:cancel].blank?                       # Called from index page...
+    - if @previous                                  # Hide open [Edit] form if any.
+      - if @previous.is_a?(Contact)
+        jQuery('##{dom_id(@previous)}').replaceWith('#{ j render(:partial => "contacts/contact", :collection => [ @previous ]) }');
+      - else
+        crm.flick('contact_#{@previous}', 'remove');
+    -# Disable onMouseOver for the list item.
+    crm.highlight_off('#{id}');
+    
+    - if called_from_landing_page?(:contacts)
+      crm.hide_form('create_registration');
+      jQuery('##{id}').html('#{ j render(:partial => "edit_from_contact") }');
+    -else
+      -# Hide [Create] form if any.
+      crm.hide_form('create_contact');
+      -# Show [Edit] form.
+      jQuery('##{id}').html('#{ j render(:partial => "edit") }');
+
+  - elsif params[:cancel].false?                    # Called from title of the landing page...
+    jQuery('#edit_contact').html('#{ j render(:partial => "edit") }');
+    crm.flip_form('edit_contact');
+    crm.set_title('edit_contact}', "#{t :edit} #{h @entity.name}");
+  jQuery('#new_#{entity_name} input[type!=hidden]').first().focus();

@@ -109,7 +109,6 @@ class EventInstance < ActiveRecord::Base
   #----------------------------------------------------------------------------
   def parse_calendar_date_start
     # always in 2012-10-28 06:28 format regardless of language
-    debugger
     Time.parse(self.calendar_start_date + " " + self.calendar_start_time)
   end
   

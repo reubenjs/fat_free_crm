@@ -1,0 +1,9 @@
+crm.flick('empty', 'toggle');
+crm.flip_form('active_folders');
+
+- unless params[:cancel].true?
+  jQuery('#active_folders').html('#{ j render(:partial => "sidebar_index")}');
+  crm.set_title('active_folders', '#{t(:active_folders_options)}');
+- else
+  crm.set_title('active_folders', '#{t(:active_folders)}');
+  

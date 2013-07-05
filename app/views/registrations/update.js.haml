@@ -1,0 +1,19 @@
+- entity_name = controller.controller_name.singularize.underscore #registration
+- @entity = instance_variable_get("@#{entity_name}")
+- id = called_from_landing_page?(:contacts) ? dom_id(@entity) : dom_id(@entity.contact)
+
+- if @entity.errors.empty?
+  - if called_from_landing_page?
+    crm.flip_form('edit_#{entity_name}');
+    crm.set_title('edit_#{entity_name}', '#{h @entity.contact.full_name}');
+    = refresh_sidebar(:show, :summary)
+  - else
+    - if called_from_landing_page?(:contacts)
+      jQuery('##{id}').replaceWith('#{ j render(:partial => "registrations/registration", :collection => [ @entity ], :locals => {:object => @registration.event}) }');
+    - else
+      jQuery('##{id}').replaceWith('#{ j render(:partial => "contacts/contact", :collection => [ @entity.contact ], :locals => {:object => @registration.event}) }');
+    jQuery('##{id}').effect("highlight", { duration:1500 });
+    = refresh_sidebar(:index, :filters)
+- else
+  jQuery('##{id}').html('#{ j render(:partial => "edit") }');
+  jQuery('##{id}').effect("shake", { duration:250, distance: 6 });

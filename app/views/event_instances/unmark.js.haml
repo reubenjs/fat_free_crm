@@ -1,0 +1,6 @@
+- id = dom_id(@contact)
+
+jQuery('##{id}').hide;
+jQuery('##{id}').replaceWith('#{ j render(:partial => "event_instances/contact", :collection => [ @contact ], :locals =>{:object => @event_instance}) }');
+jQuery('##{id}').effect("highlight", { duration:1500 });
+jQuery('#recently').replaceWith('#{ j render(:partial => "shared/recently") }');

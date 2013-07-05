@@ -1,0 +1,13 @@
+- entity_name = controller.controller_name.singularize # event_instance
+- create_id = "create_#{entity_name}"
+
+crm.flick('empty', 'toggle');
+- if called_from_index_page?
+  crm.hide_form('options');
+crm.flip_form('#{create_id}');
+
+- unless params[:cancel].true?
+  jQuery('##{create_id}').html('#{ j render(:partial => "new") }');
+  crm.set_title('#{create_id}', '#{ j t(create_id) }');
+- else
+  crm.set_title('#{create_id}', '#{ j t(entity_name.pluralize) }');

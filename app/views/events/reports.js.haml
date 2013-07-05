@@ -1,0 +1,12 @@
+- if params[:cancel].true? # <--------------------- Hide [Edit]
+
+  crm.flip_form('report_event');
+  crm.set_title('edit_event', '#{h @event.name}');
+
+- else # <----------------------------------------  Show [Edit] form.
+
+  - if params[:cancel].false?                    # Called from title of the landing page...
+    jQuery('#report_event').html('#{ j render(:partial => "reports") }');
+    crm.flip_form('report_event');
+    crm.set_title('edit_event', "Reports for #{h @event.name}");
+  jQuery('#event_name input[type!=hidden]').first().focus();

@@ -1,0 +1,10 @@
+- if @event.errors.empty?
+  crm.flip_form('email_event');
+  crm.set_title('edit_event', '#{h @event.name}');
+  jQuery('#flash').text('Emails Sent');
+  crm.flash('notice',false);
+
+- else
+  jQuery('#email_event').html('#{ j render :partial => "email_registrants"}');
+  jQuery('#email_event').effect("shake", { duration:250, distance: 6 });
+  jQuery('#email_event input[type!=hidden]').first().focus();

@@ -1,7 +1,0 @@
-contacts = @contacts.present? ? @contacts : @event.contacts
-if contacts.any?
-  page[:contacts].replace_html render(:partial => "contacts/contact", :collection => contacts, :locals => {:object => @event})
-else
-  page[:contacts].replace_html render(:partial => "shared/empty")
-end
-page[:search_results_count].replace_html :text => t('search_results_count', :count => contacts.count)

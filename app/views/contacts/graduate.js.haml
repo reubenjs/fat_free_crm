@@ -1,0 +1,13 @@
+- id = dom_id(@contact)
+
+- if @contact.errors.empty?
+  - if called_from_index_page?
+    = refresh_sidebar(:index)
+    jQuery('##{id}').replaceWith('#{ j render(:partial => "contact", :collection => [ @contact ]) }');
+    jQuery('##{id}').effect("highlight", { duration:1000 });
+  - else
+    = refresh_sidebar(:show)
+    jQuery('##{id}').replaceWith('#{ j render(:partial => "contact", :collection => [ @contact ]) }');
+    jQuery('##{id}').effect("highlight", { duration:1000 });
+- else
+  jQuery('##{id}').effect("shake", { duration:250, distance: 6 });

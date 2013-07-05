@@ -77,9 +77,10 @@ class EventInstancesController < EntitiesController
   def create
     #@users = User.except(@current_user)
     #@comment_body = params[:comment_body]
-    @event_instance.event.touch
+
     respond_with(@event_instance) do |format|
       if @event_instance.save_with_event_and_permissions(params)
+        @event_instance.event.touch
         #@event_instance.add_comment_by_user(@comment_body, current_user)
         # None: account can only be created from the Accounts index page, so we
         # don't have to check whether we're on the index page.
