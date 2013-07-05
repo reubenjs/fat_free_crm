@@ -1,0 +1,9 @@
+- entities = controller.controller_name # mandrill_emails
+- @entities = instance_variable_get("@#{entities}")
+
+- if @entities.any?
+  jQuery('##{entities}').html('#{ j render(@entities) }');
+- else
+  jQuery('##{entities}').html('#{ j render(:partial => "shared/empty") }');
+
+jQuery('#paginate').html('#{ j render(:partial => "shared/paginate_with_per_page") }');

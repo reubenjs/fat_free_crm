@@ -1,0 +1,5 @@
+- id = called_from_landing_page? ? "edit_mandrill_email_title" : dom_id(@mandrill_email)
+
+- if !@mandrill_email.errors.empty?
+  jQuery('##{id}').effect("shake", { duration:250, distance: 6 });
+  jQuery('##{id} input[type!=hidden]').first().focus();
