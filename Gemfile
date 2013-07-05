@@ -39,7 +39,7 @@ gem 'premailer', :require => false
 
 # Remove fat_free_crm dependency, to stop it from being auto-required too early.
 remove 'fat_free_crm'
-remove 'ffcrm_merge'
+#remove 'ffcrm_merge'
 
 group :development do
   gem 'thin'
@@ -97,7 +97,7 @@ end
 
 gem 'turbo-sprockets-rails3'
 #gem 'ffcrm_merge', :path => "/Users/reuben/Development/Rails/ffcrm_merge"
-gem 'ffcrm_merge', :git => "git://github.com/reubenjs/ffcrm_merge.git"
+#gem 'ffcrm_merge', :git => "git://github.com/reubenjs/ffcrm_merge.git"
 gem 'saasu', :git => 'git://github.com/reubenjs/saasu.git' 
 #gem 'saasu', :path => "/Users/reuben/Development/Rails/saasu" 
 gem 'secret_token_replacer', :git => 'git://github.com/digineo/secret_token_replacer.git'

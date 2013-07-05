@@ -49,5 +49,5 @@ require "fat_free_crm/plugin"
 require "fat_free_crm/view_factory"
 require "mandrill_email_job"
 require "conference_email_job"
-require "ffcrm_merge"
-require 'ffcrm_merge/merge_view_hooks'
+#require "ffcrm_merge"
+#require 'ffcrm_merge/merge_view_hooks'

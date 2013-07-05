@@ -5,12 +5,6 @@ GIT
     secret_token_replacer (0.1.0)
 
 GIT
-  remote: git://github.com/reubenjs/ffcrm_merge.git
-  revision: 7aa82ed965590d3eb681603e6796223f015a35b3
-  specs:
-    ffcrm_merge (1.2)
-
-GIT
   remote: git://github.com/reubenjs/saasu.git
   revision: 24ba604756b3ef73642686b6dc44507fcdcc1043
   specs:
@@ -96,7 +90,7 @@ GEM
       activesupport (>= 3.0)
     cocaine (0.5.1)
       climate_control (>= 0.0.3, < 1.0)
-    coderay (1.0.6)
+    coderay (1.0.9)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -187,7 +181,7 @@ GEM
     mandrill-rails (0.0.2)
       activesupport (>= 3.0.3)
       mandrill (~> 0.0.2)
-    method_source (0.7.1)
+    method_source (0.8.1)
     mime-types (1.23)
     multi_json (1.7.2)
     multi_xml (0.5.2)
@@ -217,14 +211,14 @@ GEM
       htmlentities (>= 4.0.0)
     prototype-rails (3.2.1)
       rails (~> 3.2)
-    pry (0.9.9.4)
+    pry (0.9.12.2)
       coderay (~> 1.0.5)
-      method_source (~> 0.7.1)
-      slop (>= 2.4.4, < 3)
-    pry-nav (0.2.3)
+      method_source (~> 0.8)
+      slop (~> 3.4)
+    pry-nav (0.2.1)
       pry (~> 0.9.9)
-    pry-rails (0.2.2)
-      pry (>= 0.9.9)
+    pry-rails (0.2.0)
+      pry
     pry-stack_explorer (0.4.7)
       binding_of_caller (~> 0.6.8)
     quiet_assets (1.0.1)
@@ -317,7 +311,7 @@ GEM
       multi_json (~> 1.0)
       simplecov-html (~> 0.7.1)
     simplecov-html (0.7.1)
-    slop (2.4.4)
+    slop (3.4.5)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -393,7 +387,6 @@ DEPENDENCIES
   execjs
   factory_girl_rails
   ffaker (>= 1.12.0)
-  ffcrm_merge!
   guard
   guard-rails
   guard-rspec
