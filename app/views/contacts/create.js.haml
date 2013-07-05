@@ -6,7 +6,10 @@
   jQuery('##{create_id}_arrow').html(crm.COLLAPSED);
   jQuery('##{create_id}_title').html('#{ j t(entity_name.pluralize) }');
   jQuery('##{create_id}').slideUp(250);
-  jQuery('##{entity_name.pluralize}').prepend('#{ j render(:partial => entity_name, :collection => [ @entity ]) }');
+  - if called_from_landing_page? :event_instances
+    jQuery('##{entity_name.pluralize}').prepend('#{ j render(:partial => "event_instances/contact", :collection => [ @entity ]) }');
+  - else
+    jQuery('##{entity_name.pluralize}').prepend('#{ j render(:partial => entity_name, :collection => [ @entity ]) }');
   jQuery('##{dom_id(@entity)}').effect("highlight", { duration:1500 });
 
   - if called_from_index_page?

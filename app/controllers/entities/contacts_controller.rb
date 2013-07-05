@@ -195,6 +195,16 @@ class ContactsController < EntitiesController
           @contact_group = ContactGroup.find($1) # related contact_group
         end
       else
+        # used for contact/create in show/contact_group view
+        if params[:related]
+          model = params[:related].sub(/_\d+/, "")
+          id = params[:related].split('_').last #change required for models with _ in name e.g. contact_group
+          if related = model.classify.constantize.my.find_by_id(id)
+            instance_variable_set("@#{model}", related)
+          else
+            respond_to_related_not_found(model) and return
+          end
+        end
         unless params[:account][:id].blank?
           @account = Account.find(params[:account][:id])
         else
