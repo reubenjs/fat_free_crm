@@ -16,7 +16,7 @@ class UserMailer < ActionMailer::Base
 
   def assigned_entity_notification(entity, assigner)
     if entity.is_a?(Task)
-      @entity_url = url_for :controller => :tasks, :action => :index
+      @entity_url = entity.asset.present? ? url_for(entity.asset) : url_for(:controller => :tasks, :action => :index)
     else
       @entity_url = url_for(entity)
     end
