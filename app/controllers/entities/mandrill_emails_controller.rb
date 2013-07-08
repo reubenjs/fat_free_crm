@@ -36,7 +36,7 @@ class MandrillEmailsController < EntitiesController
     
     @templates_list = list.map{|a| [a["name"],a["name"]]}
     respond_with(@mandrill_email) do |format|
-      @mandrill_email.from_address ||= @current_user.email
+      @mandrill_email.from_address ||= Setting.mandrill[:default_reply_to]
       @mandrill_email.from_name ||= "ES/AFES North Terrace"
       @mandrill_email.message_subject ||= @mandrill_email.category == "prayer_points" ? "ES/AFES Prayer Points w/s #{Chronic::parse("next monday").strftime("%A %-d %B %Y")}" : ""     
 

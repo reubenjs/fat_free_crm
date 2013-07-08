@@ -15,7 +15,11 @@ class UserMailer < ActionMailer::Base
   end
 
   def assigned_entity_notification(entity, assigner)
-    @entity_url = url_for(entity)
+    if entity.is_a?(Task)
+      @entity_url = url_for :controller => :tasks, :action => :index
+    else
+      @entity_url = url_for(entity)
+    end
     @entity_name = entity.name
     @entity_type = entity.class.name
     @assigner_name = assigner.name
