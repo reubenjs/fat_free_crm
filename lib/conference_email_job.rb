@@ -6,6 +6,7 @@ class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :f
       mandrill = Mailchimp::Mandrill.new(Setting.mandrill[:api_key])
       
       attached_array = [] 
+      pdf = nil
       
       if send_invoices && registration.saasu_uid.present?
         
@@ -36,10 +37,10 @@ class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :f
         end
       end
       
-      if pdf.nil?
+      if pdf.nil? && send_invoices
         # notify admin if invoice not found. This is just a warning as people who get full discount will
         # not have an invoice
-        UserMailer.delay.saasu_registration_error(registration.contact, "[WARN: pdf/invoice not found] #{response.errors[0].message}")
+        UserMailer.delay.saasu_registration_error(registration.contact, "[WARN: pdf/invoice not found] for #{registration.contact.name}")
       end
       
       retries = 3 
