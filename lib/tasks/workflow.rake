@@ -640,6 +640,24 @@ namespace :ffcrm do
     end
   end
   
+  task :fix_denomination => :environment do
+    PaperTrail.whodunnit = 1
+      
+      
+    csv = CSV.foreach(FatFreeCRM.root.join('db/data-import/nt-denomination.csv'), {:col_sep => ',', :headers => :first_row, :header_converters => :symbol}) do |row|
+      #unless group.contacts.find_by_email(row[:_email])
+      #sync has already brought this contact in and placed it in the group, skip...
+      contact = Contact.find(row[:id])
+        
+      contact.cf_church_affiliation = row[:cf_church_affiliation].to_s
+      contact.cf_denomination = row[:cf_denomination].to_s
+        
+      puts (contact.first_name + " " + contact.last_name + " :" + row[:cf_church_affiliation].to_s + ", " + row[:cf_denomination].to_s  )
+        
+      contact.save!
+    end
+  end
+  
   task :import_bsg => :environment do
     PaperTrail.whodunnit = 1
       
