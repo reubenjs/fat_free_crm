@@ -444,8 +444,8 @@ en-US:
   mandrill_emails_small: mandrill emails
   create_mandrill_email: Create Mandrill Email
   save_mandrill_email: Save Mandrill Email
-  prayer_points: Prayer Points
-  terrace_times: Terrace Times
+  prayer_points: PP
+  terrace_times: TT
   total_mandrill_emails: Total Mandrill Emails
   
   # Views -> Contacts.

@@ -36,6 +36,10 @@
   - if models.include?(:registration)
     - Setting.registration_type_color.each do |key, value|
       li.registration .#{key} { background:#{value}; }
+  
+  - if models.include?(:mandrill_email)
+    - Setting.mandrill_email_category_color.each do |key, value|
+      li.mandrill_email .#{key} { background:#{value}; }
       
   - if models.include?(:user)
     li.user .admin     { background: lightblue; }

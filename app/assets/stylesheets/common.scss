@@ -385,6 +385,7 @@ $sidebar_width: 210px;
   padding: 1px 4px 1px 3px;
   text-align: right;
   //width: 75px;
+  width: 60px;
 	border-radius: 4px;
   -moz-border-radius: {
     topleft: 4px;
@@ -399,7 +400,8 @@ $sidebar_width: 210px;
 //   - indentwide: for use with strip + checkbox (Tasks).
 //   - indentfull: for use with strip + avatar (Admin/Users).
 .indent {
-	margin-left: 0px;
+	//margin-left: 0px;
+  margin-left: 75px;
 }
 
 .indent-old {
