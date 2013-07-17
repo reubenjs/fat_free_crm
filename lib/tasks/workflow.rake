@@ -276,6 +276,11 @@ namespace :ffcrm do
             registration.assign_attributes(:first_time => true)
           end
           
+          if row[:_are_you_attending_parttime] == "Yes"
+            contact.tag_list << "part_time@myc13" unless contact.tag_list.include?("part_time@myc13")
+            registration.assign_attributes(:first_time => true)
+          end
+          
           if row[:_do_you_need_to_request_financial_assistance] == "Yes"
             registration.assign_attributes(:need_financial_assistance => true)
             contact.tasks << Task.new(
