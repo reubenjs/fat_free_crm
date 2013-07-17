@@ -29,7 +29,7 @@ xml.Worksheet 'ss:Name' => (@event.name + " contact list") do
           data.each do |value|
             xml.Cell do
               xml.Data value,
-                       'ss:Type' => 'String'
+                'ss:Type' => "#{value.to_i.to_s == value ? 'Number' : 'String'}"
             end
           end
         end
