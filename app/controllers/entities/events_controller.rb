@@ -282,7 +282,7 @@ class EventsController < EntitiesController
     
     @contacts = scope
     set_options # Refresh options
-    render :show    
+    #render :show    
   end
 
   # POST /accounts/filter                                                  AJAX

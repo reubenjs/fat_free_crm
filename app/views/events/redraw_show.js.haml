@@ -1,0 +1,5 @@
+- if @contacts.any?
+  jQuery('#contacts').html('#{ j render :partial => "contacts/contact", :collection => @contacts, :locals => {:object => @event}}');
+- else
+  jQuery('#contacts').html('#{ j render(:text => "No contacts found")}');
+jQuery('#search_results_count').html('#{ j render(:text => t('search_results_count', :count => @contacts.count)) }');
