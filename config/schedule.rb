@@ -17,21 +17,27 @@
 #   runner "AnotherModel.prune_old_records"
 # end
 set :output, 'log/rake_tasks.log'
+job_type :envcommand, 'cd :path && RAILS_ENV=:environment :task'
 
-every 10.minutes do
-  rake "ffcrm:registrations:sync"
-end
 
-every 10.minutes do
-  rake "ffcrm:dropbox:run"
-end
-
-every 10.minutes do
-  rake "ffcrm:comment_replies:run"
-end
+# every 10.minutes do
+#   rake "ffcrm:registrations:sync"
+# end
+# 
+# every 10.minutes do
+#   rake "ffcrm:dropbox:run"
+# end
+# 
+# every 10.minutes do
+#   rake "ffcrm:comment_replies:run"
+# end
 
 every 6.hours do
   command "backup perform -t my_backup", :output => '/var/www/esCRM/current/log/backup.log'
+end
+
+every :reboot do
+  envcommand 'script/delayed_job restart'
 end
 
 # Learn more: http://github.com/javan/whenever
