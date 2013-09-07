@@ -348,6 +348,8 @@ en-US:
   total_events: Total Events
   faculty: Faculty
   social: Social
+  act: ACT
+  semester: Semester
   location: Location
   event_instances: Occurrences
   save_event_instance: Save Occurrence

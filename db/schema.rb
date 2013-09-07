@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130619043718) do
+ActiveRecord::Schema.define(:version => 20130907051045) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -251,6 +251,14 @@ ActiveRecord::Schema.define(:version => 20130619043718) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "email_attachments", :force => true do |t|
+    t.string   "attached_file_id"
+    t.integer  "mandrill_email_id"
+    t.datetime "deleted_at"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
   create_table "emails", :force => true do |t|
     t.string   "imap_message_id",                                       :null => false
     t.integer  "user_id"
@@ -301,6 +309,7 @@ ActiveRecord::Schema.define(:version => 20130619043718) do
     t.datetime "created_at",                                            :null => false
     t.datetime "updated_at",                                            :null => false
     t.boolean  "has_registrations"
+    t.string   "semester"
   end
 
   add_index "events", ["assigned_to"], :name => "index_events_on_assigned_to"
@@ -516,6 +525,19 @@ ActiveRecord::Schema.define(:version => 20130619043718) do
     t.datetime "created_at",                                                   :null => false
     t.datetime "updated_at",                                                   :null => false
     t.integer  "assigned_to"
+  end
+
+  create_table "rich_rich_files", :force => true do |t|
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
+    t.string   "rich_file_file_name"
+    t.string   "rich_file_content_type"
+    t.integer  "rich_file_file_size"
+    t.datetime "rich_file_updated_at"
+    t.string   "owner_type"
+    t.integer  "owner_id"
+    t.text     "uri_cache"
+    t.string   "simplified_type",        :default => "file"
   end
 
   create_table "sessions", :force => true do |t|

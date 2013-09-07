@@ -60,10 +60,12 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
       xml.Column 'ss:Index' => 4, 'ss:Width' => 51
       xml.Column 'ss:Width' => 54
       xml.Column 'ss:Width' => 44
-      xml.Column 'ss:Width' => 21, 'ss:Span' => 25
+      xml.Column 'ss:Width' => 21, 'ss:Span' => 51
 
       # Header 1
       xml.Row 'ss:StyleID' => "s24" do
+        #Semester 1
+        
         xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 7 do
           xml.Data "Semester 1 BSG", 
                     'ss:Type' => 'String'
@@ -80,6 +82,26 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         for i in 1..12
           xml.Cell 'ss:StyleID' => "s26"
         end
+        
+        #Semester 2
+        
+        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 33 do
+          xml.Data "Semester 2 BSG/ACT", 
+                    'ss:Type' => 'String'
+        end
+        #yellow background
+        for i in 1..12
+          xml.Cell 'ss:StyleID' => "s25"
+        end
+        xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 46 do
+          xml.Data "Semester 2 TBT", 
+                    'ss:Type' => 'String'
+        end
+        #green background
+        for i in 1..12
+          xml.Cell 'ss:StyleID' => "s26"
+        end
+        
       end
       # Header.
       xml.Row 'ss:StyleID'=>"s27" do
@@ -91,6 +113,8 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
                  "Last BSG",
                  "Neither"
                ]
+        heads.concat(numbers)
+        heads.concat(numbers)
         heads.concat(numbers)
         heads.concat(numbers)
         
@@ -107,8 +131,16 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
       @account.contacts.sort_by(&:first_name).each do |contact|
         tbt = contact.last_attendance_at_event_category("bible_talk")
         bsg = contact.last_attendance_at_event_category("bsg")
-        tbt_by_weeks = contact.attendance_by_week_at_event_category("bible_talk")
-        bsg_by_weeks = contact.attendance_by_week_at_event_category("bsg")
+        tbt_by_weeks_s1 = contact.attendance_by_week_at_event_category("bible_talk", "1")
+        tbt_by_weeks_s2 = contact.attendance_by_week_at_event_category("bible_talk", "2")
+        
+        bsg_by_weeks_s1 = contact.attendance_by_week_at_event_category("bsg", "1") 
+        
+        bsg_by_weeks_s2 = contact.attendance_by_week_at_event_category("bsg", "2")
+        act_by_weeks_s2 = contact.attendance_by_week_at_event_category("act", "2")
+        
+        bsg_by_weeks_s2 = bsg_by_weeks_s2.each_with_index.map{|v,i| v.empty? ? act_by_weeks_s2[i] : v }
+        
         xml.Row do
           data    = [contact.name,
                      contact.email,
@@ -117,12 +149,14 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
                      (!bsg.nil? && bsg > (Time.now - 4.weeks)) ? bsg.strftime("%d/%m") : "",
                      (tbt.nil? && bsg.nil?) ? "True" : "False"]
                      
-          data.concat(bsg_by_weeks)
-          data.concat(tbt_by_weeks)
+          data.concat(bsg_by_weeks_s1)
+          data.concat(tbt_by_weeks_s1)
+          data.concat(bsg_by_weeks_s2)
+          data.concat(tbt_by_weeks_s2)
                      
           data.each_with_index do |value, index|
             hash = (index > 5) ? {'ss:StyleID' => "s21"} : {}
-            hash = {'ss:StyleID' => "s30"} if (index == 6 || index == 19) 
+            hash = {'ss:StyleID' => "s30"} if (index == 6 || index == 19 || index == 32 || index == 45) 
             xml.Cell hash do
               xml.Data value,
                        'ss:Type' => "#{value.respond_to?(:abs) ? 'Number' : 'String'}"

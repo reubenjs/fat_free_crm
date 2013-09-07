@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  attr_accessor :repeating_event, :semester
+  attr_accessor :repeating_event #, :semester
   
   belongs_to :user
   belongs_to :assignee, :class_name => "User", :foreign_key => :assigned_to
