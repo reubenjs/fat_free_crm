@@ -54,6 +54,7 @@ class MandrillEmailsController < EntitiesController
   #----------------------------------------------------------------------------
   def new
     @mandrill_email.attributes = {:user => current_user, :access => Setting.default_access, :assigned_to => nil}
+    @mandrill_email.name = "PP #{Chronic::parse("next monday").strftime("%-d/%-m/%Y")}"
     @category = Setting.unroll(:mandrill_email_category)
     # if params[:related]
     #       model, id = params[:related].split('_')
