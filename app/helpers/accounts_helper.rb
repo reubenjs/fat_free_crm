@@ -35,8 +35,8 @@ module AccountsHelper
   def set_campus
     "if (campus_text_box = $('contact_cf_campus')) { 
       var sel = $('account_id_chzn').select('.result-selected')[0].outerText;
-      var excluded_folders = #{Setting.excluded_folders};
-      if (!(excluded_folders.indexOf(sel) >= 0)) {
+      var included_folders = #{Setting.included_folders};
+      if (included_folders.indexOf(sel) >= 0) {
         if ( $('field_group_7_container').select('.field_group')[0].style['display'] == 'none') {
           crm.flip_subtitle($('field_group_7_container').select('a')[0])
         }
