@@ -102,7 +102,7 @@ class EventsController < EntitiesController
         hol_start_date = Setting.academic_dates[:t3_end]
         hol_end_date = Setting.academic_dates[:t4_start]
       else
-        debugger #error!
+        #debugger #error!
       end
     
       unless event_start_date.blank?
