@@ -30,8 +30,8 @@ class RegistrationObserver < ActiveRecord::Observer
     i.status = "I"
     i.invoice_number = "&lt;Auto Number&gt;"
     i.invoice_type = "Sale Invoice"
-    i.tags = "myc"
-    i.summary = "MYC 2013 Registration"
+    i.tags = "cc14"
+    i.summary = "Commencement Camp 2014 Registration"
     i.notes = "Registration added by Mojo for #{registration.contact.full_name}"
     
     if registration.contact.present?
@@ -39,19 +39,28 @@ class RegistrationObserver < ActiveRecord::Observer
     end
 
     fee = Saasu::ServiceInvoiceItem.new
-    fee.description = "MYC registration fee"
-    fee.account_uid = Setting.saasu[:myc_income_account]
-    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i
+    fee.description = "Commencement Camp registration fee"
+    fee.account_uid = Setting.saasu[:ccamp_income_account]
+    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 20)
     
     i.invoice_items = [fee]
     
-    if registration.payment_method != "PayPal"
-      discount = Saasu::ServiceInvoiceItem.new
-      discount.description = "Online payment discount (if paid before 19th July)"
-      discount.account_uid = Setting.saasu[:myc_income_account]
-      discount.total_amount_incl_tax = -5
-      
-      i.invoice_items << discount
+    # if registration.payment_method != "PayPal"
+#       discount = Saasu::ServiceInvoiceItem.new
+#       discount.description = "Online payment discount (if paid before 19th July)"
+#       discount.account_uid = Setting.saasu[:myc_income_account]
+#       discount.total_amount_incl_tax = -5
+#       
+#       i.invoice_items << discount
+#     end
+    
+    if registration.t_shirt_ordered.to_i  > 0
+      tshirt = Saasu::ServiceInvoiceItem.new
+      tshirt.description = "T-Shirt"
+      tshirt.account_uid = Setting.saasu[:tshirt_account]
+      tshirt.total_amount_incl_tax = (registration.t_shirt_ordered.to_i * 20)
+  
+      i.invoice_items << tshirt
     end
     
     if registration.donate_amount.to_i > 0
@@ -81,9 +90,8 @@ class RegistrationObserver < ActiveRecord::Observer
     email.subject = Setting.conference[:email_subject]
     email.body = "Dear #{registration.contact.first_name},\r\n\r\n
       Please find your invoice/receipt attached. If you have not already paid, the invoice contains a link to pay online that you can use at any time.\r\n\r\n
-      Pay online before the 19th of July to receive a $5 early-bird discount.\r\n\r\n
-      In Christ,\r\n\r\n
-      The MYC Team"
+      Thank you,\r\n\r\n
+      The Commencement Camp Team"
     
     if registration.payment_method == "PayPal"
       qp = Saasu::QuickPayment.new

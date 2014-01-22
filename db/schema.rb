@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130907051045) do
+ActiveRecord::Schema.define(:version => 20140121133402) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -525,6 +525,8 @@ ActiveRecord::Schema.define(:version => 20130907051045) do
     t.datetime "created_at",                                                   :null => false
     t.datetime "updated_at",                                                   :null => false
     t.integer  "assigned_to"
+    t.string   "t_shirt_ordered"
+    t.string   "t_shirt_size_ordered"
   end
 
   create_table "rich_rich_files", :force => true do |t|

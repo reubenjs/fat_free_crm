@@ -143,11 +143,11 @@ namespace :ffcrm do
       
       require 'open-uri'
       PaperTrail.whodunnit = 1
-      url = Setting.registration_api[:myc_link]
+      url = Setting.registration_api[:ccamp_link]
       url_data = open(url).read()
       
       group = ContactGroup.find_or_initialize_by_name(
-          :name => "MYC 2013",
+          :name => "Commencement Camp 2014",
           :access => Setting.default_access,
           :user_id => 1,
           :category => "camp"
@@ -157,7 +157,7 @@ namespace :ffcrm do
         end
       
       event = Event.find_or_initialize_by_name(
-          :name => "MYC 2013",
+          :name => "Commencement Camp 2014",
           :access => Setting.default_access,
           :user_id => 1,
           :category => "conference",
@@ -169,23 +169,23 @@ namespace :ffcrm do
           ei = EventInstance.new(
             :access => Setting.default_access,
             :user_id => 1,
-            :name => "MYC 2013",
+            :name => "Commencement Camp 2014",
             :location => "Dzintari"
             #:starts_at => DateTime.parse("2013-07-22 10:00:00"),
             #:ends_at => DateTime.parse("2013-07-26 10:00:00")
             )
-            ei.calendar_start_date = "22/07/2013"
+            ei.calendar_start_date = "18/02/2014"
             ei.calendar_start_time = "10:00am"
-            ei.calendar_end_date = "26/07/2013"
+            ei.calendar_end_date = "20/02/2014"
             ei.calendar_end_time = "2:00pm"
             
           event.event_instances << ei
         end
       
-      csv = CSV.parse(url_data, {:col_sep => ',', :headers => :first_row, :header_converters => :symbol}) 
-
+      csv = CSV.parse(url_data, {:col_sep => ',', :headers => :first_row, :header_converters => :symbol})
+      binding.pry
       csv.each do |row|
-        unless SyncLog.find_by_sync_type_and_synced_item("myc13", row[:transaction_id])
+        unless SyncLog.find_by_sync_type_and_synced_item("cc14", row[:transaction_id])
           #sync has already brought this contact in and placed it in the group, skip...
           
           # Find or create contact
@@ -193,7 +193,7 @@ namespace :ffcrm do
           
           contact = Contact.find_by_email(row[:_email])
           if contact.nil?
-            contact = Contact.find_or_initialize_by_mobile(row[:_mobile].gsub(/[\(\) ]/, ""))
+            contact = Contact.find_or_initialize_by_mobile(row[:_phonemobile].gsub(/[\(\) ]/, ""))
             contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
             log_string = "Contact found by mobile. Registered: "
           end
@@ -210,10 +210,6 @@ namespace :ffcrm do
           
           # Pull in contact data
           #----------------------
-          
-          if row[:_course_year_in_2013] == "1" && contact.cf_year_commenced.blank?
-            contact.cf_year_commenced = "2013"
-          end
           
           contact.business_address = Address.new
           contact.business_address.street1 = row[:_address]
@@ -245,7 +241,7 @@ namespace :ffcrm do
           if !contact.persisted?
             contact.user_id = 1
             contact.access = Setting.default_access
-            contact.tag_list << "new@myc13" unless contact.tag_list.include?("new@myc13")
+            contact.tag_list << "new@cc14" unless contact.tag_list.include?("new@cc14")
             log_string = "Created new contact: "
           else
             log_string = "Contact found by email. Registered: " if log_string.nil?
@@ -257,12 +253,13 @@ namespace :ffcrm do
             :email => row[:_email],
             :cf_gender => row[:_gender],
             #:phone => row[:_home_phone],
-            :mobile => row[:_mobile].gsub(/[\(\) ]/, ""),
+            :mobile => row[:_phonemobile].gsub(/[\(\) ]/, ""),
             #address?
-            :cf_faculty => row[:_faculty_adelaide_uni].gsub(/N\/A/, ""),
+            :cf_faculty => row[:_faculty_for_adelaide_uni_students].gsub(/N\/A/, ""),
             :cf_campus => row[:_campus],
             :cf_course_1 => row[:_course],
-            :cf_church_affiliation => row[:_church_if_you_attend_one],
+            :cf_church_affiliation => (row[:_church_if_you_attend_one] == "(Other - not in this list)" ? row[:_if_other_please_specify] : row[:_church_if_you_attend_one]),
+            :cf_denomination => row[:_denomination],
             :cf_expected_grad_year => row[:_year_i_expect_to_graduate],
             :cf_has_dietary_or_health_issues => (row[:_do_you_have_any_special_dietary_requirements_or_health_issues] == "Yes" ? true : false),
             :cf_dietary_health_issue_details => row[:_please_specify],
@@ -271,22 +268,23 @@ namespace :ffcrm do
             :cf_emergency_contact_number => row[:_phone]
            )
 
-          if row[:_is_this_your_first_myc] == "Yes"
-            contact.tag_list << "first-myc-2013" unless contact.tag_list.include?("first-myc-2013")
+          if row[:_is_this_your_first_commencement_camp] == "Yes"
+            contact.tag_list << "first-cc-2014" unless contact.tag_list.include?("first-cc-2014")
             registration.assign_attributes(:first_time => true)
           end
           
           if row[:_are_you_attending_parttime] == "Yes"
-            contact.tag_list << "part_time@myc13" unless contact.tag_list.include?("part_time@myc13")
-            registration.assign_attributes(:first_time => true)
+            contact.tag_list << "part_time@cc14" unless contact.tag_list.include?("part_time@cc14")
+            registration.assign_attributes(:part_time => true)
           end
           
           if row[:_do_you_need_to_request_financial_assistance] == "Yes"
             registration.assign_attributes(:need_financial_assistance => true)
             contact.tasks << Task.new(
-                  :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("geoff")
+                  :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("dave")
                   )
           end
+          
             
           contact.save
           
@@ -300,6 +298,8 @@ namespace :ffcrm do
             :part_time => (row[:_are_you_attending_parttime] == "Yes"),
             :donate_amount => row[:_id_like_to_donate_this_amount_to_assist_others_in_financial_need_enter_numbers_only_in_000_format],
             :comments => row[:_comment],
+            :t_shirt_ordered => row[:_id_like_to_purchase_this_many_stylish_es_t_shirts_for_20_each_enter_qty],
+            :t_shirt_size_ordered => row[:_choose_your_size],
             :payment_method => (row[:_eb_payment_status] == "Paid" ? "PayPal" : "Cash"),
             :fee => row[:_amount],
             :breakfasts => row[:_breakfast].split(" "),
@@ -317,7 +317,7 @@ namespace :ffcrm do
             # Log that this registration has been imported
             #----------------------------------------------
           
-            sl = SyncLog.create(:sync_type => "myc13", :synced_item => row[:transaction_id])
+            sl = SyncLog.create(:sync_type => "cc14", :synced_item => row[:transaction_id])
             sl.save
           
             puts (log_string + contact.first_name + " " + contact.last_name)

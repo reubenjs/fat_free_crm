@@ -37,6 +37,19 @@
           .label Driver for:
           = f.text_area :driver_for, :style =>"width:500px", :rows => 3
     
+    .subtitle{:style => "padding-top:10px"} Merchandise Ordered
+    %table
+      %tr
+        %td
+          .label 
+            Number of T-Shirts ordered
+            = f.text_field :t_shirt_ordered
+      %tr
+        %td
+          .label 
+            Size
+            = f.text_field :t_shirt_size_ordered
+    
     .subtitle{:style => "padding-top:10px"} Dietary/Health
     = f.simple_fields_for :contact do |c|
       %table
