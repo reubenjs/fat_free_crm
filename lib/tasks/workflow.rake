@@ -183,7 +183,7 @@ namespace :ffcrm do
         end
       
       csv = CSV.parse(url_data, {:col_sep => ',', :headers => :first_row, :header_converters => :symbol})
-      binding.pry
+      
       csv.each do |row|
         unless SyncLog.find_by_sync_type_and_synced_item("cc14", row[:transaction_id])
           #sync has already brought this contact in and placed it in the group, skip...
