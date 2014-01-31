@@ -10,12 +10,13 @@ module ContactsHelper
   def contact_folder_checbox(folder, count)
     id = (folder == "other") ? "other" : folder.id
     checked = (session[:contacts_filter] ? session[:contacts_filter].split(",").include?(id.to_s) : count.to_i > 0)
-    onclick = remote_function(
-      :url      => { :controller => :contacts, :action => :filter },
-      :with     => h(%Q/"folder=" + $$("input[name='folder[]']").findAll(function (el) { return el.checked }).pluck("value")/),
-      :loading  => "$('loading').show()",
-      :complete => "$('loading').hide()"
-    )
+    url = url_for(:controller => :contacts, :action => :filter)
+    onclick = %Q{
+      $('#loading').show();
+      $.post('#{url}', {folder: this.value, checked: this.checked}, function () {
+        $('#loading').hide();
+      });
+    }.html_safe
     
     check_box_tag("folder[]", id, checked, :id => id, :onclick => onclick)
   end
@@ -25,12 +26,13 @@ module ContactsHelper
   def user_contact_checbox(user, count)
     id = (user == "other") ? "other" : user.id
     checked = (session[:contacts_user_filter] ? session[:contacts_user_filter].split(",").include?(id.to_s) : count.to_i > 0)
-    onclick = remote_function(
-      :url      => { :controller => :contacts, :action => :filter },
-      :with     => h(%Q/"user=" + $$("input[name='user[]']").findAll(function (el) { return el.checked }).pluck("value")/),
-      :loading  => "$('loading').show()",
-      :complete => "$('loading').hide()"
-    )
+    url = url_for(:controller => :contacts, :action => :filter)
+    onclick = %Q{
+      $('#loading').show();
+      $.post('#{url}', {user: this.value, checked: this.checked}, function () {
+        $('#loading').hide();
+      });
+    }.html_safe
     
     check_box_tag("user[]", id, checked, :id => id, :onclick => onclick)
   end
@@ -46,24 +48,28 @@ module ContactsHelper
   end
   
   def contact_user_checbox_select(text, ids = [], html_class = "filter_label")
-    onclick = remote_function(
-      :url      => { :controller => :contacts, :action => :filter },
-      :with     => h(%Q/"user=" + $$("input[name='user[]']").findAll(function (el) { el.checked = ((#{ids}.indexOf(el.value) >= 0) ? true : false); return el.checked; }).pluck("value")/),
-      :loading  => "$('loading').show()",
-      :complete => "$('loading').hide()"
-    )
+    url = url_for(:controller => :contacts, :action => :filter)
+    onclick = %Q{
+      $('#loading').show();
+      $("input[name='user[]']").each(function () { this.checked = ((#{ids.to_json}.indexOf(this.value) >= 0) ? true : false); });
+      $.post('#{url}', {users: #{ids.to_json}}, function () {
+        $('#loading').hide();
+      });
+    }
     
     label_tag(text.to_sym, text, :onclick => onclick, :class => html_class)
   end
   
   
   def contact_folder_checbox_select(text, ids = [], html_class = "filter_label")
-    onclick = remote_function(
-      :url      => { :controller => :contacts, :action => :filter },
-      :with     => h(%Q/"folder=" + $$("input[name='folder[]']").findAll(function (el) { el.checked = ((#{ids}.indexOf(el.value) >= 0) ? true : false); return el.checked; }).pluck("value")/),
-      :loading  => "$('loading').show()",
-      :complete => "$('loading').hide()"
-    )
+    url = url_for(:controller => :contacts, :action => :filter)
+    onclick = %Q{
+      $('#loading').show();
+      $("input[name='folder[]']").each(function () { this.checked = ((#{ids.to_json}.indexOf(this.value) >= 0) ? true : false); });
+      $.post('#{url}', {folders: #{ids.to_json}}, function () {
+        $('#loading').hide();
+      });
+    }
     
     label_tag(text.to_sym, text, :onclick => onclick, :class => html_class)
   end
@@ -141,27 +147,26 @@ module ContactsHelper
     
     # seems that prototype update event is required...
     script = "
-      $j('\#account_id').val(#{Account.find_by_name(template).id});
-      Event.fire($(\"account_id\"), \"liszt:updated\");
-      $j('\#account_id').trigger(\"change\");
+      $('\#account_id').val(#{Account.find_by_name(template).id}).trigger(\"liszt:updated\");
+      $('\#account_id').trigger(\"change\");
     "
     
     # clear all subscriptions
     weekly_checkboxes.each do |box|
-      script = script + "$j('\#contact_cf_weekly_emails_#{box}').prop(\"checked\", false);"
+      script = script + "$('\#contact_cf_weekly_emails_#{box}').prop(\"checked\", false);"
     end
     
     supporter_checkboxes.each do |box|
-      script = script + "$j('\#contact_cf_supporter_emails_#{box}').prop(\"checked\", false);"
+      script = script + "$('\#contact_cf_supporter_emails_#{box}').prop(\"checked\", false);"
     end
     
     # subscribe according to template
     weekly_emails.each do |email|
-      script = script + "$j('\#contact_cf_weekly_emails_#{email}').prop(\"checked\", true);"
+      script = script + "$('\#contact_cf_weekly_emails_#{email}').prop(\"checked\", true);"
     end
     
     supporter_emails.each do |email|
-      script = script + "$j('\#contact_cf_supporter_emails_#{email}').prop(\"checked\", true);"
+      script = script + "$('\#contact_cf_supporter_emails_#{email}').prop(\"checked\", true);"
     end
     
     script

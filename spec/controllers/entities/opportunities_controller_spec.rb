@@ -99,7 +99,7 @@ describe OpportunitiesController do
 
     describe "with mime type of JSON" do
       it "should render all opportunities as JSON" do
-        @controller.should_receive(:get_opportunities).and_return(opportunities = mock("Array of Opportunities"))
+        @controller.should_receive(:get_opportunities).and_return(opportunities = double("Array of Opportunities"))
         opportunities.should_receive(:to_json).and_return("generated JSON")
 
         request.env["HTTP_ACCEPT"] = "application/json"
@@ -110,7 +110,7 @@ describe OpportunitiesController do
 
     describe "with mime type of JSON" do
       it "should render all opportunities as JSON" do
-        @controller.should_receive(:get_opportunities).and_return(opportunities = mock("Array of Opportunities"))
+        @controller.should_receive(:get_opportunities).and_return(opportunities = double("Array of Opportunities"))
         opportunities.should_receive(:to_json).and_return("generated JSON")
 
         request.env["HTTP_ACCEPT"] = "application/json"
@@ -121,7 +121,7 @@ describe OpportunitiesController do
 
     describe "with mime type of XML" do
       it "should render all opportunities as xml" do
-        @controller.should_receive(:get_opportunities).and_return(opportunities = mock("Array of Opportunities"))
+        @controller.should_receive(:get_opportunities).and_return(opportunities = double("Array of Opportunities"))
         opportunities.should_receive(:to_xml).and_return("generated XML")
 
         request.env["HTTP_ACCEPT"] = "application/xml"
@@ -348,7 +348,7 @@ describe OpportunitiesController do
 
       before do
         @opportunity = FactoryGirl.build(:opportunity, :user => current_user)
-        Opportunity.stub!(:new).and_return(@opportunity)
+        Opportunity.stub(:new).and_return(@opportunity)
         @stage = Setting.unroll(:opportunity_stage)
       end
 
@@ -426,7 +426,7 @@ describe OpportunitiesController do
       it "should update related campaign revenue if won" do
         @campaign = FactoryGirl.create(:campaign, :revenue => 0)
         @opportunity = FactoryGirl.build(:opportunity, :user => current_user, :stage => "won", :amount => 1100, :discount => 100)
-        Opportunity.stub!(:new).and_return(@opportunity)
+        Opportunity.stub(:new).and_return(@opportunity)
 
         xhr :post, :create, :opportunity => { :name => "Hello world" }, :campaign => @campaign.id, :account => { :name => "Test Account" }
         assigns(:opportunity).should == @opportunity
@@ -436,7 +436,7 @@ describe OpportunitiesController do
 
       it "should add a new comment to the newly created opportunity when specified" do
         @opportunity = FactoryGirl.build(:opportunity, :user => current_user)
-        Opportunity.stub!(:new).and_return(@opportunity)
+        Opportunity.stub(:new).and_return(@opportunity)
 
         xhr :post, :create, :opportunity => { :name => "Opportunity Knocks" }, :account => { :name => "My Account" }, :comment_body => "Awesome comment is awesome"
         @opportunity.reload.comments.map(&:comment).should include("Awesome comment is awesome")
@@ -449,7 +449,7 @@ describe OpportunitiesController do
         @account = Account.new(:user => current_user)
         @opportunity = FactoryGirl.build(:opportunity, :name => nil, :campaign => nil, :user => current_user,
                                      :account => @account)
-        Opportunity.stub!(:new).and_return(@opportunity)
+        Opportunity.stub(:new).and_return(@opportunity)
         @stage = Setting.unroll(:opportunity_stage)
         @accounts = [ FactoryGirl.create(:account, :user => current_user) ]
 
@@ -465,7 +465,7 @@ describe OpportunitiesController do
         @account = FactoryGirl.create(:account, :id => 42, :user => current_user)
         @opportunity = FactoryGirl.build(:opportunity, :name => nil, :campaign => nil, :user => current_user,
                                      :account => @account)
-        Opportunity.stub!(:new).and_return(@opportunity)
+        Opportunity.stub(:new).and_return(@opportunity)
         @stage = Setting.unroll(:opportunity_stage)
 
         # Expect to redraw [create] form with selected account.
@@ -864,18 +864,18 @@ describe OpportunitiesController do
     it_should_behave_like("auto complete")
   end
 
-  # POST /opportunities/redraw                                             AJAX
+  # GET /opportunities/redraw                                              AJAX
   #----------------------------------------------------------------------------
-  describe "responding to POST redraw" do
+  describe "responding to GET redraw" do
     it "should save user selected opportunity preference" do
-      xhr :post, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
+      xhr :get, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
       current_user.preference[:opportunities_per_page].should == "42"
       current_user.preference[:opportunities_index_view].should  == "brief"
       current_user.preference[:opportunities_sort_by].should  == "opportunities.name ASC"
     end
 
     it "should reset current page to 1" do
-      xhr :post, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
+      xhr :get, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
       session[:opportunities_current_page].should == 1
     end
 
@@ -885,7 +885,7 @@ describe OpportunitiesController do
         FactoryGirl.create(:opportunity, :name => "B", :user => current_user)
       ]
 
-      xhr :post, :redraw, :per_page => 1, :sort_by => "name"
+      xhr :get, :redraw, :per_page => 1, :sort_by => "name"
       assigns(:opportunities).should == [ @opportunities.first ]
       response.should render_template("opportunities/index")
     end

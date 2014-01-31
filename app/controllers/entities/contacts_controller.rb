@@ -208,7 +208,7 @@ class ContactsController < EntitiesController
         unless params[:account][:id].blank?
           @account = Account.find(params[:account][:id])
         else
-          if request.referer =~ /\/accounts\/(.+)$/
+          if request.referer =~ /\/accounts\/(\d+)\z/
             @account = Account.find($1) # related account
           else
             @account = Account.new(:user => current_user)
@@ -302,7 +302,7 @@ class ContactsController < EntitiesController
   #----------------------------------------------------------------------------
   # Handled by ApplicationController :auto_complete
 
-  # POST /contacts/redraw                                                  AJAX
+  # GET /contacts/redraw                                                   AJAX
   #----------------------------------------------------------------------------
   def redraw
     current_user.pref[:contacts_per_page] = params[:per_page] if params[:per_page]
@@ -330,8 +330,29 @@ class ContactsController < EntitiesController
   # POST /contacts/filter                                                  AJAX
   #----------------------------------------------------------------------------
   def filter
-    session[:contacts_filter] = params[:folder] if params[:folder].present?
-    session[:contacts_user_filter] = params[:user] if params[:user].present?
+    if params[:folders].present?
+      session[:contacts_filter] = params[:folders].join(",")
+    else
+      update_session(:contacts_filter) do |filters| 
+        if params[:checked].true?
+          filters << params[:folder]
+        else
+          filters.delete(params[:folder])
+        end
+      end
+    end
+
+    if params[:users].present?
+      session[:contacts_user_filter] = params[:users].join(",")
+    else
+      update_session(:contacts_user_filter) do |filters|      
+        if params[:checked].true?
+          filters << params[:user]
+        else
+          filters.delete(params[:user])
+        end
+      end
+    end
     
     respond_with(@contacts = get_contacts(:page => 1, :per_page => params[:per_page])) do |format|
       format.js { render :index }
@@ -344,6 +365,16 @@ class ContactsController < EntitiesController
   end
 
   private
+  
+  # Yields array of current filters and updates the session using new values.
+  #----------------------------------------------------------------------------
+  def update_session(name)
+    #name = "contacts_filter"
+    filters = (session[name].nil? ? [] : session[name].split(","))
+    yield filters
+    session[name] = filters.uniq.join(",")
+  end
+  
   #----------------------------------------------------------------------------
   alias :get_contacts :get_list_of_records
 

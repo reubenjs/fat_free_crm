@@ -2,9 +2,9 @@
 - @entities = instance_variable_get("@#{entities}")
 
 - if @entities.any?
-  jQuery('##{entities}').html('#{ j render(:partial => "event", :collection => @entities) }');
+  $('##{entities}').html('#{ j render(:partial => "event", :collection => @entities) }');
 - else
-  jQuery('##{entities}').html('#{ j render(:partial => "shared/empty") }');
+  $('##{entities}').html('#{ j render(:partial => "shared/empty") }');
 
-jQuery('#paginate').html('#{ j render(:partial => "shared/paginate_with_per_page") }');
-jQuery('#export').html('#{ j render(:partial => "shared/export") }');
+$('#paginate').html('#{ j render(:partial => "shared/paginate_with_per_page") }');
+$('#export').html('#{ j render(:partial => "shared/export") }');

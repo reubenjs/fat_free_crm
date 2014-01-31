@@ -3,27 +3,27 @@
 - create_id = "create_#{entity_name}"
 
 - if @entity.valid?
-  jQuery('##{create_id}_arrow').html(crm.COLLAPSED);
-  jQuery('##{create_id}_title').html('#{ j t(entity_name.pluralize) }');
-  jQuery('##{create_id}').slideUp(250);
+  $('##{create_id}_arrow').html(crm.COLLAPSED);
+  $('##{create_id}_title').html('#{ j t(entity_name.pluralize) }');
+  $('##{create_id}').slideUp(250);
   - if called_from_landing_page? :event_instances
-    jQuery('##{entity_name.pluralize}').prepend('#{ j render(:partial => "event_instances/contact", :collection => [ @entity ]) }');
+    $('##{entity_name.pluralize}').prepend('#{ j render(:partial => "event_instances/contact", :collection => [ @entity ]) }');
   - else
-    jQuery('##{entity_name.pluralize}').prepend('#{ j render(:partial => entity_name, :collection => [ @entity ]) }');
-  jQuery('##{dom_id(@entity)}').effect("highlight", { duration:1500 });
+    $('##{entity_name.pluralize}').prepend('#{ j render(:partial => entity_name, :collection => [ @entity ]) }');
+  $('##{dom_id(@entity)}').effect("highlight", { duration:1500 });
 
   - if called_from_index_page?
     = refresh_sidebar(:index)
-    jQuery('#paginate').html('#{ j render(:partial => "shared/paginate_with_per_page") }');
+    $('#paginate').html('#{ j render(:partial => "shared/paginate_with_per_page") }');
   - else
-    jQuery('#recently').html('#{ j render(:partial => "shared/recently") }');
+    $('#recently').replaceWith('#{ j render(:partial => "shared/recently") }');
   crm.flick('empty', 'remove');
   
   - if called_from_landing_page? :contact_groups
-    jQuery('#email_group_link').html('#{mail_to(@current_user.email, "Email group", :bcc => @contact_group.email_addresses)} | ');
+    $('#email_group_link').html('#{mail_to(@current_user.email, "Email group", :bcc => @contact_group.email_addresses)} | ');
 
 - else
-  jQuery('##{create_id}').html('#{ j render(:partial => "new") }');
+  $('##{create_id}').html('#{ j render(:partial => "new") }');
   crm.create_or_select_account(#{ request.referer =~ /\/accounts\// || @account.id.blank? });
-  jQuery('##{create_id}').effect("shake", { duration:250, distance: 6 });
-  jQuery('#new_#{entity_name} input[type!=hidden]').first().focus();
+  $('##{create_id}').effect("shake", { duration:250, distance: 6 });
+  $('#new_#{entity_name} input[type!=hidden]').first().focus();

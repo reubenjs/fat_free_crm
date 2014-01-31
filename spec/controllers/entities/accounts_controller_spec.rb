@@ -96,7 +96,7 @@ describe AccountsController do
 
     describe "with mime type of JSON" do
       it "should render all accounts as json" do
-        @controller.should_receive(:get_accounts).and_return(accounts = mock("Array of Accounts"))
+        @controller.should_receive(:get_accounts).and_return(accounts = double("Array of Accounts"))
         accounts.should_receive(:to_json).and_return("generated JSON")
 
         request.env["HTTP_ACCEPT"] = "application/json"
@@ -107,7 +107,7 @@ describe AccountsController do
 
     describe "with mime type of XML" do
       it "should render all accounts as xml" do
-        @controller.should_receive(:get_accounts).and_return(accounts = mock("Array of Accounts"))
+        @controller.should_receive(:get_accounts).and_return(accounts = double("Array of Accounts"))
         accounts.should_receive(:to_xml).and_return("generated XML")
 
         request.env["HTTP_ACCEPT"] = "application/xml"
@@ -304,7 +304,7 @@ describe AccountsController do
 
       it "should expose a newly created account as @account and render [create] template" do
         @account = FactoryGirl.build(:account, :name => "Hello world", :user => current_user)
-        Account.stub!(:new).and_return(@account)
+        Account.stub(:new).and_return(@account)
 
         xhr :post, :create, :account => { :name => "Hello world" }
         assigns(:account).should == @account
@@ -314,7 +314,7 @@ describe AccountsController do
       # Note: [Create Account] is shown only on Accounts index page.
       it "should reload accounts to update pagination" do
         @account = FactoryGirl.build(:account, :user => current_user)
-        Account.stub!(:new).and_return(@account)
+        Account.stub(:new).and_return(@account)
 
         xhr :post, :create, :account => { :name => "Hello" }
         assigns[:accounts].should == [ @account ]
@@ -322,7 +322,7 @@ describe AccountsController do
 
       it "should get data to update account sidebar" do
         @account = FactoryGirl.build(:account, :name => "Hello", :user => current_user)
-        Campaign.stub!(:new).and_return(@account)
+        Campaign.stub(:new).and_return(@account)
 
         xhr :post, :create, :account => { :name => "Hello" }
         assigns[:account_category_total].should be_instance_of(HashWithIndifferentAccess)
@@ -330,7 +330,7 @@ describe AccountsController do
 
       it "should add a new comment to the newly created account when specified" do
         @account = FactoryGirl.build(:account, :name => "Hello world", :user => current_user)
-        Account.stub!(:new).and_return(@account)
+        Account.stub(:new).and_return(@account)
 
         xhr :post, :create, :account => { :name => "Hello world" }, :comment_body => "Awesome comment is awesome"
         assigns[:account].comments.map(&:comment).should include("Awesome comment is awesome")
@@ -340,7 +340,7 @@ describe AccountsController do
     describe "with invalid params" do
       it "should expose a newly created but unsaved account as @account and still render [create] template" do
         @account = FactoryGirl.build(:account, :name => nil, :user => nil)
-        Account.stub!(:new).and_return(@account)
+        Account.stub(:new).and_return(@account)
 
         xhr :post, :create, :account => {}
         assigns(:account).should == @account
@@ -566,18 +566,18 @@ describe AccountsController do
     it_should_behave_like("auto complete")
   end
 
-  # POST /accounts/redraw                                                 AJAX
+  # GET  /accounts/redraw                                                 AJAX
   #----------------------------------------------------------------------------
-  describe "responding to POST redraw" do
+  describe "responding to GET redraw" do
     it "should save user selected account preference" do
-      xhr :post, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
+      xhr :get, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
       current_user.preference[:accounts_per_page].should == "42"
       current_user.preference[:accounts_index_view].should  == "brief"
       current_user.preference[:accounts_sort_by].should  == "accounts.name ASC"
     end
 
     it "should reset current page to 1" do
-      xhr :post, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
+      xhr :get, :redraw, :per_page => 42, :view => "brief", :sort_by => "name"
       session[:accounts_current_page].should == 1
     end
 
@@ -587,7 +587,7 @@ describe AccountsController do
         FactoryGirl.create(:account, :name => "B", :user => current_user)
       ]
 
-      xhr :post, :redraw, :per_page => 1, :sort_by => "name"
+      xhr :get, :redraw, :per_page => 1, :sort_by => "name"
       assigns(:accounts).should == [ @accounts.first ]
       response.should render_template("accounts/index")
     end

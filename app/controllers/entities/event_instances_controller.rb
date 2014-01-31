@@ -125,9 +125,8 @@ class EventInstancesController < EntitiesController
   # PUT /tasks/1/complete
   #----------------------------------------------------------------------------
   def mark
-    #debugger
     @contact = Contact.find(params[:contact_id])
-    #@event_instance = EventInstance.find(event_instance)
+    #@event_instance = EventInstance.find(param[:id])
     #check if already marked
     if @event_instance.attendances.where(:contact_id => @contact.id).empty?
       previously_deleted_versions = Version.destroys.where(
@@ -153,16 +152,14 @@ class EventInstancesController < EntitiesController
         @event_instance.attendances << @attendance
       end
     end
-    #@attendance.save
+    
     @event_instance.event.touch
-    #update_sidebar unless params[:bucket].blank?
-    respond_with(@contact)
+    
   end
   
   # PUT /tasks/1/complete
   #----------------------------------------------------------------------------
   def unmark
-    #debugger
     @contact = Contact.find(params[:contact_id])
     #@event_instance = EventInstance.find(event_instance)
     @attendances = @event_instance.attendances.where(:contact_id => @contact.id)
@@ -171,10 +168,9 @@ class EventInstancesController < EntitiesController
     @attendances.each do |a|
       @event_instance.attendances.delete(a)
     end
-    #@attendance.save
+
     @event_instance.event.touch
-    #update_sidebar unless params[:bucket].blank?
-    respond_with(@contact)
+
   end
 
   # PUT /accounts/1/attach

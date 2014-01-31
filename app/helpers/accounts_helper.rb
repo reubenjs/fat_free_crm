@@ -22,14 +22,17 @@ module AccountsHelper
     ].join(', ')
   end
 
+  # Generates a select list with the first 25 accounts
+  # and prepends the currently selected account, if any.
+  #----------------------------------------------------------------------------
   def account_select(options = {})
-      # Generates a select list with the first 25 accounts,
-      # and prepends the currently selected account, if available
       options[:selected] = (@account && @account.id) || 0
       accounts = ([@account] + Account.my.order(:name).limit(25)).compact.uniq
       collection_select :account, :id, accounts, :id, :name, options,
                         {:"data-placeholder" => t(:select_an_account),
-                         :style => "width:#{mobile_device? ? "245" : "324"}px; display:none;", :onchange => set_campus }
+                         :"data-url" => auto_complete_accounts_path(format: 'json'),
+                         :style => "width:#{mobile_device? ? "245" : "324"}px; display:none;",
+                         :class => 'ajax_chosen' }
   end
   
   def set_campus

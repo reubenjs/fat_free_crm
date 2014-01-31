@@ -210,12 +210,29 @@ class ContactGroupsController < EntitiesController
   # POST /accounts/filter                                                  AJAX
   #----------------------------------------------------------------------------
   def filter
-    session[:contact_groups_filter] = params[:category]
-    @contact_groups = get_contact_groups(:page => 1)
-    render :index
+    update_session do |filters|      
+      if params[:checked].true?
+        filters << params[:category]
+      else
+        filters.delete(params[:category])
+      end
+    end
+    
+    respond_with(@contact_groups = get_contact_groups(:page => 1, :per_page => params[:per_page])) do |format|
+      format.js { render :index }
+    end
   end
 
 private
+
+  # Yields array of current filters and updates the session using new values.
+  #----------------------------------------------------------------------------
+  def update_session
+    name = "contact_groups_filter"
+    filters = (session[name].nil? ? [] : session[name].split(","))
+    yield filters
+    session[name] = filters.uniq.join(",")
+  end
 
   #----------------------------------------------------------------------------
   alias :get_contact_groups :get_list_of_records

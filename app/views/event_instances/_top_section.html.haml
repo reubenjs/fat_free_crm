@@ -8,9 +8,14 @@
     - tfmt = '%I:%M%P'
     %td(colspan="5")
       .datetime
-        %p.datepair
+        %p.datepair{"data-language" => "javascript"}
           = e.text_field :calendar_start_date, :style => "width:90px;", :autocomplete => :off, :class => 'date start'
-          = e.text_field :calendar_start_time, :style => "width:90px;", :autocomplete => :off, :class => 'time start'
+          = e.text_field :calendar_start_time, :style => "width:90px;", :autocomplete => :off, :class => 'time start ui-timepicker-input'
           = "&nbsp;&nbsp;".html_safe + 'to' +"&nbsp;&nbsp;".html_safe
-          = e.text_field :calendar_end_time, :style => "width:90px;", :autocomplete => :off, :class => 'time end'
+          = e.text_field :calendar_end_time, :style => "width:90px;", :autocomplete => :off, :class => 'time end ui-timepicker-input'
           = e.text_field :calendar_end_date, :style => "width:90px;", :autocomplete => :off, :class => 'date end'
+
+:javascript
+  $( document ).ready(function() {
+    attachDate();
+  });

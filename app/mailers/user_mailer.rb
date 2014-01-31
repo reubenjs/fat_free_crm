@@ -38,5 +38,12 @@ class UserMailer < ActionMailer::Base
           :from => "Mojo <mojo@nt.es.org.au>"
           
   end
-end
 
+  private
+
+  def from_address
+    from = Setting.smtp[:from]
+    !from.blank? ? from : "Fat Free CRM <noreply@fatfreecrm.com>"
+  end
+
+end

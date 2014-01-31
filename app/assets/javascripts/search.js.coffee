@@ -7,37 +7,22 @@
 
   $ ->
     $("#advanced_search").ransack_search_form()
-    
+
     # For basic search, remove placeholder text on focus, restore on blur
     $('#query').focusin (e) ->
       $(this).data('placeholder', $(this).attr('placeholder')).attr('placeholder', '')
-      $(this).parent().addClass("ui-focus");
-      $(this).parent().find(".ui-icon-delete").show();
     $('#query').focusout (e) ->
       $(this).attr('placeholder', $(this).data('placeholder'))
-      $(this).parent().removeClass("ui-focus");
-    $(".ui-icon-delete").live "click", ->
-      $(this).parent().find("input.clear-ui").val("");
-      $(this).hide();
 
-    # For advanced search we show a spinner and dim the page when loading results
-    # This method undoes that when the results are returned. Ideally, this should
-    # be converted to jQuery (using the 'live' method)
-    # but we have to move to jquery-ujs first as all ajax events are current
-    # registered with prototype
-    Event.observe document.body, 'ajax:complete', (e, el) ->
-      if e.findElement('.ransack_search')
+    $(document).ajaxComplete ->
+      if $('.ransack_search').length
         $("#loading").hide()
         $("#advanced_search").css('opacity', 1)
 
-    Event.observe document.body, 'ajax:failure', (e, el) ->
-      if e.findElement('.ransack_search')
-        $('#flash').html('An error occurred whilst trying to search') # no i18n
-        crm.flash('error')
-
     # Search tabs
     # -----------------------------------------------------
-    activate_search_form = (search_form) ->
+    $(document).on 'click', '#search .tabs a', ->
+      search_form = $(this).data('search-form')
       # Hide all
       $('#search .search_form').hide()
       $('#search .tabs li a').removeClass('active')
@@ -47,25 +32,18 @@
       # Run search for current query
       switch search_form
         when 'basic_search'
-          $('#lists .show_lists_save_form').hide()
           query_input = $('#basic_search input#query')
           if !query_input.is('.defaultTextActive')
             value = query_input.val()
           else
             value = ""
           crm.search(value, window.controller)
-          $('#filters').enable() # Enable filters panel (if present)
-          if query_input.val() != ""
-            query_input.focus()
+          $('#filters').prop('disabled', false) # Enable filters panel (if present)
 
         when 'advanced_search'
-          $('#lists .show_lists_save_form').show()
           $("#advanced_search form input:submit").click()
-          $('#filters').disable() # Disable filters panel (if present)
+          $('#filters').prop('disabled', true) # Disable filters panel (if present)
 
       return
-
-    $("#search .tabs a").click ->
-      activate_search_form($(this).data('search-form'))
 
 ) jQuery

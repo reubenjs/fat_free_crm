@@ -5,13 +5,13 @@
 #------------------------------------------------------------------------------
 (($) ->
 
-  $('input.date').live 'click focus', ->
-          $(this).datepicker({
-            showOn: 'focus',
-            changeMonth: true,
-            dateFormat: 'dd/mm/yy'})
+  $(document).on 'click focus', 'input.date', ->
+    $(this).datepicker({
+      showOn: 'focus',
+      changeMonth: true,
+      dateFormat: 'yy-mm-dd'})
 
-  $('input.datetime').live 'click focus', ->
+  $(document).on 'click focus', 'input.datetime', ->
     $(this).datetimepicker({
       showOn: 'focus',
       controlType: 'select',

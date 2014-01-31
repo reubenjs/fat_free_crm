@@ -620,7 +620,7 @@ li.mobile {
     font-size: 12px;
     list-style: none;
     padding: 3px 0px 3px 0px;
-	.gravatar {
+    .gravatar {
       float: left;
       padding: 0px 0px 0px 0px; }
     tt {
@@ -947,19 +947,6 @@ span.handle img {
 .field_group .list {
   padding-bottom: 30px; }
 
-#lists {
-  .show_lists_save_form {
-    text-align: right; }
-  .show_lists_save_form, .save_list {
-    margin: 10px 0 0; }
-  .list_icon {
-    opacity: 0.5;
-    width: 12px; }
-  img.input_info {
-    vertical-align: middle; }
-  input#save_list {
-    margin-top: 6px; } }
-
 .fields .subtitle {
   cursor: move; }
 
@@ -1040,4 +1027,25 @@ table.asset_attributes {
 #sent_or_scheduled_details {
 	padding: 10px; 
 	background-color: lightyellow;
+}
+
+.spinner {
+  margin: 7px 4px 0px 4px;
+  float: right;
+}
+
+.comment .spinner {
+  margin: 5px 4px 0px 4px;
+  float: left;
+}
+
+.comment .buttons {
+  padding-left: 40px;
+}
+
+// Jumpbox
+
+span.jumpbox-highlight {
+  background-color: lightyellow;
+  font-weight: bold;
 }

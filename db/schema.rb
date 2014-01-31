@@ -401,7 +401,10 @@ ActiveRecord::Schema.define(:version => 20140121133402) do
     t.text     "url"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "user_id"
   end
+
+  add_index "lists", ["user_id"], :name => "index_lists_on_user_id"
 
   create_table "mandrill_emails", :force => true do |t|
     t.string   "uuid",             :limit => 36

@@ -4,45 +4,42 @@
 // See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 //------------------------------------------------------------------------------
 
-//= require prototype
-//= require effects
-//= require controls
-//= require dragdrop
-//= require prototype_ujs
-
 //= require jquery
+//= require jquery_ujs
 //= require jquery-ui
 //= require jquery.mobile.custom.min
-//= require jquery-noconflict
+// require jquery-noconflict
 //= require select2
-
-//= require modalbox
 //= require crm
 //= require crm_classes
 //= require crm_loginout
-//= require crm_fields
-// require ffcrm_merge
+//= require crm_tags
+//= require crm_sortable
+//= require crm_draggable
 //= require textarea_autocomplete
 //= require crm_textarea_autocomplete
-//= require event.simulate
-//= require ajax-chosen-prototype
+//= require ajax-chosen-jquery
 //= require crm_chosen
+//= require crm_select2
 //= require ransack_ui_jquery
 //= require search
 //= require lists
 //= require autocomplete-rails
 // require datepair
-//= require datepicker
-//= require jquery-timepicker/jquery.timepicker
-//= require jquery-timepicker/lib/datepair-old
-// require jquery-timepicker/lib/base
-//= require jquery.disable
+//= require jquery-timepicker/lib/base
 // require jquery_ui_datepicker/jquery-ui-timepicker-addon
+//= require jquery-timepicker/jquery.timepicker
+//= require jquery-timepicker/lib/datepair
+//= require datepicker
+// require jquery.disable
 //= require admin/fields
 //= require format_buttons
 //= require tinymce
+//= require crm_comments
+//= require jquery_timeago
+//= require timeago
+//= require pagination
 //= require_self
-
 
 <%
 Gem.loaded_specs.keys.grep(/^ffcrm_/).each do |plugin|

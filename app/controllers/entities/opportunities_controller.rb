@@ -39,7 +39,8 @@ class OpportunitiesController < EntitiesController
       model, id = params[:related].split('_')
       if related = model.classify.constantize.my.find_by_id(id)
         instance_variable_set("@#{model}", related)
-        @account = related.account if related.respond_to?(:account)
+        @account = related.account if related.respond_to?(:account) && !related.account.nil?
+        @campaign = related.campaign if related.respond_to?(:campaign)
       else
         respond_to_related_not_found(model) and return
       end
@@ -81,7 +82,7 @@ class OpportunitiesController < EntitiesController
         unless params[:account][:id].blank?
           @account = Account.find(params[:account][:id])
         else
-          if request.referer =~ /\/accounts\/(.+)$/
+          if request.referer =~ /\/accounts\/(\d+)\z/
             @account = Account.find($1) # related account
           else
             @account = Account.new(:user => current_user)
@@ -144,7 +145,7 @@ class OpportunitiesController < EntitiesController
   #----------------------------------------------------------------------------
   # Handled by ApplicationController :auto_complete
 
-  # POST /opportunities/redraw                                             AJAX
+  # GET /opportunities/redraw                                              AJAX
   #----------------------------------------------------------------------------
   def redraw
     @opportunities = get_opportunities(:page => 1, :per_page => params[:per_page])

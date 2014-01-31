@@ -40,12 +40,13 @@ class Contact < ActiveRecord::Base
   belongs_to  :user
   belongs_to  :lead
   belongs_to  :assignee, :class_name => "User", :foreign_key => :assigned_to
+  belongs_to  :reporting_user, :class_name => "User", :foreign_key => :reports_to
   has_one     :account_contact, :dependent => :destroy
   has_one     :account, :through => :account_contact
   has_many    :registrations, :dependent => :destroy
   has_many    :contact_opportunities, :dependent => :destroy
   has_many    :opportunities, :through => :contact_opportunities, :uniq => true, :order => "opportunities.id DESC"
-  has_many    :tasks, :as => :asset, :dependent => :destroy#, :order => 'created_at DESC'
+  has_many    :tasks, :as => :asset, :dependent => :destroy
   has_one     :business_address, :dependent => :destroy, :as => :addressable, :class_name => "Address", :conditions => "address_type = 'Business'"
   has_many    :addresses, :dependent => :destroy, :as => :addressable, :class_name => "Address" # advanced search uses this
   has_many    :emails, :as => :mediator
@@ -57,6 +58,8 @@ class Contact < ActiveRecord::Base
   #contacts we really don't want to keep any trace of...
   has_many    :attendances, :dependent => :destroy 
 
+  delegate :campaign, :to => :lead, :allow_nil => true
+
   has_ransackable_associations %w(account opportunities tags activities emails addresses comments tasks contact_groups)
   ransack_can_autocomplete
   
@@ -64,10 +67,10 @@ class Contact < ActiveRecord::Base
 
   accepts_nested_attributes_for :business_address, :allow_destroy => true, :reject_if => proc {|attributes| Address.reject_address(attributes)}
 
-  scope :created_by, lambda { |user| { :conditions => [ "user_id = ?", user.id ] } }
-  scope :assigned_to, lambda { |user| { :conditions => ["assigned_to = ?", user.id ] } }
+  scope :created_by,  ->(user) { where( user_id: user.id ) }
+  scope :assigned_to, ->(user) { where( assigned_to: user.id ) }
 
-  scope :text_search, lambda { |query|
+  scope :text_search, ->(query) {
     t = Contact.arel_table
     # We can't always be sure that names are entered in the right order, so we must
     # split the query into all possible first/last name permutations.
@@ -107,10 +110,10 @@ class Contact < ActiveRecord::Base
 
   has_fields
   exportable
-  sortable :by => [ "first_name ASC",  "last_name ASC", "created_at DESC", "updated_at DESC", "account_contacts.account_id DESC" ], :default => "created_at DESC"
+  sortable :by => [ "first_name ASC",  "last_name ASC", "created_at DESC", "updated_at DESC" ], :default => "created_at DESC"
 
-  validates_presence_of :first_name, :message => :missing_first_name if Setting.require_first_names
-  validates_presence_of :last_name, :message => :missing_last_name if Setting.require_last_names
+  validates_presence_of :first_name, :message => :missing_first_name, :if => -> { Setting.require_first_names }
+  validates_presence_of :last_name,  :message => :missing_last_name,  :if => -> { Setting.require_last_names  }
   validate :users_for_shared_access
 
   # Default values provided through class methods.
@@ -200,7 +203,6 @@ class Contact < ActiveRecord::Base
     # Must set access before user_ids, because user_ids= method depends on access value.
     self.access = params[:contact][:access] if params[:contact][:access]
     self.attributes = params[:contact]
-    #mailchimp_lists unless self.invalid?
     self.save
   end
 

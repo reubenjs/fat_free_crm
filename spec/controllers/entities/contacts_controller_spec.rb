@@ -70,7 +70,7 @@ describe ContactsController do
 
     describe "with mime type of JSON" do
       it "should render all contacts as JSON" do
-        @controller.should_receive(:get_contacts).and_return(contacts = mock("Array of Contacts"))
+        @controller.should_receive(:get_contacts).and_return(contacts = double("Array of Contacts"))
         contacts.should_receive(:to_json).and_return("generated JSON")
 
         request.env["HTTP_ACCEPT"] = "application/json"
@@ -81,7 +81,7 @@ describe ContactsController do
 
     describe "with mime type of XML" do
       it "should render all contacts as xml" do
-        @controller.should_receive(:get_contacts).and_return(contacts = mock("Array of Contacts"))
+        @controller.should_receive(:get_contacts).and_return(contacts = double("Array of Contacts"))
         contacts.should_receive(:to_xml).and_return("generated XML")
 
         request.env["HTTP_ACCEPT"] = "application/xml"
@@ -303,7 +303,7 @@ describe ContactsController do
 
       it "should expose a newly created contact as @contact and render [create] template" do
         @contact = FactoryGirl.build(:contact, :first_name => "Billy", :last_name => "Bones")
-        Contact.stub!(:new).and_return(@contact)
+        Contact.stub(:new).and_return(@contact)
 
         xhr :post, :create, :contact => { :first_name => "Billy", :last_name => "Bones" }, :account => { :name => "Hello world" }
         assigns(:contact).should == @contact
@@ -314,7 +314,7 @@ describe ContactsController do
       it "should be able to associate newly created contact with the opportunity" do
         @opportunity = FactoryGirl.create(:opportunity, :id => 987);
         @contact = FactoryGirl.build(:contact)
-        Contact.stub!(:new).and_return(@contact)
+        Contact.stub(:new).and_return(@contact)
 
         xhr :post, :create, :contact => { :first_name => "Billy"}, :account => {}, :opportunity => 987
         assigns(:contact).opportunities.should include(@opportunity)
@@ -323,7 +323,7 @@ describe ContactsController do
 
       it "should reload contacts to update pagination if called from contacts index" do
         @contact = FactoryGirl.build(:contact, :user => current_user)
-        Contact.stub!(:new).and_return(@contact)
+        Contact.stub(:new).and_return(@contact)
 
         request.env["HTTP_REFERER"] = "http://localhost/contacts"
         xhr :post, :create, :contact => { :first_name => "Billy", :last_name => "Bones" }, :account => {}
@@ -332,7 +332,7 @@ describe ContactsController do
 
       it "should add a new comment to the newly created contact when specified" do
         @contact = FactoryGirl.build(:contact, :user => current_user)
-        Contact.stub!(:new).and_return(@contact)
+        Contact.stub(:new).and_return(@contact)
 
         xhr :post, :create, :contact => { :first_name => "Testy", :last_name => "McTest" }, :account => { :name => "Hello world" }, :comment_body => "Awesome comment is awesome"
         assigns[:contact].comments.map(&:comment).should include("Awesome comment is awesome")
@@ -343,7 +343,7 @@ describe ContactsController do
 
       before(:each) do
         @contact = FactoryGirl.build(:contact, :first_name => nil, :user => current_user, :lead => nil)
-        Contact.stub!(:new).and_return(@contact)
+        Contact.stub(:new).and_return(@contact)
       end
 
       # Redraw [create] form with selected account.
@@ -648,11 +648,11 @@ describe ContactsController do
     it_should_behave_like("auto complete")
   end
 
-  # POST /contacts/redraw                                                  AJAX
+  # GET /contacts/redraw                                                   AJAX
   #----------------------------------------------------------------------------
   describe "responding to POST redraw" do
     it "should save user selected contact preference" do
-      xhr :post, :redraw, :per_page => 42, :view => "long", :sort_by => "first_name", :naming => "after"
+      xhr :get, :redraw, :per_page => 42, :view => "long", :sort_by => "first_name", :naming => "after"
       current_user.preference[:contacts_per_page].to_i.should == 42
       current_user.preference[:contacts_index_view].should  == "long"
       current_user.preference[:contacts_sort_by].should  == "contacts.first_name ASC"
@@ -660,13 +660,13 @@ describe ContactsController do
     end
 
     it "should set similar options for Leads" do
-      xhr :post, :redraw, :sort_by => "first_name", :naming => "after"
+      xhr :get, :redraw, :sort_by => "first_name", :naming => "after"
       current_user.pref[:leads_sort_by].should == "leads.first_name ASC"
       current_user.pref[:leads_naming].should == "after"
     end
 
     it "should reset current page to 1" do
-      xhr :post, :redraw, :per_page => 42, :view => "long", :sort_by => "first_name", :naming => "after"
+      xhr :get, :redraw, :per_page => 42, :view => "long", :sort_by => "first_name", :naming => "after"
       session[:contacts_current_page].should == 1
     end
 
@@ -676,7 +676,7 @@ describe ContactsController do
         FactoryGirl.create(:contact, :first_name => "Bobby", :user => current_user)
       ]
 
-      xhr :post, :redraw, :per_page => 1, :sort_by => "first_name"
+      xhr :get, :redraw, :per_page => 1, :sort_by => "first_name"
       assigns(:contacts).should == [ @contacts.first ]
       response.should render_template("contacts/index")
     end

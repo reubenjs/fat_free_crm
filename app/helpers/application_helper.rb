@@ -54,7 +54,7 @@ module ApplicationHelper
     asset_count = related.try(assets).count
     
     if (views && related.present?)
-      sort_by_menu_items = sort_by_model.sort_by_fields.map { |field| options_menu_item(:sort_by, field, url_for(:controller => related.class.name.tableize.to_sym, :action => :redraw_show, :id => related.id, :remote => true), false) }
+      sort_by_menu_items = sort_by_model.sort_by_fields.map { |field| options_menu_item(:sort_by, field, url_for(:controller => related.class.name.tableize.to_sym, :action => :redraw_show, :id => related.id, :remote => true)) }
       sort_by = current_user.pref[:"#{sort_by_model.name.tableize}_sort_by"]  || sort_by_model.sort_by
       current_sort_by = t("option_" + sort_by_model.sort_by_map.invert[sort_by])
     end
@@ -66,10 +66,9 @@ module ApplicationHelper
     html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if (views && related.present? && !no_create)
     html << javascript_tag(
       "new crm.Menu({
-        trigger   : \"sort_by\",
-        fade      : 0.5,
-        appear    : 0.5,
-        align     : \"left\",
+        trigger   : \"\#sort_by\",
+        fade      : 500,
+        appear    : 500,
         menu_items: [ #{sort_by_menu_items.join(",")} ]
       });" 
     ) if (views && related.present?)
@@ -84,7 +83,7 @@ module ApplicationHelper
   def load_select_popups_for(related, *assets)
     js = generate_js_for_popups(related, *assets)
     content_for(:javascript_epilogue) do
-      raw "document.observe('dom:loaded', function() { #{js} });"
+      raw "$(function() { #{js} });"
     end
   end
 
@@ -113,7 +112,7 @@ module ApplicationHelper
     link_to(text,
       url + "#{url.include?('?') ? '&' : '?'}cancel=false" + related + event_instance,
       :remote => true,
-      :onclick => "this.href = this.href.replace(/cancel=(true|false)/,'cancel='+ Element.visible('#{id}'));",
+      :onclick => "this.href = this.href.replace(/cancel=(true|false)/,'cancel='+ ($('##{id}').css('display') != 'none'));",
       :class => options[:class]
     )
   end
@@ -133,7 +132,7 @@ module ApplicationHelper
     link_to(edit_text,
       options[:url] || polymorphic_url(record, :action => :edit),
       :remote  => true,
-      :onclick => "this.href = this.href.split('?')[0] + '?previous='+crm.find_form('edit_#{name}');".html_safe
+      :onclick => "this.href = this.href.split('?')[0] + '?previous='+crm.find_form('edit_#{name}') + '#{related}';".html_safe
     )
   end
 
@@ -203,7 +202,7 @@ module ApplicationHelper
     tabs = [ :contacts, :accounts, :contact_groups, :events ]
     current = tabs.first unless tabs.include?(current)
     tabs.map do |tab|
-      link_to_function(t("tab_#{tab}"), "crm.jumper('#{tab}')", :class => (tab == current ? 'selected' : ''))
+      link_to_function(t("tab_#{tab}"), "crm.jumper('#{tab}')", "html-data" => tab, :class => (tab == current ? 'selected' : ''))
     end.join(" | ").html_safe
   end
 
@@ -221,7 +220,7 @@ module ApplicationHelper
 
   #----------------------------------------------------------------------------
   def one_submit_only(form='')
-    { :onsubmit => "jQuery('#'+this.id+' input[type=\\'submit\\']').disable()".html_safe }
+    { :onsubmit => "$('#'+this.id+' input[type=submit]').prop('disabled', true)".html_safe }
   end
 
   #----------------------------------------------------------------------------
@@ -243,9 +242,9 @@ module ApplicationHelper
   def confirm_delete(model, params = {})
     question = %(<span class="warn">#{t(:confirm_delete, model.class.to_s.downcase)}</span>).html_safe
     yes = link_to(t(:yes_button), params[:url] || model, :method => :delete)
-    no = link_to_function(t(:no_button), "jQuery('#menu').html(jQuery('#confirm').html());")
-    text = "jQuery('#confirm').html( jQuery('#menu').html() );\n"
-    text << "jQuery('#menu').html('#{question} #{yes} : #{no}');"
+    no = link_to_function(t(:no_button), "$('#menu').html($('#confirm').html());")
+    text = "$('#confirm').html( $('#menu').html() );\n"
+    text << "$('#menu').html('#{question} #{yes} : #{no}');"
     text.html_safe
   end
 
@@ -264,8 +263,8 @@ module ApplicationHelper
   #----------------------------------------------------------------------------
   def refresh_sidebar_for(view, action = nil, shake = nil)
     text = ""
-    text << "jQuery('#sidebar').html('#{ j render(:partial => "layouts/sidebar", :locals => { :view => view, :action => action }) }');"
-    text << "jQuery('##{j shake.to_s}').effect('shake', { duration:200, distance: 3 });" if shake
+    text << "$('#sidebar').html('#{ j render(:partial => "layouts/sidebar", :locals => { :view => view, :action => action }) }');"
+    text << "$('##{j shake.to_s}').effect('shake', { duration:200, distance: 3 });" if shake
     text.html_safe
   end
 
@@ -287,42 +286,41 @@ module ApplicationHelper
 
   # Ajax helper to refresh current index page once the user selects an option.
   #----------------------------------------------------------------------------
-  def redraw(option, value, url = nil)
+  def redraw(option, value, url = send("redraw_#{controller.controller_name}_path"))
     if value.is_a?(Array)
       param, value = value.first, value.last
     end
-    remote_function(
-      :url       => url || send("redraw_#{controller.controller_name}_path"),
-      :with      => "'#{option}=#{param || value}'",
-      :condition => "$('#{option}').innerHTML != '#{value}'",
-      :loading   => "$('#{option}').update('#{value}'); $('loading').show()",
-      :complete  => "$('loading').hide()"
-    )
+    %Q{
+      if ($('##{option}').html() != '#{value}') {
+        $('##{option}').html('#{value}');
+        $('#loading').show();
+        $.post('#{url}', {#{option}: '#{param || value}'}, function () {
+          $('#loading').hide();
+        });
+      }
+    }
   end
 
   #----------------------------------------------------------------------------
-  def options_menu_item(option, key, url = nil, query=true)
-    name = t("option_#{key.include?(".") ? key.split(".")[1] : key}")
-    with = query ? "'#{option}=#{key}&query=' + $(\"query\").value" : "'#{option}=#{key}'"
-    
+  def options_menu_item(option, key, url = send("redraw_#{controller.controller_name}_path"))
+    name = t("option_#{key}")
     "{ name: \"#{name.titleize}\", on_select: function() {" +
-    remote_function(
-      :url       => url || send("redraw_#{controller.controller_name}_path"),
-      :with      => with,
-      :condition => "$('#{option}').innerHTML != '#{name}'",
-      :loading   => "$('#{option}').update('#{name}'); $('loading').show()",
-      :complete  => "$('loading').hide()"
-    ) + "}}"
+    %Q{
+      if ($('##{option}').html() != '#{name}') {
+        $('##{option}').html('#{name}');
+        $('#loading').show();
+        $.get('#{url}', {#{option}: '#{key}', query: $('#query').val()}, function () {
+          $('#loading').hide();
+        });
+      }
+    } + "}}"
   end
 
   # Ajax helper to pass browser timezone offset to the server.
   #----------------------------------------------------------------------------
   def get_browser_timezone_offset
     unless session[:timezone_offset]
-      remote_function(
-        :url  => timezone_path,
-        :with => "'offset='+(new Date()).getTimezoneOffset()"
-      )
+      "$.get('#{timezone_path}', {offset: (new Date()).getTimezoneOffset()});"
     end
   end
 
@@ -334,7 +332,6 @@ module ApplicationHelper
     args = { :class => 'gravatar', :size => :large }.merge(args)
 
     if model.respond_to?(:avatar) and model.avatar.present?
-      Avatar
       image_tag(model.avatar.image.url(args[:size]), args)
     else
       args = Avatar.size_from_style!(args) # convert size format :large => '75x75'
@@ -434,18 +431,20 @@ module ApplicationHelper
 
   def entity_filter_checkbox(name, value, count)
     checked = (session["#{controller_name}_filter"].present? ? session["#{controller_name}_filter"].split(",").include?(value.to_s) : count.to_i > 0)
-    values = %Q{$$("input[name='#{name}[]']").findAll(function (el) { return el.checked }).pluck("value")}
-    params = h(%Q{"#{name}=" + #{values} + "&query=" + $("query").value})
-
-    onclick = remote_function(
-      :url      => { :action => :filter },
-      :with     => params,
-      :loading  => "$('loading').show()",
-      :complete => "$('loading').hide()"
-    )
+    url = url_for(:action => :filter)
+    onclick = %Q{
+      var query = $('#query').val(),
+          values = [];
+      $('input[name=&quot;#{name}[]&quot;]').filter(':checked').each(function () {
+        values.push(this.value);
+      });
+      $('#loading').show();
+      $.post('#{url}', {#{name}: values.join(','), query: query}, function () {
+        $('#loading').hide();
+      });
+    }.html_safe
     check_box_tag("#{name}[]", value, checked, :id => value, :onclick => onclick)
   end
-
 
   # Create a column in the 'asset_attributes' table.
   #----------------------------------------------------------------------------
@@ -526,7 +525,8 @@ module ApplicationHelper
         content_tag(:li) do
           url = (action == "index") ? send("redraw_#{controller}_path") : send("#{controller.singularize}_path")
           link_to('#', :title => t(view.name, :default => view.title), :"data-view" => view.name, :"data-url" => url, :"data-context" => action, :class => classes) do
-            image_tag(view.icon || 'brief.png')
+            icon = view.icon || 'fa-bars'
+            content_tag(:i, nil, class: "fa #{icon}")
           end
         end
       end.join('').html_safe
@@ -538,12 +538,44 @@ module ApplicationHelper
       url_for(model),
       :method  => :delete,
       :remote  => true,
-      :onclick => visual_effect(:highlight, dom_id(model), :startcolor => "#ffe4e1")
+      :onclick => "$('\##{dom_id(model)}').effect(\"highlight\");".html_safe 
     )
   end
   
   def indefinite_article(params_word)
       %w(a e i o u).include?(params_word[0].downcase) ? "an" : "a"
+  end
+
+  #----------------------------------------------------------------------------
+  # Generate the html for $.timeago function
+  # <span class="timeago" datetime="2008-07-17T09:24:17Z">July 17, 2008</span>
+  def timeago(time, options = {})
+    options[:class] ||= "timeago"
+    content_tag(:span, time.to_s, options.merge( title: time.getutc.iso8601)) if time
+  end
+
+  #----------------------------------------------------------------------------
+  # Translate List name to FontAwesome icon text
+  def get_icon(name)
+    case name
+      when "tasks" then "fa-check-square-o"
+      when "campaigns" then "fa-bar-chart-o"
+      when "leads" then "fa-tasks"
+      when "accounts" then "fa-users"
+      when "contacts" then "fa-user"
+      when "opportunities" then "fa-money"
+      when "team" then "fa-globe"
+    end
+  end
+
+  #----------------------------------------------------------------------------
+  # Ajaxification FTW!
+  # e.g. collection = Opportunity.my.scope
+  #         options = { renderer: {...} , params: {...}
+  def paginate(options = {})
+    collection = options.delete(:collection)
+    options = { renderer: RemoteLinkPaginationHelper::LinkRenderer }.merge(options)
+    will_paginate(collection, options)
   end
 
 end

@@ -1,6 +1,6 @@
 .remote
   = simple_form_for(@mandrill_email, :html => one_submit_only(:mandrill_email), :remote => true) do |f|
-    = link_to_close edit_contact_group_path(@mandrill_email)
+    = link_to_close edit_mandrill_email_path(@mandrill_email)
     = f.hidden_field :user_id
 
     = f.error_messages :object_name => t('mandrill_email')

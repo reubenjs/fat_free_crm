@@ -288,9 +288,17 @@ class EventsController < EntitiesController
   # POST /accounts/filter                                                  AJAX
   #----------------------------------------------------------------------------
   def filter
-    session[:events_filter] = params[:category]
-    @events = get_events(:page => 1)
-    render :index
+    update_session do |filters|      
+      if params[:checked].true?
+        filters << params[:category]
+      else
+        filters.delete(params[:category])
+      end
+    end
+    
+    respond_with(@events = get_events(:page => 1, :per_page => params[:per_page])) do |format|
+      format.js { render :index }
+    end
   end
   
   def toggle_comments
@@ -298,6 +306,15 @@ class EventsController < EntitiesController
   end
 
 private
+
+  # Yields array of current filters and updates the session using new values.
+  #----------------------------------------------------------------------------
+  def update_session
+    name = "events_filter"
+    filters = (session[name].nil? ? [] : session[name].split(","))
+    yield filters
+    session[name] = filters.uniq.join(",")
+  end
 
   def create_event_instances(list_of_dates, start_week)
     event_instances_list = []

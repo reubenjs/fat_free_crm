@@ -20,13 +20,24 @@ module EventsHelper
   #----------------------------------------------------------------------------
   def link_to_mark(contact, event)
     #onclick = %Q/$("#{dom_id(contact, :mark)}").style.textDecoration="line-through";/
-    onclick = remote_function(:url => mark_event_instance_path(event), :method => :put, :with => "'contact_id=#{contact.id}'")
+    url = url_for(:controller => :event_instances, :action => :mark)
+    onclick = %Q{
+      $('#loading').show();
+      $.post('#{url}', {contact_id: this.name.split('_').pop() }, function () {
+        $('#loading').hide();
+      });
+    }.html_safe
   end
 
   #----------------------------------------------------------------------------
   def link_to_unmark(contact, event)
-    #onclick = %Q/$("#{dom_id(contact, :mark)}").style.textDecoration="line-through";/
-    onclick = remote_function(:url => unmark_event_instance_path(event), :method => :put, :with => "'contact_id=#{contact.id}'")
+    url = url_for(:controller => :event_instances, :action => :unmark)
+    onclick = %Q{
+      $('#loading').show();
+      $.post('#{url}', {contact_id: this.name.split('_').pop() }, function () {
+        $('#loading').hide();
+      });
+    }.html_safe
   end
 
   def attendance_section(related, assets)
@@ -48,12 +59,13 @@ module EventsHelper
   #----------------------------------------------------------------------------
   def event_category_checbox(category, count)
     checked = (session[:events_filter] ? session[:events_filter].split(",").include?(category.to_s) : count.to_i > 0)
-    onclick = remote_function(
-      :url      => { :action => :filter },
-      :with     => h(%Q/"category=" + $$("input[name='category[]']").findAll(function (el) { return el.checked }).pluck("value")/),
-      :loading  => "$('loading').show()",
-      :complete => "$('loading').hide()"
-    )
+    url = url_for(:controller => :events, :action => :filter)
+    onclick = %Q{
+      $('#loading').show();
+      $.post('#{url}', {category: this.value, checked: this.checked}, function () {
+        $('#loading').hide();
+      });
+    }.html_safe
     check_box_tag("category[]", category, checked, :id => category, :onclick => onclick)
   end
 

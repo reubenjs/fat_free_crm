@@ -9,9 +9,14 @@
       %span.ui-icon-delete
   
       :javascript
-        new Form.Element.Observer('query', 1.5, function(element, value) {
-          crm.search_show(value, "#{object.class.name.tableize}", "#{object.id}", "contacts");
+        var searchTimeout;
+
+        $('#query').on('keydown', function(event) {
+          $el = $(event.target)
+          if (searchTimeout) clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(function () { crm.search_show($el.val(), "#{object.class.name.tableize}", "#{object.id}", "contacts"); }, 500);
         });
+        
     #search_results_count{:style => "display:inline; margin-left: 5px"}
     = image_tag("loading.gif", :size => :thumb, :id => "loading", :style => "display: none;")
 
@@ -22,4 +27,4 @@
     - contacts = object.contacts.paginate(:page => 1, :per_page => 50)
   = render :partial => "contacts/contact", :collection => contacts, :locals => {:object => object}
 
-= will_paginate contacts, :id => 'contacts_pagination', :params => {:action => :contacts}
+= paginate( collection: contacts, id: 'contacts_pagination', params: { action: 'contacts' } )

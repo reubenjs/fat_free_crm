@@ -6,9 +6,6 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rubygems'
-require 'yaml'
-YAML::ENGINE.yamler = 'syck'
-
 require 'rails/all'
 
 if defined?(Bundler)
@@ -31,7 +28,7 @@ module FatFreeCRM
     config.autoload_paths += Dir[Rails.root.join("app/models/**")] +
                              Dir[Rails.root.join("app/controllers/entities")]
 
-    # Prevent Field class from being reloading more than once as this clears registered customfields
+    # Prevent Field class from being reloaded more than once as this clears registered customfields
     config.autoload_once_paths += [File.expand_path("../app/models/fields/field.rb", __FILE__)]
 
     # Activate observers that should always be running.
@@ -72,7 +69,7 @@ module FatFreeCRM
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :password_hash, :password_salt, :password_confirmation]
 
     # Use SQL instead of Active Record's schema dumper when creating the database.
     # This is necessary if your schema can't be completely dumped by the schema dumper,

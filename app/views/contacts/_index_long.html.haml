@@ -1,6 +1,6 @@
 - object = defined?(object) ? object : nil
 - registration = (object.present? && object.class == Event) ? object.registrations.find_by_contact_id(contact.id) : nil
-%li.highlight[contact]
+%li.draggable.highlight[contact]
   = avatar_for(contact, :size => "30x30")
   %ul.tools
     = hook(:contact_tools_before, self, :contact => contact)
@@ -64,7 +64,7 @@
         - assigned = User.find(contact.assigned_to) unless contact.assigned_to.blank?
         - if assigned.present?
           = "[#{link_to assigned.first_name, assigned}] |".html_safe
-      = t(:added_ago, time_ago_in_words(contact.created_at))
+      = t(:added_ago, value: timeago(contact.created_at)).html_safe
 
     = hook(:contact_bottom, self, :contact => contact)
-= draggable_element(dom_id(contact), :revert => true, :handle => "'gravatar'", :scroll => "window")
+-#= draggable_element(dom_id(contact), :revert => true, :handle => "'gravatar'", :scroll => "window")

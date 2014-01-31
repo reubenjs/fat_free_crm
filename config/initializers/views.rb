@@ -7,55 +7,55 @@
 # Register the views that FatFreeCRM provides
 #------------------------------------------------------------------------------
 
-[ {:name => 'contacts_index_brief', :title => 'Brief format', :icon => 'brief.png',
+[ {:name => 'contacts_index_brief', :title => 'Brief format', :icon => 'fa-bars',
    :controllers => ['contacts'], :actions => ['index'], :template => 'contacts/index_brief'},
-  {:name => 'contacts_index_long', :title => 'Long format', :icon => 'long.png',
+  {:name => 'contacts_index_long', :title => 'Long format', :icon => 'fa-list',
    :controllers => ['contacts'], :actions => ['index'], :template => 'contacts/index_long'}, # default index view
-  {:name => 'contacts_index_full', :title => 'Full format', :icon => 'full.png',
+  {:name => 'contacts_index_full', :title => 'Full format', :icon => 'fa-list-alt',
    :controllers => ['contacts'], :actions => ['index'], :template => 'contacts/index_full'},
-  {:name => 'contacts_show_normal', :title => 'Normal format', :icon => 'long.png',
+  {:name => 'contacts_show_normal', :title => 'Normal format', :icon => 'fa-list',
    :controllers => ['contacts'], :actions => ['show'], :template => nil}, # default show view
 
- {:name => 'opportunities_index_brief', :title => 'Brief format', :icon => 'brief.png',
+ {:name => 'opportunities_index_brief', :title => 'Brief format', :icon => 'fa-bars',
   :controllers => ['opportunities'], :actions => ['index'], :template => 'opportunities/index_brief'},
- {:name => 'opportunities_index_long', :title => 'Long format', :icon => 'long.png',
+ {:name => 'opportunities_index_long', :title => 'Long format', :icon => 'fa-list',
    :controllers => ['opportunities'], :actions => ['index'], :template => 'opportunities/index_long'}, # default
- {:name => 'opportunities_show_normal', :title => 'Normal format', :icon => 'long.png',
+ {:name => 'opportunities_show_normal', :title => 'Normal format', :icon => 'fa-list',
    :controllers => ['opportunities'], :actions => ['show'], :template => nil}, # default show view
-   
- {:name => 'accounts_index_brief', :title => 'Brief format', :icon => 'brief.png',
+
+ {:name => 'accounts_index_brief', :title => 'Brief format', :icon => 'fa-bars',
   :controllers => ['accounts'], :actions => ['index'], :template => 'accounts/index_brief'}, # default
- {:name => 'accounts_index_long', :title => 'Long format', :icon => 'long.png',
+ {:name => 'accounts_index_long', :title => 'Long format', :icon => 'fa-list',
   :controllers => ['accounts'], :actions => ['index'], :template => 'accounts/index_long'}, # default
  # {:name => 'accounts_show_normal', :title => 'Normal format', :icon => 'long.png',
  #   :controllers => ['accounts'], :actions => ['show'], :template => 'contacts/index_brief'}, # default show view
- {:name => 'accounts_show_brief', :title => 'Brief format', :icon => 'brief.png',
+ {:name => 'accounts_show_brief', :title => 'Brief format', :icon => 'fa-bars',
     :controllers => ['accounts'], :actions => ['show'], :template => 'contacts/index_brief'}, # default show view
-  {:name => 'accounts_show_long', :title => 'Long format', :icon => 'long.png',
+  {:name => 'accounts_show_long', :title => 'Long format', :icon => 'fa-list',
      :controllers => ['accounts'], :actions => ['show'], :template => 'contacts/index_long'}, # default show view
  
- {:name => 'leads_index_brief', :title => 'Brief format', :icon => 'brief.png',
+ {:name => 'leads_index_brief', :title => 'Brief format', :icon => 'fa-bars',
   :controllers => ['leads'], :actions => ['index'], :template => 'leads/index_brief'}, # default
- {:name => 'leads_index_long', :title => 'Long format', :icon => 'long.png',
+ {:name => 'leads_index_long', :title => 'Long format', :icon => 'fa-list',
   :controllers => ['leads'], :actions => ['index'], :template => 'leads/index_long'},
- {:name => 'leads_show_normal', :title => 'Normal format', :icon => 'long.png',
+ {:name => 'leads_show_normal', :title => 'Normal format', :icon => 'fa-list',
    :controllers => ['leads'], :actions => ['show'], :template => nil}, # default show view
-  
- {:name => 'campaigns_index_brief', :title => 'Brief format', :icon => 'brief.png',
+
+ {:name => 'campaigns_index_brief', :title => 'Brief format', :icon => 'fa-bars',
   :controllers => ['campaigns'], :actions => ['index'], :template => 'campaigns/index_brief'}, # default
- {:name => 'campaigns_index_long', :title => 'Long format', :icon => 'long.png',
+ {:name => 'campaigns_index_long', :title => 'Long format', :icon => 'fa-list',
   :controllers => ['campaigns'], :actions => ['index'], :template => 'campaigns/index_long'},
- {:name => 'campaigns_show_normal', :title => 'Normal format', :icon => 'long.png',
+ {:name => 'campaigns_show_normal', :title => 'Normal format', :icon => 'fa-list',
    :controllers => ['campaigns'], :actions => ['show'], :template => nil}, # default show view
    
- {:name => 'contact_groups_show_brief', :title => 'Brief format', :icon => 'brief.png',
+ {:name => 'contact_groups_show_brief', :title => 'Brief format', :icon => 'fa-bars',
    :controllers => ['contact_groups'], :actions => ['show'], :template => 'contacts/index_brief'}, # default
-  {:name => 'contact_groups_show_long', :title => 'Long format', :icon => 'long.png',
+  {:name => 'contact_groups_show_long', :title => 'Long format', :icon => 'fa-list',
    :controllers => ['contact_groups'], :actions => ['show'], :template => 'contacts/index_long'},
    
- {:name => 'events_show_brief', :title => 'Brief format', :icon => 'brief.png',
+ {:name => 'events_show_brief', :title => 'Brief format', :icon => 'fa-bars',
    :controllers => ['events'], :actions => ['show'], :template => 'contacts/index_brief'}, # default
-  {:name => 'events_show_long', :title => 'Long format', :icon => 'long.png',
+  {:name => 'events_show_long', :title => 'Long format', :icon => 'fa-list',
    :controllers => ['events'], :actions => ['show'], :template => 'contacts/index_long'},
  
 ].each {|view| FatFreeCRM::ViewFactory.new(view)}

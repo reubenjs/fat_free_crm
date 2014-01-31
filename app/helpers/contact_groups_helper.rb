@@ -20,13 +20,14 @@ module ContactGroupsHelper
   # Sidebar checkbox control for filtering accounts by category.
   #----------------------------------------------------------------------------
   def contact_group_category_checbox(category, count)
-    checked = (session[:accounts_filter] ? session[:accounts_filter].split(",").include?(category.to_s) : count.to_i > 0)
-    onclick = remote_function(
-      :url      => { :action => :filter },
-      :with     => h(%Q/"category=" + $$("input[name='category[]']").findAll(function (el) { return el.checked }).pluck("value")/),
-      :loading  => "$('loading').show()",
-      :complete => "$('loading').hide()"
-    )
+    checked = (session[:contact_groups_filter] ? session[:contact_groups_filter].split(",").include?(category.to_s) : count.to_i > 0)
+    url = url_for(:controller => :contact_groups, :action => :filter)
+    onclick = %Q{
+      $('#loading').show();
+      $.post('#{url}', {category: this.value, checked: this.checked}, function () {
+        $('#loading').hide();
+      });
+    }.html_safe
     check_box_tag("category[]", category, checked, :id => category, :onclick => onclick)
   end
 

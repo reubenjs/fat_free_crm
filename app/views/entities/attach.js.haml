@@ -8,7 +8,7 @@
       - view = "pending"
     - else
       - view = "assigned"
-    jQuery('#tasks').prepend('#{ j render(:partial => "tasks/#{view}", :collection => [ @attachment ], :locals => { :bucket => @attachment.computed_bucket }) }');
+    $('#tasks').prepend('#{ j render(:partial => "tasks/#{view}", :collection => [ @attachment ], :locals => { :bucket => @attachment.computed_bucket }) }');
 
 
   - else
@@ -16,16 +16,16 @@
       -# we want selecting attendees on this page to act like you've marked them as attended.
       -# If they're already on the page, replace, checked and green background
       -# otherwise, add to the top of the list, checked and green background
-      if (jQuery('##{dom_id(@attachment)}').length > 0) { 
-      jQuery('##{dom_id(@attachment)}').replaceWith('#{ j render(:partial => "event_instances/#{partial}", :collection => [ @attachment ], :locals => {:object => @event_instance}) }');
+      if ($('##{dom_id(@attachment)}').length > 0) { 
+      $('##{dom_id(@attachment)}').replaceWith('#{ j render(:partial => "event_instances/#{partial}", :collection => [ @attachment ], :locals => {:object => @event_instance}) }');
       } else {
-      jQuery('##{h params[:assets]}').prepend('#{ j render(:partial => "event_instances/#{partial}", :collection => [ @attachment ], :locals => {:object => @event_instance}) }');
+      $('##{h params[:assets]}').prepend('#{ j render(:partial => "event_instances/#{partial}", :collection => [ @attachment ], :locals => {:object => @event_instance}) }');
       }
     - else
-      jQuery('##{h params[:assets]}').prepend('#{ j render(:partial => "#{params[:assets]}/#{partial}", :collection => [ @attachment ]) }');
+      $('##{h params[:assets]}').prepend('#{ j render(:partial => "#{params[:assets]}/#{partial}", :collection => [ @attachment ]) }');
     - if called_from_landing_page?(:accounts)
       = refresh_sidebar_for(:accounts, :show, :summary)
     - elsif called_from_landing_page?(:campaigns)
       = refresh_sidebar_for(:campaigns, :show, :summary)
 
-jQuery('##{partial}_#{h params[:asset_id]}').effect("highlight", { duration:1500 });
+$('##{partial}_#{h params[:asset_id]}').effect("highlight", { duration:1500 });

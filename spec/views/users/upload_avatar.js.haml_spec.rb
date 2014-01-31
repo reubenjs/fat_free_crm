@@ -15,7 +15,7 @@ describe "/users/upload_avatar" do
   describe "no errors:" do
     before do
       @avatar = FactoryGirl.create(:avatar, :entity => current_user)
-      current_user.stub!(:avatar).and_return(@avatar)
+      current_user.stub(:avatar).and_return(@avatar)
       assign(:user, @user = current_user)
     end
 
@@ -31,14 +31,14 @@ describe "/users/upload_avatar" do
     before do
       @avatar = FactoryGirl.create(:avatar, :entity => current_user)
       @avatar.errors.add(:image, "error")
-      current_user.stub!(:avatar).and_return(@avatar)
+      current_user.stub(:avatar).and_return(@avatar)
       assign(:user, @user = current_user)
     end
 
     it "should redraw the [Upload Avatar] form and shake it" do
       render
-      rendered.should include("jQuery('#upload_avatar').html")
-      rendered.should include(%Q/jQuery('#upload_avatar').effect("shake"/)
+      rendered.should include("$('#upload_avatar').html")
+      rendered.should include(%Q/$('#upload_avatar').effect("shake"/)
     end
   end # errors
 end

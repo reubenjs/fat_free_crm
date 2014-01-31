@@ -9,15 +9,26 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
+
+    # handle signup
+    can(:create, User) if User.can_signup?
+
     if user.present?
       entities = [Event, EventInstance, Registration]
       
       [Account, Campaign, Contact, Lead, Opportunity, ContactGroup, Attendance].each{|e| entities << e} unless user.groups.collect(&:name).include? "Conference Manager"
       
       entities << MandrillEmail if user.mandrill?
-      
-      can :create, :all
-      can :read, [User] # for search autocomplete
+
+      # User
+      can :manage, User, id: user.id # can do any action on themselves
+
+      # Tasks
+      can :create, Task
+      can :manage, Task, user: user.id
+      can :manage, Task, assigned_to: user.id
+
+      # Entities
       can :manage, entities, :access => 'Public'
       can :manage, entities + [Task], :user_id => user.id
       can :manage, entities + [Task], :assigned_to => user.id

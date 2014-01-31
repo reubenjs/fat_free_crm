@@ -166,13 +166,29 @@ class MandrillEmailsController < EntitiesController
 
   # POST /accounts/filter                                                  AJAX
   #----------------------------------------------------------------------------
-  def filter
-    session[:mandrill_emails_filter] = params[:category]
+  def filter 
+    update_session do |filters|
+      if params[:checked].true?
+        filters << params[:category]
+      else
+        filters.delete(params[:category])
+      end
+    end
+    
     @mandrill_emails = get_mandrill_emails(:page => 1)
-    render :index
+    #render :index
   end
 
 private
+
+  # Yields array of current filters and updates the session using new values.
+  #----------------------------------------------------------------------------
+  def update_session
+    name = "mandrill_emails_filter"
+    filters = (session[name].nil? ? [] : session[name].split(","))
+    yield filters
+    session[name] = filters.uniq.join(",")
+  end
 
   #----------------------------------------------------------------------------
   alias :get_mandrill_emails :get_list_of_records
