@@ -178,6 +178,13 @@
     show_comments: (value) ->
       $("com_contact_" + value ).toggle(); # show/hide comments section for attendances
 
+  	#----------------------------------------------------------------------------
+    update_part_time: (value) ->
+      if value
+        $("#part_time").show()
+      else
+        $("#part_time").hide()
+
     #----------------------------------------------------------------------------
     flip_campaign_permissions: (value) ->
       if value
@@ -451,8 +458,8 @@
       
       $.extend $.ui.autocomplete::,
         _renderItem: (ul, item) ->
-          term = @element.val()
-          html = item.label.replace(term, "<span class=\"jumpbox-highlight\">$&</span>")
+          term = new RegExp( "(" + @element.val() + ")", "gi" )
+          html = item.label.replace(term, "<span class=\"jumpbox-highlight\">$1</span>")
           $("<li></li>").data("item.autocomplete", item).append($("<a></a>").html(html)).appendTo ul
 
     #----------------------------------------------------------------------------

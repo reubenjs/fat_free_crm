@@ -1045,7 +1045,15 @@ table.asset_attributes {
 
 // Jumpbox
 
-span.jumpbox-highlight {
-  background-color: lightyellow;
-  font-weight: bold;
+.ui-menu-item > a:not(.ui-state-focus) {
+  span.jumpbox-highlight {
+    background-color: lightyellow;
+    font-weight: bold;
+  }
+}
+
+.ui-state-focus { 
+  span.jumpbox-highlight {
+    background-color: darkgray;
+  }
 }

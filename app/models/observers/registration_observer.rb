@@ -9,9 +9,13 @@ class RegistrationObserver < ActiveRecord::Observer
   end
   
   def before_update(registration)
-    if (registration.saasu_uid.blank? && registration.fee.to_i > 0)
-      add_saasu(registration) 
-      #registration.update_attributes(:saasu_uid => "delayed")
+    if (registration.fee.to_i > 0)
+      if (registration.saasu_uid.blank?)
+        add_saasu(registration) 
+        #registration.update_attributes(:saasu_uid => "delayed")
+      else
+        update_saasu(registration)
+      end
     end
   end
   
@@ -20,6 +24,22 @@ class RegistrationObserver < ActiveRecord::Observer
   end
 
   private
+
+  def update_saasu(registration)
+    i = Saasu::Invoice.find(registration.saasu_uid)
+    
+    i.invoice_items = calculate_invoice_items(registration)
+
+    response = Saasu::Invoice.update(i)
+    
+    if response.errors.nil?
+      Delayed::Worker.logger.add(Logger::INFO, "Updated invoice for #{registration.contact.full_name} to saasu")
+    else
+      Delayed::Worker.logger.add(Logger::INFO, "Error updating invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
+      UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
+    end
+    
+  end
 
   def add_saasu(registration)
     i = Saasu::Invoice.new
@@ -37,40 +57,8 @@ class RegistrationObserver < ActiveRecord::Observer
     if registration.contact.present?
       i.contact_uid = find_or_add_to_saasu(registration.contact)
     end
-
-    fee = Saasu::ServiceInvoiceItem.new
-    fee.description = "Commencement Camp registration fee"
-    fee.account_uid = Setting.saasu[:ccamp_income_account]
-    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 20)
     
-    i.invoice_items = [fee]
-    
-    # if registration.payment_method != "PayPal"
-#       discount = Saasu::ServiceInvoiceItem.new
-#       discount.description = "Online payment discount (if paid before 19th July)"
-#       discount.account_uid = Setting.saasu[:myc_income_account]
-#       discount.total_amount_incl_tax = -5
-#       
-#       i.invoice_items << discount
-#     end
-    
-    if registration.t_shirt_ordered.to_i  > 0
-      tshirt = Saasu::ServiceInvoiceItem.new
-      tshirt.description = "T-Shirt"
-      tshirt.account_uid = Setting.saasu[:tshirt_account]
-      tshirt.total_amount_incl_tax = (registration.t_shirt_ordered.to_i * 20)
-  
-      i.invoice_items << tshirt
-    end
-    
-    if registration.donate_amount.to_i > 0
-      donation = Saasu::ServiceInvoiceItem.new
-      donation.description = "Donation"
-      donation.account_uid = Setting.saasu[:donation_account]
-      donation.total_amount_incl_tax = registration.donate_amount.to_i
-      
-      i.invoice_items << donation
-    end
+    i.invoice_items = calculate_invoice_items(registration)
 
     tt = Saasu::TradingTerms.new
     tt.type = 1
@@ -115,8 +103,46 @@ class RegistrationObserver < ActiveRecord::Observer
     end
   end
   
-  def update_saasu(registration, updated_uid)
-
+  def calculate_invoice_items(registration)
+    
+    invoice_items = []
+    
+    fee = Saasu::ServiceInvoiceItem.new
+    fee.description = "Commencement Camp registration fee"
+    fee.account_uid = Setting.saasu[:ccamp_income_account]
+    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 20)
+    
+    invoice_items << fee
+    
+    # if registration.payment_method != "PayPal"
+#       discount = Saasu::ServiceInvoiceItem.new
+#       discount.description = "Online payment discount (if paid before 19th July)"
+#       discount.account_uid = Setting.saasu[:myc_income_account]
+#       discount.total_amount_incl_tax = -5
+#       
+#       i.invoice_items << discount
+#     end
+    
+    if registration.t_shirt_ordered.to_i  > 0
+      tshirt = Saasu::ServiceInvoiceItem.new
+      tshirt.description = "T-Shirt"
+      tshirt.account_uid = Setting.saasu[:tshirt_account]
+      tshirt.total_amount_incl_tax = (registration.t_shirt_ordered.to_i * 20)
+  
+      invoice_items << tshirt
+    end
+    
+    if registration.donate_amount.to_i > 0
+      donation = Saasu::ServiceInvoiceItem.new
+      donation.description = "Donation"
+      donation.account_uid = Setting.saasu[:donation_account]
+      donation.total_amount_incl_tax = registration.donate_amount.to_i
+      
+      invoice_items << donation
+    end
+    
+    invoice_items
+    
   end
   
   def delete_saasu(saasu_uid)

@@ -198,15 +198,20 @@ namespace :ffcrm do
             log_string = "Contact found by mobile. Registered: "
           end
           
-          # Create the registration
-          #-------------------------
+          if registration = event.registrations.find_by_contact_id(contact.id)
+            
+          else          
+            # Create the registration
+            #-------------------------
           
-          registration = Registration.new(
-            :contact => contact, 
-            :event => event,
-            :access => Setting.default_access,
-            :user_id => 1,
-            )
+            registration = Registration.new(
+              :contact => contact, 
+              :event => event,
+              :access => Setting.default_access,
+              :user_id => 1,
+              )
+          
+          end
           
           # Pull in contact data
           #----------------------

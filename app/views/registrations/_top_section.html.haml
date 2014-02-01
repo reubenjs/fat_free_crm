@@ -11,7 +11,7 @@
         %td
           .label 
             Part time
-            = f.check_box :part_time, :style => "float:left;", :onclick => "crm.update_part_time($('registration_part_time').checked)"
+            = f.check_box :part_time, :style => "float:left;", :onclick => "crm.update_part_time($('#registration_part_time').prop('checked'))"
     %div#part_time{ hidden_if(!@registration.part_time) }
       %table{ :width => "100%", :cellpadding => 0, :cellspacing => 0 }
         %tr
