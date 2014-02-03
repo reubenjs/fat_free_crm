@@ -3,7 +3,6 @@ class RegistrationObserver < ActiveRecord::Observer
   
   def before_create(registration) 
     if registration.fee.to_i > 0
-      #registration.update_attributes(:saasu_uid => "delayed")
       add_saasu(registration) 
     end
   end
@@ -12,33 +11,71 @@ class RegistrationObserver < ActiveRecord::Observer
     if (registration.fee.to_i > 0)
       if (registration.saasu_uid.blank?)
         add_saasu(registration) 
-        #registration.update_attributes(:saasu_uid => "delayed")
       else
         update_saasu(registration)
       end
     end
   end
   
-  def after_destroy(registration)
-    #self.delay.delete_saasu(registration.saasu_uid) if registration.saasu_uid.present?
+  def before_destroy(registration)
+    i = Saasu::Invoice.find(registration.saasu_uid)
+    if i.payments.present?
+      Delayed::Worker.logger.add(
+        Logger::INFO, 
+        "Not deleting invoice for #{registration.contact.full_name} from saasu as it contains a payment."
+        )
+      UserMailer.delay.saasu_registration_error(registration.contact, "Invoice not deleted from Saasu as it contains payments. Manual entry required")
+    else
+      response = Saasu::Invoice.delete(registration.saasu_uid)
+      if response.errors.nil?
+        Delayed::Worker.logger.add(Logger::INFO, "Deleted invoice for #{registration.contact.full_name} from saasu.")
+      else
+        Delayed::Worker.logger.add(Logger::INFO, "Error deleting invoice for #{registration.contact.full_name} from saasu. #{response.errors}")
+        UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
+      end
+    end
   end
 
   private
 
   def update_saasu(registration)
     i = Saasu::Invoice.find(registration.saasu_uid)
+    already_paid = 0
     
-    i.invoice_items = calculate_invoice_items(registration)
-
-    response = Saasu::Invoice.update(i)
-    
-    if response.errors.nil?
-      Delayed::Worker.logger.add(Logger::INFO, "Updated invoice for #{registration.contact.full_name} to saasu")
-    else
-      Delayed::Worker.logger.add(Logger::INFO, "Error updating invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
-      UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
+    if i.payments.present?
+      i.payments.each do |p| 
+        already_paid += p.amount
+      end
     end
     
+    if (already_paid > registration.fee.to_i)
+      #This would result in an overpayment error, don't update saasu invoice - it will have to be modified manually
+      Delayed::Worker.logger.add(
+        Logger::INFO, 
+        "Not updating invoice for #{registration.contact.full_name} to saasu as it would result in an overpayment"
+        )
+      UserMailer.delay.saasu_registration_error(registration.contact, "Change to registration not updated to Saasu as it would result in an overpayment. Manual entry required")
+    else
+      if (registration.t_shirt_ordered_changed? || 
+          registration.donate_amount_changed? || 
+          registration.fee_changed?)
+      
+        i.invoice_items = calculate_invoice_items(registration)
+      end
+      if registration.payment_method_was == "Cash" && registration.payment_method == "PayPal"
+        i.quick_payment = calculate_payment(registration)
+      end
+      
+      response = Saasu::Invoice.update(i)
+  
+      if response.errors.nil?
+        Delayed::Worker.logger.add(Logger::INFO, "Updated invoice for #{registration.contact.full_name} to saasu")
+      else
+        Delayed::Worker.logger.add(Logger::INFO, "Error updating invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
+        UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
+      end
+      
+    end
   end
 
   def add_saasu(registration)
@@ -82,13 +119,7 @@ class RegistrationObserver < ActiveRecord::Observer
       The Commencement Camp Team"
     
     if registration.payment_method == "PayPal"
-      qp = Saasu::QuickPayment.new
-      qp.date_paid = Time.now.strftime("%Y-%m-%d")
-      qp.banked_to_account_uid = Setting.saasu[:paypal_account]
-      qp.amount = registration.fee.to_i
-      qp.summary = "auto entered: paypal payment"
-      
-      i.quick_payment = [qp]
+      i.quick_payment = calculate_payment(registration)
     end
     
     response = Saasu::Invoice.insert_and_email(i, email, Setting.conference[:email_template].to_i)
@@ -101,6 +132,16 @@ class RegistrationObserver < ActiveRecord::Observer
       Delayed::Worker.logger.add(Logger::INFO, "Error adding invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
       UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
     end
+  end
+  
+  def calculate_payment(registration)
+    qp = Saasu::QuickPayment.new
+    qp.date_paid = Time.now.strftime("%Y-%m-%d")
+    qp.banked_to_account_uid = Setting.saasu[:paypal_account]
+    qp.amount = registration.fee.to_i
+    qp.summary = "auto entered: paypal payment"
+    
+    [qp]
   end
   
   def calculate_invoice_items(registration)

@@ -93,7 +93,7 @@
       %tr
         %td
           .label Payment Method
-          = f.select :payment_method, [["Cash","Cash"],["PayPal","PayPal"]], { :style => "width:160px" }
+          = f.select :payment_method, [["Cash","Cash"],["PayPal","PayPal"]], { :style => "width:160px" }, {:disabled => (f.object.payment_method == "PayPal")}
     
     
             

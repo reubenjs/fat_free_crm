@@ -64,7 +64,7 @@ class Event < ActiveRecord::Base
     if attachment.is_a?(Task)
       attachment.update_attribute(:asset, nil)
     else # Contacts, Opportunities
-      self.send(attachment.class.name.tableize).delete(attachment)
+      self.send(attachment.class.name.tableize).destroy(attachment)
     end
   end
   
