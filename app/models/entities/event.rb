@@ -83,10 +83,10 @@ class Event < ActiveRecord::Base
   
   def contacts_to_phone
     all_campus_contacts = Contact.in_accounts([1,2,3])
-    tagged_to_ignore = Contact.tagged_with('ignore-myc13')
-    in_bsg = Contact.includes(:contact_groups).where('contact_groups.category = "BSG"')
+    #tagged_to_ignore = Contact.tagged_with('ignore-myc13')
+    #in_bsg = Contact.includes(:contact_groups).where('contact_groups.category = "BSG"')
     
-    to_phone = all_campus_contacts - self.contacts - tagged_to_ignore - in_bsg
+    to_phone = all_campus_contacts - self.contacts #- tagged_to_ignore - in_bsg
   end
 
   private
