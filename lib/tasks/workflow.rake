@@ -59,6 +59,16 @@ namespace :ffcrm do
   end
   
   namespace :mailchimp do
+    desc "move subscribers to new single-list setup"
+    task :move => :environment do
+      Contact.all.each do |c|
+        if c.has_mailchimp_subscription?
+          Delayed::Job.enqueue AddOrUpdateChimp.new(c, c.cf_weekly_emails.reject(&:blank?))
+          puts "Moved #{c.full_name}"
+        end
+      end
+    end
+    
     desc "check mailchimp lists for consistency"
     task :check => :environment do
       lists = ["adelaide", "city_west", "city_east"]
