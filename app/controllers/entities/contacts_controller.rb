@@ -50,7 +50,7 @@ class ContactsController < EntitiesController
     if request.post?
       assigned_to_key = "other"
       
-      unless params[:data]["merges"].nil? || params[:data]["merges"]["INTERESTS"].nil?
+      unless params[:data]["merges"].nil? || params[:data]["merges"]["INTERESTS"].empty?
         list_name = params[:data]["merges"]["INTERESTS"].split(",")[0]
         assigned_to_key = list_name.downcase.underscore + "_" + params[:data]["merges"]["GENDER"].downcase
       end
@@ -109,8 +109,8 @@ class ContactsController < EntitiesController
       end
       contact.save
     else # GET
-      respond_with @contacts do |format|
-        format.html
+      respond_to do |format|
+        format.all {head :ok, :content_type => 'text/html'}
       end
     end  
   end
