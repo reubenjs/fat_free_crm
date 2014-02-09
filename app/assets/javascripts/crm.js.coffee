@@ -172,11 +172,11 @@
       
     #----------------------------------------------------------------------------
     show_scheduled: (value) ->
-      $("scheduled").toggle(); # Hide dropdown.
+      $("#scheduled").toggle(); # Hide dropdown.
     
     #----------------------------------------------------------------------------
     show_comments: (value) ->
-      $("com_contact_" + value ).toggle(); # show/hide comments section for attendances
+      $("#com_contact_" + value ).toggle(); # show/hide comments section for attendances
 
   	#----------------------------------------------------------------------------
     update_part_time: (value) ->
