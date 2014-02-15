@@ -83,6 +83,7 @@ Rails.application.routes.draw do
       post :mailchimp_webhooks
       get :mandrill_webhooks
       post :mandrill_webhooks
+      post :bsg_webhooks
     end
     member do
       post :move_contact

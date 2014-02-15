@@ -9,7 +9,7 @@ class ContactsController < EntitiesController
   before_filter :get_data_for_sidebar, :only => :index
   
   def single_access_allowed?
-    (action_name == "mailchimp_webhooks" || action_name == "mandrill_webhooks")
+    (action_name == "mailchimp_webhooks" || action_name == "mandrill_webhooks" || action_name == "bsg_webhooks")
   end
   
   def confirm
@@ -21,6 +21,123 @@ class ContactsController < EntitiesController
     respond_with(@contact)
   end
   alias :tags :mailing_lists
+  
+  def bsg_webhooks
+    if request.post?
+      #Setup groups if they don't already exist
+      adelaide_group = ContactGroup.find_or_initialize_by_name(
+          :name => Setting.bsg[:adelaide_group_name],
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+      unless adelaide_group.persisted?
+        adelaide_group.save
+      end
+        
+      ce_group = ContactGroup.find_or_initialize_by_name(
+          :name => Setting.bsg[:city_east_group_name],
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+      unless ce_group.persisted?
+        ce_group.save
+      end
+      
+      cw_group = ContactGroup.find_or_initialize_by_name(
+          :name => Setting.bsg[:city_west_group_name],
+          :access => Setting.default_access,
+          :user_id => 1
+          )
+      unless cw_group.persisted?
+        cw_group.save
+      end
+      
+      contact = params[:email].blank? ? nil : Contact.find_by_email(params[:email])
+      if contact.nil?
+        if params[:phone].blank?
+          contact = Contact.new
+          log_string = "Contact initialized"
+        else
+          contact = Contact.find_or_initialize_by_mobile(params[:phone].gsub(/[\(\) ]/, ""))
+          contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
+          log_string = "Contact found by mobile. updated: "
+        end
+      end
+      
+      if params[:year] == "1"
+        contact.cf_year_commenced = Time.new.year
+      end  
+      
+      unless contact.assigned_to.present?
+        if (params[:campus] == "city_east" || params[:campus] == "city_west")
+          #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+          user = (params[:gender] == "Male") ? User.find_by_first_name("dave") : User.find_by_first_name("emily")
+        elsif (params[:campus] == "adelaide")
+          #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+          user = (params[:gender] == "Male") ? User.find_by_first_name("reuben") : User.find_by_first_name("laura")
+        else
+          user = User.find_by_first_name("geoff")
+        end
+        contact.assigned_to = user.id
+      end
+      
+      unless contact.account.present?
+        contact.account = Account.find_or_create_by_name(params[:campus].titleize) 
+        contact.account.user = User.find(1)
+      end
+      
+      if !contact.persisted?
+        contact.user_id = 1
+        contact.access = Setting.default_access
+        contact.tag_list << "new@bsg#{Time.new.strftime('%y')}" unless contact.tag_list.include?("new@bsg#{Time.new.strftime('%y')}")
+        log_string = "Created new contact: "
+      else
+        log_string = "Contact found by email. updated: " if log_string.nil?
+      end
+
+      contact.tag_list << params[:opportunities].split(", ")
+      
+      unless params[:instrument].blank?
+        contact.background_info += "\n" unless contact.background_info.blank?
+        contact.background_info += "Instrument played: #{params[:instrument]}"
+      end
+      
+      contact.update_attributes(
+        :first_name => params[:first_name],
+        :last_name => params[:last_name],
+        :email => params[:email],
+        :cf_gender => params[:gender],
+        :mobile => params[:phone].gsub(/[\(\) ]/, ""),
+        #address?
+        :cf_campus => params[:campus],
+        :cf_course_1 => params[:course],
+        :cf_faculty => params[:faculty]
+      )
+      
+      contact.save!
+      contact.touch
+      
+      contacts_with_name = Contact.where(:first_name => contact.first_name, :last_name => contact.last_name)
+      if contacts_with_name.size > 1
+        contact.tasks << Task.new(
+              :name => "Possible duplicate from bsg registration sync", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("reuben")
+              )
+      end
+      
+      adelaide_group.contacts << contact if params[:campus] == "adelaide" && !adelaide_group.contacts.include?(contact) #shouldn't happen, but just in case
+      ce_group.contacts << contact if params[:campus] == "city_east" && !ce_group.contacts.include?(contact) #shouldn't happen, but just in case
+      cw_group.contacts << contact if params[:campus] == "city_west" && !cw_group.contacts.include?(contact) #shouldn't happen, but just in case
+      
+      respond_to do |format|
+        format.all {head :ok, :content_type => 'text/html'}
+      end
+      
+    else # GET
+      respond_to do |format|
+        format.all {head :ok, :content_type => 'text/html'}
+      end
+    end
+  end
   
   def mandrill_webhooks
     if request.post?
