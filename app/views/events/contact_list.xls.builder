@@ -33,11 +33,24 @@ xml.Worksheet 'ss:Name' => (@event.name + " contact list") do
                  I18n.t('state'),
                  I18n.t('zipcode'),
                  I18n.t('country'),
-                 I18n.t('address')]
+                 I18n.t('address'),
+                 "Transport required",
+                 "Driver for",
+                 "Can transport",
+                 "First time",
+                 "Part time",
+                 "Breakfasts",
+                 "Lunches",
+                 "Dinners",
+                 "Sleeps",
+                 "Fee",
+                 "Payment method",
+                 "T Shirt ordered",
+                 "T Shirt size ordered"]
         
         # Append custom field labels to header
         Contact.fields.each do |field|
-          heads << field.label
+          heads << field.label unless field.label == "Financial Status"
         end
         
         heads.each do |head|
@@ -50,6 +63,7 @@ xml.Worksheet 'ss:Name' => (@event.name + " contact list") do
       
       # Contact rows.
       @event.contacts.each do |contact|
+        r = Registration.where(:event_id => @event.id, :contact_id => contact.id).first
         xml.Row do
           address = contact.business_address
           data    = [contact.lead.try(:name),
@@ -82,11 +96,24 @@ xml.Worksheet 'ss:Name' => (@event.name + " contact list") do
                      address.try(:state),
                      address.try(:zipcode),
                      address.try(:country),
-                     address.try(:full_address)]
+                     address.try(:full_address),
+                     r.transport_required,
+                     r.driver_for,
+                     r.can_transport,
+                     r.first_time,
+                     r.part_time,
+                     r.breakfasts,
+                     r.lunches,
+                     r.dinners,
+                     r.sleeps,
+                     r.fee,
+                     r.payment_method,
+                     r.t_shirt_ordered,
+                     r.t_shirt_size_ordered]
           
           # Append custom field values.
           Contact.fields.each do |field|
-            data << contact.send(field.name)
+            data << contact.send(field.name) unless field.label == "Financial Status"
           end
           
           data.each do |value|
