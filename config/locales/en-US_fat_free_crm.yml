@@ -691,7 +691,7 @@ en-US:
   create_a_new: create a new
   select_existing: select existing
   delete: Delete
-  discard: Discard
+  discard: Remove from here
   edit: Edit
   items_total: ! '%{count} total.'
   less: Show Less
