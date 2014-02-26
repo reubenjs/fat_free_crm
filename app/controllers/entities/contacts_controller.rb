@@ -98,8 +98,8 @@ class ContactsController < EntitiesController
       contact.tag_list << params[:opportunities].split(", ")
       
       unless params[:instrument].blank?
-        contact.background_info += "\n" unless contact.background_info.blank?
-        contact.background_info += "Instrument played: #{params[:instrument]}"
+        contact.background_info << "\n" unless contact.background_info.blank?
+        contact.background_info << "Instrument played: #{params[:instrument]}"
       end
       
       contact.update_attributes(
@@ -127,6 +127,8 @@ class ContactsController < EntitiesController
       adelaide_group.contacts << contact if params[:campus] == "adelaide" && !adelaide_group.contacts.include?(contact) #shouldn't happen, but just in case
       ce_group.contacts << contact if params[:campus] == "city_east" && !ce_group.contacts.include?(contact) #shouldn't happen, but just in case
       cw_group.contacts << contact if params[:campus] == "city_west" && !cw_group.contacts.include?(contact) #shouldn't happen, but just in case
+      
+      #TODO: add to emailing lists
       
       respond_to do |format|
         format.all {head :ok, :content_type => 'text/html'}
