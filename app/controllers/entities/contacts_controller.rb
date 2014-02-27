@@ -109,10 +109,12 @@ class ContactsController < EntitiesController
         :cf_gender => params[:gender],
         :mobile => params[:phone].gsub(/[\(\) ]/, ""),
         #address?
-        :cf_campus => params[:campus],
+        :cf_campus => params[:campus].titleize,
         :cf_course_1 => params[:course],
         :cf_faculty => params[:faculty]
       )
+      
+      contact.cf_weekly_emails << params[:campus].titleize unless contact.cf_weekly_emails.include?(params[:campus].titleize)
       
       contact.save!
       contact.touch
