@@ -95,11 +95,11 @@ class ContactsController < EntitiesController
         log_string = "Contact found by email. updated: " if log_string.nil?
       end
 
-      contact.tag_list << params[:opportunities].split(", ")
+      contact.tag_list << params[:opportunities].split(", ") if params[:opportunities]
       
       unless params[:instrument].blank?
         contact.background_info << "\n" unless contact.background_info.blank?
-        contact.background_info << "Instrument played: #{params[:instrument]}"
+        contact.background_info = contact.background_info.to_s + "Instrument played: #{params[:instrument]}"
       end
       
       contact.update_attributes(
