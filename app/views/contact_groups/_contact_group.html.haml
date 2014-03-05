@@ -10,6 +10,9 @@
     %li= link_to ("Emails &#8250; clipboard".html_safe), '#', :onclick => "crm.copyToClipboard('#{contact_group.email_addresses}')"
     %li= mail_to("", "Email group", :bcc => contact_group.email_addresses)
     
+    - if !shown_on_landing_page?
+      %li= contact_group.inactive? ? link_to_activate(contact_group) : link_to_archive(contact_group)
+    
     - if can?(:update, contact_group)
       %li= link_to_edit(contact_group)
     

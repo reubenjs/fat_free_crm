@@ -21,7 +21,8 @@ class ContactGroupsController < EntitiesController
   # GET /accounts
   #----------------------------------------------------------------------------
   def index
-    @contact_groups = get_contact_groups(:page => params[:page])
+    inactive = params.include?("inactive") ? session[:contact_groups_inactive] = (params[:inactive] == "true") : session[:contact_groups_inactive]
+    @contact_groups = get_contact_groups(:page => params[:page], :inactive => inactive)
     
     session[:contact_groups_current_query] = params[:query]
     respond_with @contact_groups do |format|
@@ -115,6 +116,28 @@ class ContactGroupsController < EntitiesController
       format.js   { respond_to_destroy(:ajax) }
     end
   end
+  
+  def archive
+    @contact_group = ContactGroup.find(params[:id])
+    @contact_group.update_attributes(:inactive => true) if @contact_group
+    
+    respond_with(@contact_group) do |format|
+      #get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
+  
+  def activate
+    @contact_group = ContactGroup.find(params[:id])
+    @contact_group.update_attributes(:inactive => false) if @contact_group
+    
+    respond_with(@contact_group) do |format|
+      #get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
 
   # PUT /accounts/1/attach
   #----------------------------------------------------------------------------
@@ -182,7 +205,7 @@ class ContactGroupsController < EntitiesController
     current_user.pref[:contact_groups_outline]  = params[:outline]  if params[:outline]
     current_user.pref[:contact_groups_sort_by]  = ContactGroup::sort_by_map[params[:sort_by]] if params[:sort_by]
     contact_groups = get_contact_groups(:page => 1)
-    @contact_groups = get_contact_groups(:page => 1, :per_page => params[:per_page]) # Start on the first page.
+    @contact_groups = get_contact_groups(:page => 1, :per_page => params[:per_page], :inactive => session[:contact_groups_inactive]) # Start on the first page.
     set_options # Refresh options
     render :index    
   end
@@ -218,7 +241,7 @@ class ContactGroupsController < EntitiesController
       end
     end
     
-    respond_with(@contact_groups = get_contact_groups(:page => 1, :per_page => params[:per_page])) do |format|
+    respond_with(@contact_groups = get_contact_groups(:page => 1, :per_page => params[:per_page], :inactive => session[:contact_groups_inactive])) do |format|
       format.js { render :index }
     end
   end

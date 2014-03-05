@@ -9,7 +9,9 @@ class AccountsController < EntitiesController
   # GET /accounts
   #----------------------------------------------------------------------------
   def index
-    @accounts = get_accounts(:page => params[:page], :per_page => params[:per_page])
+    inactive = params.include?("inactive") ? session[:accounts_inactive] = (params[:inactive] == "true") : session[:accounts_inactive]
+    
+    @accounts = get_accounts(:page => params[:page], :per_page => params[:per_page], :inactive => inactive)
 
     respond_with @accounts do |format|
       format.xls { render :layout => 'header' }
@@ -128,6 +130,28 @@ class AccountsController < EntitiesController
       format.js   { respond_to_destroy(:ajax) }
     end
   end
+  
+  def archive
+    @account = Account.find(params[:id])
+    @account.update_attributes(:inactive => true) if @account
+    
+    respond_with(@account) do |format|
+      get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
+  
+  def activate
+    @account = Account.find(params[:id])
+    @account.update_attributes(:inactive => false) if @account
+    
+    respond_with(@account) do |format|
+      get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
 
   # PUT /accounts/1/attach
   #----------------------------------------------------------------------------
@@ -146,7 +170,7 @@ class AccountsController < EntitiesController
   def redraw
     current_user.pref[:accounts_per_page] = params[:per_page] if params[:per_page]
     current_user.pref[:accounts_sort_by]  = Account::sort_by_map[params[:sort_by]] if params[:sort_by]
-    @accounts = get_accounts(:page => 1, :per_page => params[:per_page])
+    @accounts = get_accounts(:page => 1, :per_page => params[:per_page], :inactive => session[:accounts_inactive])
     set_options # Refresh options
 
     respond_with(@accounts) do |format|
@@ -180,7 +204,7 @@ class AccountsController < EntitiesController
   #----------------------------------------------------------------------------
   def filter
     session[:accounts_filter] = params[:category]
-    @accounts = get_accounts(:page => 1, :per_page => params[:per_page])
+    @accounts = get_accounts(:page => 1, :per_page => params[:per_page], :inactive => session[:accounts_inactive])
 
     respond_with(@accounts) do |format|
       format.js { render :index }

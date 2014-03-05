@@ -20,6 +20,9 @@ class ContactGroup < ActiveRecord::Base
     query = query.gsub(/[^\w\s\-\.'\p{L}]/u, '').strip
     where('upper(name) LIKE upper(?)', "%#{query}%")
   }
+  
+  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "inactive = true" : "inactive = false OR inactive IS NULL"}") }
+  
 
   uses_user_permissions
   acts_as_commentable

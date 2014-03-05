@@ -24,7 +24,8 @@ class EventsController < EntitiesController
   # GET /accounts
   #----------------------------------------------------------------------------
   def index
-    @events = get_events(:page => params[:page])
+    inactive = params.include?("inactive") ? session[:events_inactive] = (params[:inactive] == "true") : session[:events_inactive]
+    @events = get_events(:page => params[:page], :inactive => inactive)
     respond_with @events do |format|
       format.xls { render :layout => 'header' }
     end
@@ -225,6 +226,28 @@ class EventsController < EntitiesController
     super
   end
   
+  def archive
+    @event = Event.find(params[:id])
+    @event.update_attributes(:inactive => true) if @event
+    
+    respond_with(@event) do |format|
+      get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
+  
+  def activate
+    @event = Event.find(params[:id])
+    @event.update_attributes(:inactive => false) if @event
+    
+    respond_with(@event) do |format|
+      get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
+  
   def reports
     
   end
@@ -261,7 +284,7 @@ class EventsController < EntitiesController
     @current_user.pref[:events_per_page] = params[:per_page] if params[:per_page]
     @current_user.pref[:events_outline]  = params[:outline]  if params[:outline]
     @current_user.pref[:events_sort_by]  = Event::sort_by_map[params[:sort_by]] if params[:sort_by]
-    @events = get_events(:page => 1)
+    @events = get_events(:page => 1, :inactive => session[:events_inactive])
     render :index
   end
   
@@ -296,7 +319,7 @@ class EventsController < EntitiesController
       end
     end
     
-    respond_with(@events = get_events(:page => 1, :per_page => params[:per_page])) do |format|
+    respond_with(@events = get_events(:page => 1, :per_page => params[:per_page], :inactive => session[:events_inactive])) do |format|
       format.js { render :index }
     end
   end

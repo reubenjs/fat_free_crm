@@ -5,6 +5,11 @@
   #buttons
     = view_buttons
   .create_asset
+    - if session["#{controller_name}_inactive".to_sym] == true
+      = link_to "Show Active #{controller_name.titleize}", url_for(controller: "#{controller_name}", action: :index, inactive: false)
+    - else
+      = link_to "Show Archived #{controller_name.titleize}", url_for(controller: "#{controller_name}", action: :index, inactive: true)
+    = " | "
     = link_to_inline("create_#{model_name}".to_sym, send("new_#{model_name}_path"), :text => t("create_#{model_name}".to_sym))
 
 .title

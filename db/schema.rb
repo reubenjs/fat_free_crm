@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140121133402) do
+ActiveRecord::Schema.define(:version => 20140305004939) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(:version => 20140121133402) do
     t.integer  "rating",                         :default => 0,        :null => false
     t.string   "category",         :limit => 32
     t.text     "subscribed_users"
+    t.boolean  "inactive",                       :default => false
   end
 
   add_index "accounts", ["assigned_to"], :name => "index_accounts_on_assigned_to"
@@ -187,6 +188,7 @@ ActiveRecord::Schema.define(:version => 20140121133402) do
     t.datetime "updated_at",                                           :null => false
     t.text     "subscribed_users"
     t.string   "background_info"
+    t.boolean  "inactive",                       :default => false
   end
 
   add_index "contact_groups", ["assigned_to"], :name => "index_contact_groups_on_assigned_to"
@@ -230,6 +232,7 @@ ActiveRecord::Schema.define(:version => 20140121133402) do
     t.string   "skype",            :limit => 128
     t.text     "subscribed_users"
     t.string   "saasu_uid"
+    t.boolean  "inactive",                        :default => false
   end
 
   add_index "contacts", ["assigned_to"], :name => "index_contacts_on_assigned_to"
@@ -310,6 +313,7 @@ ActiveRecord::Schema.define(:version => 20140121133402) do
     t.datetime "updated_at",                                            :null => false
     t.boolean  "has_registrations"
     t.string   "semester"
+    t.boolean  "inactive",                        :default => false
   end
 
   add_index "events", ["assigned_to"], :name => "index_events_on_assigned_to"

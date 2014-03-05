@@ -8,6 +8,9 @@
   %ul.tools
     = hook(:account_tools_before, self, :account => account)
     
+    - if !shown_on_landing_page?
+      %li= account.inactive? ? link_to_activate(account) : link_to_archive(account)
+    
     %li= link_to ("Emails &#8250; clipboard".html_safe), '#', :onclick => "crm.copyToClipboard('#{account.email_addresses}')"
     %li= mail_to("", "Email folder", :bcc => account.email_addresses)
 

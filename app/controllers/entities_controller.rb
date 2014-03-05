@@ -149,10 +149,12 @@ private
         scope = scope.user_state(filter_users) if filter_users.present?
       end
     end
-
+    
+    scope = scope.show_inactive(session["#{controller_name}_inactive".to_sym])
+    
     scope = scope.text_search(query)              if query.present?
     scope = scope.tagged_with(tags, :on => :tags) if tags.present?
-
+    
     # Ignore this order when doing advanced search
     unless advanced_search
       order = current_user.pref[:"#{controller_name}_sort_by"] || klass.sort_by

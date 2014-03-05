@@ -4,7 +4,7 @@
 # See MIT-LICENSE file or http://www.opensource.org/licenses/mit-license.php
 #------------------------------------------------------------------------------
 class ContactsController < EntitiesController
-  before_filter :get_accounts, :only => [ :new, :create, :edit, :update ]
+  before_filter :get_accounts, :only => [ :new, :create, :edit, :update, :archive, :activate ]
   before_filter :check_for_mobile
   before_filter :get_data_for_sidebar, :only => :index
   
@@ -242,7 +242,11 @@ class ContactsController < EntitiesController
     query = params.include?("query") ? session[:contacts_query] = params[:query] : session[:contacts_query]
     #overwrite with nil if params "q" (advanced search)
     query = nil if params.include?("q")
-    @contacts = get_contacts(:page => params[:page], :per_page => params[:per_page], :query => query)
+    inactive = params.include?("inactive") ? session[:contacts_inactive] = (params[:inactive] == "true") : session[:contacts_inactive]
+    
+    @contacts = get_contacts(:page => params[:page], :per_page => params[:per_page], :query => query, :inactive => inactive)
+
+    #@inactive_only = inactive
     
     respond_with @contacts do |format|
       format.xls { render :layout => 'header' }
@@ -418,6 +422,29 @@ class ContactsController < EntitiesController
   def attendances
     
   end
+  
+  def archive
+    @contact = Contact.find(params[:id])
+    @contact.update_attributes(:inactive => true) if @contact
+    
+    respond_with(@contact) do |format|
+      get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
+  
+  def activate
+    @contact = Contact.find(params[:id])
+    @contact.update_attributes(:inactive => false) if @contact
+    
+    respond_with(@contact) do |format|
+      get_data_for_sidebar
+      format.html { respond_to_destroy(:html) }
+      format.js   { respond_to_destroy(:ajax) }
+    end
+  end
+  
   # PUT /contacts/1/attach
   #----------------------------------------------------------------------------
   # Handled by EntitiesController :attach
@@ -447,7 +474,7 @@ class ContactsController < EntitiesController
       current_user.pref[:leads_naming] ||= params[:naming]
     end
 
-    @contacts = get_contacts(:page => 1, :per_page => params[:per_page]) # Start on the first page.
+    @contacts = get_contacts(:page => 1, :per_page => params[:per_page], :inactive => session[:contacts_inactive]) # Start on the first page.
     set_options # Refresh options
 
     respond_with(@contacts) do |format|
@@ -482,7 +509,7 @@ class ContactsController < EntitiesController
       end
     end
     
-    respond_with(@contacts = get_contacts(:page => 1, :per_page => params[:per_page])) do |format|
+    respond_with(@contacts = get_contacts(:page => 1, :per_page => params[:per_page], :inactive => session[:contacts_inactive])) do |format|
       format.js { render :index }
     end
   end

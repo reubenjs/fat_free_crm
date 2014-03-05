@@ -46,6 +46,8 @@ Rails.application.routes.draw do
       post :unsubscribe
       get  :contacts
       get  :opportunities
+      get :archive
+      get :activate
     end
   end
 
@@ -96,6 +98,8 @@ Rails.application.routes.draw do
       get :mailing_lists
       get :tags
       get :confirm
+      get :archive
+      get :activate
       post :graduate
     end
   end
@@ -179,6 +183,8 @@ Rails.application.routes.draw do
     end
     member do
       get :redraw_show
+      get :archive
+      get :activate
       put  :attach
       post :discard
       post :subscribe
@@ -228,6 +234,8 @@ Rails.application.routes.draw do
       put :send_emails
       get :generate_report
       get :redraw_show
+      get :archive
+      get :activate
       put  :attach
       #put :mark
       #put :unmark

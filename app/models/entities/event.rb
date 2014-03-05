@@ -23,6 +23,8 @@ class Event < ActiveRecord::Base
     where('upper(name) LIKE upper(?)', "%#{query}%")
   }
   
+  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "inactive = true" : "inactive = false OR inactive IS NULL"}") }
+  
   has_ransackable_associations %w(contacts tags comments tasks)
   ransack_can_autocomplete
 

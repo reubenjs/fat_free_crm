@@ -8,6 +8,9 @@
     %ul.tools
       = hook(:event_tools_before, self, :event => event)
 
+      - if !shown_on_landing_page?
+        %li= event.inactive? ? link_to_activate(event) : link_to_archive(event)
+      
       - if can?(:update, event)
         %li= link_to_edit(event)
 
