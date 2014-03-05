@@ -14,6 +14,8 @@ en-US:
   select_none: -- None --
   select_blank: -- Select --
   yes_button: 'Yes'
+  archive: Archive
+  activate: Activate
 
 
   # Settings.
