@@ -149,8 +149,8 @@ private
         scope = scope.user_state(filter_users) if filter_users.present?
       end
     end
-    
-    scope = scope.show_inactive(session["#{controller_name}_inactive".to_sym])
+
+    scope = scope.show_inactive(session["#{controller_name}_inactive".to_sym]) if klass.respond_to?(:show_inactive)
     
     scope = scope.text_search(query)              if query.present?
     scope = scope.tagged_with(tags, :on => :tags) if tags.present?
