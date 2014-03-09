@@ -281,11 +281,21 @@ class EventsController < EntitiesController
   # POST /accounts/redraw                                                  AJAX
   #----------------------------------------------------------------------------
   def redraw
-    @current_user.pref[:events_per_page] = params[:per_page] if params[:per_page]
-    @current_user.pref[:events_outline]  = params[:outline]  if params[:outline]
-    @current_user.pref[:events_sort_by]  = Event::sort_by_map[params[:sort_by]] if params[:sort_by]
-    @events = get_events(:page => 1, :inactive => session[:events_inactive])
-    render :index
+    current_user.pref[:events_per_page] = params[:per_page] if params[:per_page]
+    current_user.pref[:events_outline]  = params[:outline]  if params[:outline]
+    #current_user.pref[:events_sort_by]  = Event::sort_by_map[params[:sort_by]] if params[:sort_by]
+    
+    # Sorting and naming only: set the same option for Leads if the hasn't been set yet.
+    if params[:sort_by]
+      current_user.pref[:events_sort_by] = Event::sort_by_map[params[:sort_by]]
+    end
+    
+    @events = get_events(:page => 1, :per_page => params[:per_page], :inactive => session[:events_inactive])
+    set_options
+    
+    respond_with(@events) do |format|
+      format.js { render :index }
+    end
   end
   
   # POST /accounts/redraw                                                  AJAX

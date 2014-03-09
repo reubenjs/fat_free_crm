@@ -1,5 +1,4 @@
 .filters#filters
-  = render "shared/search"
   = hook(:index_event_sidebar_bottom, self)
   - Setting.event_category.each do |key|
     .check_box{:style => "border-bottom: 1px silver dotted;"}
