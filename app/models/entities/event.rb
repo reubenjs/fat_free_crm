@@ -23,7 +23,7 @@ class Event < ActiveRecord::Base
     where('upper(name) LIKE upper(?)', "%#{query}%")
   }
   
-  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "inactive = true" : "inactive = false OR inactive IS NULL"}") }
+  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "events.inactive = true" : "events.inactive = false OR events.inactive IS NULL"}") }
   
   has_ransackable_associations %w(contacts tags comments tasks)
   ransack_can_autocomplete
@@ -35,7 +35,7 @@ class Event < ActiveRecord::Base
   has_paper_trail :ignore => [ :subscribed_users ]
   has_fields
   exportable
-  sortable :by => [ "name ASC", "created_at DESC", "updated_at DESC" ], :default => "created_at DESC"
+  sortable :by => [ "name ASC", "created_at DESC", "updated_at DESC", "category ASC" ], :default => "created_at DESC"
 
   validates_presence_of :name, :message => :missing_name
   validate :users_for_shared_access

@@ -70,7 +70,7 @@ class Contact < ActiveRecord::Base
   scope :created_by,  ->(user) { where( user_id: user.id ) }
   scope :assigned_to, ->(user) { where( assigned_to: user.id ) }
 
-  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "inactive = true" : "inactive = false OR inactive IS NULL"}") }
+  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "contacts.inactive = true" : "contacts.inactive = false OR contacts.inactive IS NULL"}") }
 
   scope :text_search, ->(query) {
     t = Contact.arel_table

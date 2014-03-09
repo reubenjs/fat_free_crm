@@ -21,7 +21,7 @@ class ContactGroup < ActiveRecord::Base
     where('upper(name) LIKE upper(?)', "%#{query}%")
   }
   
-  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "inactive = true" : "inactive = false OR inactive IS NULL"}") }
+  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "contact_groups.inactive = true" : "contact_groups.inactive = false OR contact_groups.inactive IS NULL"}") }
   
 
   uses_user_permissions

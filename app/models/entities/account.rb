@@ -56,7 +56,7 @@ class Account < ActiveRecord::Base
     where('(user_id = :user_id AND assigned_to IS NULL) OR assigned_to = :user_id', :user_id => user.id)
   }
   
-  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "inactive = true" : "inactive = false OR inactive IS NULL"}") }
+  scope :show_inactive, lambda {|inactive| where( "#{inactive ? "accounts.inactive = true" : "accounts.inactive = false OR accounts.inactive IS NULL"}") }
 
   scope :by_name, -> { order(:name) }
 

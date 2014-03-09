@@ -688,7 +688,7 @@ namespace :ffcrm do
       contact = Contact.find_by_first_name_and_last_name(row[:fnam], row[:lnam])
       
       group = ContactGroup.find_or_initialize_by_name(
-          :name => "BSG13-Ad #{row[:gn]}-#{row[:time]}",
+          :name => "BSG14-Ad #{row[:gn].rjust(2,'0')}-#{row[:time]}",
           :access => Setting.default_access,
           :user_id => 1,
           :category => "bsg"
