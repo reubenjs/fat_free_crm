@@ -2,7 +2,7 @@
   %ul
     - conference_manager_hidden = [:tab_tasks, :tab_accounts, :tab_contacts, :tab_groups]
     - mandrill = @current_user.mandrill?
-    - conference = @current_user.groups.collect(&:name).include? "Conference Manager"
+    - conference = @current_user.groups.collect(&:name).include?("Conference Manager") || @current_user.groups.collect(&:name).include?("BSG Data Entry")
     - tabs.each do |tab|
       -unless (tab[:text] == :tab_mandrill && !mandrill) || (conference_manager_hidden.include?(tab[:text]) && conference)
         %li

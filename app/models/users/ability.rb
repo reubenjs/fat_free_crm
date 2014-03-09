@@ -14,12 +14,24 @@ class Ability
     can(:create, User) if User.can_signup?
 
     if user.present?
-      entities = [Event, EventInstance, Registration]
       
-      [Account, Campaign, Contact, Lead, Opportunity, ContactGroup, Attendance].each{|e| entities << e} unless user.groups.collect(&:name).include? "Conference Manager"
+      entities = []
+      restricted_entities = []
       
+      can_manage_events = ["Staff", "Conference Manager", "BSG Data Entry"].to_set
+      can_record_attendance = ["Staff", "BSG Data Entry"].to_set
+      needs_explicit_permission = ["BSG Data Entry", "Conference Manager"].to_set
+      
+      [Account, Campaign, Contact, Lead, Opportunity, ContactGroup, Event].each{|e| entities << e} if user.groups.collect(&:name).include? "Staff"
+      
+      if in_group? user, can_manage_events
+        [EventInstance, Registration].each{|e| entities << e} 
+        restricted_entities << Event if in_group? user, needs_explicit_permission
+      end
+      
+      entities << Attendance if in_group? user, can_record_attendance
       entities << MandrillEmail if user.mandrill?
-
+      
       # User
       can :manage, User, id: user.id # can do any action on themselves
 
@@ -29,7 +41,7 @@ class Ability
       can :manage, Task, assigned_to: user.id
 
       # Entities
-      can :manage, entities, :access => 'Public'
+      can :manage, entities, :access => 'Public' #does not apply to restricted_entities
       can :manage, entities + [Task], :user_id => user.id
       can :manage, entities + [Task], :assigned_to => user.id
 
@@ -49,7 +61,7 @@ class Ability
           scope = scope.or(t[:group_id].eq_any(group_ids))
         end
 
-        entities.each do |klass|
+        (entities + restricted_entities).each do |klass|
           if (asset_ids = Permission.where(scope.and(t[:asset_type].eq(klass.name))).value_of(:asset_id)).any?
             can :manage, klass, :id => asset_ids
           end
@@ -58,6 +70,10 @@ class Ability
 
     end
   end
-
+  
+  def in_group?(user, name_array)
+    user.groups.collect(&:name).any? { |x| name_array.include?(x) }
+  end
+  
   ActiveSupport.run_load_hooks(:fat_free_crm_ability, self)
 end
