@@ -57,7 +57,7 @@ end
 xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
   xml.Table do
     unless @account.contacts.empty?
-      xml.Column 'ss:Index' => 4, 'ss:Width' => 51
+      xml.Column 'ss:Index' => 5, 'ss:Width' => 51
       xml.Column 'ss:Width' => 54
       xml.Column 'ss:Width' => 44
       xml.Column 'ss:Width' => 21, 'ss:Span' => 51
@@ -66,7 +66,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
       xml.Row 'ss:StyleID' => "s24" do
         #Semester 1
         
-        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 7 do
+        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 8 do
           xml.Data "Semester 1 BSG", 
                     'ss:Type' => 'String'
         end
@@ -74,7 +74,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         for i in 1..12
           xml.Cell 'ss:StyleID' => "s25"
         end
-        xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 20 do
+        xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 21 do
           xml.Data "Semester 1 TBT", 
                     'ss:Type' => 'String'
         end
@@ -85,7 +85,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         
         #Semester 2
         
-        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 33 do
+        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 34 do
           xml.Data "Semester 2 BSG/ACT", 
                     'ss:Type' => 'String'
         end
@@ -93,7 +93,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         for i in 1..12
           xml.Cell 'ss:StyleID' => "s25"
         end
-        xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 46 do
+        xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 47 do
           xml.Data "Semester 2 TBT", 
                     'ss:Type' => 'String'
         end
@@ -109,6 +109,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         heads = [I18n.t('name'),
                  I18n.t('email'),
                  I18n.t('mobile'),
+                 "Tags",
                  "Last TBT",
                  "Last BSG",
                  "Neither"
@@ -145,6 +146,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
           data    = [contact.name,
                      contact.email,
                      contact.mobile,
+                     contact.tags.collect(&:name).join(", "),
                      (!tbt.nil? && tbt > (Time.now - 4.weeks)) ? tbt.strftime("%d/%m") : "",
                      (!bsg.nil? && bsg > (Time.now - 4.weeks)) ? bsg.strftime("%d/%m") : "",
                      (tbt.nil? && bsg.nil?) ? "True" : "False"]
@@ -155,8 +157,8 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
           data.concat(tbt_by_weeks_s2)
                      
           data.each_with_index do |value, index|
-            hash = (index > 5) ? {'ss:StyleID' => "s21"} : {}
-            hash = {'ss:StyleID' => "s30"} if (index == 6 || index == 19 || index == 32 || index == 45) 
+            hash = (index > 6) ? {'ss:StyleID' => "s21"} : {}
+            hash = {'ss:StyleID' => "s30"} if (index == 7 || index == 20 || index == 33 || index == 46) 
             xml.Cell hash do
               xml.Data value,
                        'ss:Type' => "#{value.respond_to?(:abs) ? 'Number' : 'String'}"

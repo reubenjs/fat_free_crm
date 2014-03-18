@@ -146,13 +146,13 @@ class Contact < ActiveRecord::Base
   end
   
   def last_attendance_at_event_category(event_type)
-    events = Event.find_all_by_category(event_type)
+    events = Event.show_inactive(false).find_all_by_category(event_type)
     last_attendance = self.attendances.where('events.id IN (?)', events.each.map(&:id)).order('event_instances.starts_at DESC').includes(:event, :event_instance).first
     last_time = last_attendance.event_instance.starts_at unless last_attendance.nil?
   end
   
   def attendance_by_week_at_event_category(event_type, semester = 1)
-    events = Event.find_all_by_category(event_type)
+    events = Event.show_inactive(false).find_all_by_category(event_type)
     attendances = self.attendances.where('events.id IN (?) AND events.semester = ?', events.each.map(&:id), semester).order('event_instances.starts_at DESC').includes(:event, :event_instance)
 
     attendance_array = Array.new(13){""} #will end up as something like ["", "", bullet, "" ...]
