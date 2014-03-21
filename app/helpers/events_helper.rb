@@ -20,7 +20,7 @@ module EventsHelper
   #----------------------------------------------------------------------------
   def link_to_mark(contact, event)
     #onclick = %Q/$("#{dom_id(contact, :mark)}").style.textDecoration="line-through";/
-    url = url_for(:controller => :event_instances, :action => :mark)
+    url = url_for(:controller => :event_instances, :action => :mark, :id => @event_instance.id)
     onclick = %Q{
       $('#loading').show();
       $.post('#{url}', {contact_id: this.name.split('_').pop() }, function () {
@@ -31,7 +31,7 @@ module EventsHelper
 
   #----------------------------------------------------------------------------
   def link_to_unmark(contact, event)
-    url = url_for(:controller => :event_instances, :action => :unmark)
+    url = url_for(:controller => :event_instances, :action => :unmark, :id => @event_instance.id)
     onclick = %Q{
       $('#loading').show();
       $.post('#{url}', {contact_id: this.name.split('_').pop() }, function () {

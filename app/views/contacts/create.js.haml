@@ -7,7 +7,7 @@
   $('##{create_id}_title').html('#{ j t(entity_name.pluralize) }');
   $('##{create_id}').slideUp(250);
   - if called_from_landing_page? :event_instances
-    $('##{entity_name.pluralize}').prepend('#{ j render(:partial => "event_instances/contact", :collection => [ @entity ]) }');
+    $('##{entity_name.pluralize}').prepend('#{ j render(:partial => "event_instances/contact", :collection => [ @entity ], :locals => {:object => @event_instance}) }');
   - else
     $('##{entity_name.pluralize}').prepend('#{ j render(:partial => entity_name, :collection => [ @entity ]) }');
   $('##{dom_id(@entity)}').effect("highlight", { duration:1500 });
