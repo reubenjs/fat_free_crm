@@ -126,6 +126,7 @@ class ContactsController < EntitiesController
 
       contact.update_attributes(
         :first_name => params[:first_name],
+        :preferred_name => params[:preferred_name],
         :last_name => params[:last_name],
         :email => params[:email],
         :cf_gender => params[:gender],

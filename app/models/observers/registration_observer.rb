@@ -155,14 +155,14 @@ class RegistrationObserver < ActiveRecord::Observer
     
     invoice_items << fee
     
-    # if registration.payment_method != "PayPal"
-#       discount = Saasu::ServiceInvoiceItem.new
-#       discount.description = "Online payment discount (if paid before 19th July)"
-#       discount.account_uid = Setting.saasu[:myc_income_account]
-#       discount.total_amount_incl_tax = -5
-#       
-#       i.invoice_items << discount
-#     end
+    if registration.payment_method != "PayPal"
+      discount = Saasu::ServiceInvoiceItem.new
+      discount.description = "Online payment discount (if paid before 20th June)"
+      discount.account_uid = Setting.saasu[:myc_income_account]
+      discount.total_amount_incl_tax = -10
+      
+      invoice_items << discount
+    end
     
     if registration.t_shirt_ordered.to_i  > 0
       tshirt = Saasu::ServiceInvoiceItem.new
