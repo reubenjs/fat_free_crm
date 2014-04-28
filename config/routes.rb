@@ -86,6 +86,7 @@ Rails.application.routes.draw do
       get :mandrill_webhooks
       post :mandrill_webhooks
       post :bsg_webhooks
+      post :myc_webhooks
     end
     member do
       post :move_contact

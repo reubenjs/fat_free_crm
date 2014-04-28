@@ -9,7 +9,7 @@ class ContactsController < EntitiesController
   before_filter :get_data_for_sidebar, :only => :index
   
   def single_access_allowed?
-    (action_name == "mailchimp_webhooks" || action_name == "mandrill_webhooks" || action_name == "bsg_webhooks")
+    (action_name == "mailchimp_webhooks" || action_name == "mandrill_webhooks" || action_name == "bsg_webhooks" || action_name == "myc_webhooks")
   end
   
   def confirm
@@ -21,6 +21,201 @@ class ContactsController < EntitiesController
     respond_with(@contact)
   end
   alias :tags :mailing_lists
+  
+  def myc_webhooks
+    if request.post?
+      group = ContactGroup.find_or_initialize_by_name(
+          :name => "MYC 2014",
+          :access => Setting.default_access,
+          :user_id => 1,
+          :category => "camp"
+          )
+        unless group.persisted?
+          group.save
+        end
+  
+      event = Event.find_or_initialize_by_name(
+          :name => "MYC 2014",
+          :access => Setting.default_access,
+          :user_id => 1,
+          :category => "conference",
+          :contact_group => group,
+          :has_registrations => true
+          )
+        unless event.persisted?
+          event.save
+          ei = EventInstance.new(
+            :access => Setting.default_access,
+            :user_id => 1,
+            :name => "MYC 2014",
+            :location => "Dzintari"
+            #:starts_at => DateTime.parse("2013-07-22 10:00:00"),
+            #:ends_at => DateTime.parse("2013-07-26 10:00:00")
+            )
+            ei.calendar_start_date = "21/07/2014"
+            ei.calendar_start_time = "10:00am"
+            ei.calendar_end_date = "25/07/2014"
+            ei.calendar_end_time = "2:00pm"
+        
+          event.event_instances << ei
+        end
+      
+      # Find or create contact
+      #------------------------
+    
+      contact = Contact.find_by_email(params[:email])
+      if contact.nil?
+        contact = Contact.find_or_initialize_by_mobile(params[:phone].gsub(/[\(\) ]/, ""))
+        contact.update_attributes(:alt_email => contact.email) if contact.persisted? #email must have changed
+        log_string = "Contact found by mobile. Registered: "
+      end
+    
+      if registration = event.registrations.find_by_contact_id(contact.id)
+      
+      else          
+        # Create the registration
+        #-------------------------
+    
+        registration = Registration.new(
+          :contact => contact, 
+          :event => event,
+          :access => Setting.default_access,
+          :user_id => 1,
+          )
+    
+      end
+    
+      # Pull in contact data
+      #----------------------
+    
+      contact.business_address = Address.new
+      contact.business_address.street1 = params[:address][:thoroughfare]
+      contact.business_address.street2 = params[:address][:premise]
+      contact.business_address.city = params[:address][:locality]
+      contact.business_address.state = params[:address][:administrative_area]
+      contact.business_address.zipcode = params[:address][:postal_code]
+      contact.business_address.country = "Australia"
+      contact.business_address.address_type = "Business"   
+    
+      unless contact.assigned_to.present?
+        if (params[:campus] == "city_east" || params[:campus] == "city_west")
+          #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+          user = (params[:gender] == "male") ? User.find_by_first_name("dave") : User.find_by_first_name("emily")
+        elsif (params[:campus] == "adelaide")
+          #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
+          user = (params[:gender] == "male") ? User.find_by_first_name("reuben") : User.find_by_first_name("laura")
+        else
+          user = User.find_by_first_name("geoff")
+        end
+        contact.assigned_to = user.id
+      end
+    
+      unless contact.account.present?
+        contact.account = Account.find_or_create_by_name(params[:campus].titleize) 
+        contact.account.user = User.find(1)
+      end
+    
+      if !contact.persisted?
+        contact.user_id = 1
+        contact.access = Setting.default_access
+        contact.tag_list << "new@myc14" unless contact.tag_list.include?("new@myc14")
+        log_string = "Created new contact: "
+      else
+        log_string = "Contact found by email. Registered: " if log_string.nil?
+      end
+
+      contact.update_attributes(
+        :first_name => params[:first_name],
+        :last_name => params[:last_name],
+        :email => params[:email],
+        :cf_gender => params[:gender],
+        #:phone => row[:_home_phone],
+        :mobile => params[:phone].gsub(/[\(\) ]/, ""),
+        #address?
+        :cf_faculty => params[:faculty].gsub(/N\/A/, ""),
+        :cf_campus => params[:campus].titleize,
+        :cf_course_1 => params[:course].gsub(/N\/A/, ""),
+        :cf_church_affiliation => params[:church].gsub(/N\/A/, ""),
+        :cf_denomination => params[:denomination].gsub(/N\/A/, ""),
+        :cf_expected_grad_year => (params[:expected_graduation_year] == 'N/A or unknown' ? nil : params[:expected_graduation_year]),
+        :cf_has_dietary_or_health_issues => (params[:dietary_requirements] == "yes" || params[:health_issues] == "yes"),
+        :cf_dietary_health_issue_details => "Dietary requirements: #{params[:please_specify_dietary]} \r\nHealth issues: #{params[:health_issues_specify]}",
+        :cf_emergency_contact => params[:emergency_contact_name],
+        :cf_emergency_contact_relationship => params[:emergency_contact_relationship],
+        :cf_emergency_contact_number => params[:emergency_contact_phone]
+       )
+
+      if params[:first_time] == "yes"
+        contact.tag_list << "first-myc-2014" unless contact.tag_list.include?("first-myc-2014")
+        registration.assign_attributes(:first_time => true)
+      end
+    
+      if params[:part_time] == "yes"
+        contact.tag_list << "part_time@myc14" unless contact.tag_list.include?("part_time@myc14")
+        registration.assign_attributes(:part_time => true)
+      end
+    
+      if params[:financial_assistance] == "yes"
+        registration.assign_attributes(:need_financial_assistance => true)
+        contact.tasks << Task.new(
+              :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("geoff")
+              )
+      end
+      
+      contact.save
+    
+      # Pull in registration data
+      #---------------------------
+    
+      registration.assign_attributes(
+        :transport_required => (params[:transport_required] == "yes"),
+        :driver_for => params[:driver_for],
+        :can_transport => params[:drive_others],
+        :donate_amount => params[:donate_amount],
+        :t_shirt_ordered => (params[:purchase_jumper] == "yes" ? 1 : 0),
+        :t_shirt_size_ordered => params[:jumper_size],
+        :payment_method => (params[:payment_method] == "paypal_wps" ? "PayPal" : "Cash"),
+        :fee => params[:total_amount].to_i / 100,
+        :breakfasts => (params[:breakfast].blank? ? nil : params[:breakfast].split(", ")),
+        :lunches => (params[:lunch].blank? ? nil : params[:lunch].split(", ")),
+        :dinners => (params[:dinner].blank? ? nil : params[:dinner].split(", ")),
+        :sleeps => (params[:sleeping].blank? ? nil : params[:sleeping].split(", ")),
+        :international_student => params[:international_student],
+        :requires_sleeping_bag => params[:sleeping_bag_required]
+      )
+              
+      # There is now enough info in registration for observers/registration_observer 
+      # to raise an invoice
+      #-------------------------
+    
+      if registration.save #only synclog if successful (save will trigger registration observer which might fail if connection to saasu is down etc.)
+    
+        # Check for suspected duplicate contacts after syncing this item
+        # --------------------------------------------------------------- 
+    
+        contacts_with_name = Contact.where(:first_name => contact.first_name, :last_name => contact.last_name)
+        if contacts_with_name.size > 1
+          contact.tasks << Task.new(
+                :name => "Possible duplicate from registration sync", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("reuben")
+                )
+        end
+    
+        group.contacts << contact unless group.contacts.include?(contact) 
+      else
+        #puts "Registration failed for #{contact.first_name} #{contact.last_name}"
+        UserMailer.delay.saasu_registration_error(contact, "MYC registration save failed")
+      end
+      
+      respond_to do |format|
+        format.all {head :ok, :content_type => 'text/html'}
+      end
+      
+    else # GET
+      respond_to do |format|
+        format.all {head :ok, :content_type => 'text/html'}
+      end
+    end
+  end
   
   def bsg_webhooks
     if request.post?

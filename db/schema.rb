@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140305004939) do
+ActiveRecord::Schema.define(:version => 20140428142707) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -534,6 +534,8 @@ ActiveRecord::Schema.define(:version => 20140305004939) do
     t.integer  "assigned_to"
     t.string   "t_shirt_ordered"
     t.string   "t_shirt_size_ordered"
+    t.boolean  "international_student"
+    t.boolean  "requires_sleeping_bag"
   end
 
   create_table "rich_rich_files", :force => true do |t|

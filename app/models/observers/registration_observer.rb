@@ -87,8 +87,8 @@ class RegistrationObserver < ActiveRecord::Observer
     i.status = "I"
     i.invoice_number = "&lt;Auto Number&gt;"
     i.invoice_type = "Sale Invoice"
-    i.tags = "cc14"
-    i.summary = "Commencement Camp 2014 Registration"
+    i.tags = "myc14"
+    i.summary = "MYC 2014 Registration"
     i.notes = "Registration added by Mojo for #{registration.contact.full_name}"
     
     if registration.contact.present?
@@ -116,7 +116,7 @@ class RegistrationObserver < ActiveRecord::Observer
     email.body = "Dear #{registration.contact.first_name},\r\n\r\n
       Please find your invoice/receipt attached. If you have not already paid, the invoice contains a link to pay online that you can use at any time.\r\n\r\n
       Thank you,\r\n\r\n
-      The Commencement Camp Team"
+      The MYC Team"
     
     if registration.payment_method == "PayPal"
       i.quick_payment = calculate_payment(registration)
@@ -149,9 +149,9 @@ class RegistrationObserver < ActiveRecord::Observer
     invoice_items = []
     
     fee = Saasu::ServiceInvoiceItem.new
-    fee.description = "Commencement Camp registration fee"
-    fee.account_uid = Setting.saasu[:ccamp_income_account]
-    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 20)
+    fee.description = "MYC registration fee"
+    fee.account_uid = Setting.saasu[:myc_income_account]
+    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 35)
     
     invoice_items << fee
     
@@ -166,9 +166,9 @@ class RegistrationObserver < ActiveRecord::Observer
     
     if registration.t_shirt_ordered.to_i  > 0
       tshirt = Saasu::ServiceInvoiceItem.new
-      tshirt.description = "T-Shirt"
-      tshirt.account_uid = Setting.saasu[:tshirt_account]
-      tshirt.total_amount_incl_tax = (registration.t_shirt_ordered.to_i * 20)
+      tshirt.description = "Jesus Week jumper"
+      tshirt.account_uid = Setting.saasu[:jw_jumper_account]
+      tshirt.total_amount_incl_tax = (registration.t_shirt_ordered.to_i * 35)
   
       invoice_items << tshirt
     end
@@ -176,7 +176,7 @@ class RegistrationObserver < ActiveRecord::Observer
     if registration.donate_amount.to_i > 0
       donation = Saasu::ServiceInvoiceItem.new
       donation.description = "Donation"
-      donation.account_uid = Setting.saasu[:donation_account]
+      donation.account_uid = Setting.saasu[:myc_donation_account]
       donation.total_amount_incl_tax = registration.donate_amount.to_i
       
       invoice_items << donation
