@@ -12,6 +12,10 @@
           = f.text_field :last_name
       %tr
         %td
+          .label.top #{t :preferred_name}:
+          = f.text_field :preferred_name
+      %tr
+        %td
           .label #{t :email}:
           = f.text_field :email
         %td= spacer
