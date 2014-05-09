@@ -1,18 +1,17 @@
 - personal ||= false
 - caption = personal ? :personal_lists : :global_lists
-
-.panel.lists
-  .caption #{t caption}
-  %ul
-    - if lists.none? || @current_user.groups.collect(&:name).include?("Conference Manager")
+- @lists = List.all
+- @list = List.new
+.well{:style => "padding:0"}
+  %ul.nav.nav-list#lists
+    %li.nav-header #{t :lists}
+    - if @lists.none? || @current_user.groups.collect(&:name).include?("Conference Manager")
       %div #{t :no_saved_lists}
     - else
-      - lists.sort.each_with_index do |item, i|
-        %li[item]{ :class => i < lists.size - 1 ? "" : "last" }
-          %dt= link_to(truncate(item.name, :length => 25), h(item.url), :title => item.name)
-          %tt
-            = link_to(url_for(item), :method => :delete, :confirm => t(:confirm_delete, value: 'list'), :remote => true, :class => "list_icon delete_on_hover") do
-              %i.fa{:"data-controller" => item.controller, class: get_icon(item.controller)}
+      - @lists.sort.each_with_index do |list, i|
+        %li[list]
+          %dt= link_to(truncate(list.name, :length => 25), list.url, :title => list.name)
+          %tt= link_to(image_tag("/assets/tab_icons/#{list.controller}_active.png", :"data-controller" => list.controller), url_for(list), :method => :delete, :confirm => 'Are you sure?', :remote => true, :class => "list_icon delete_on_hover")
 
   .list_save{ hidden_if(!params[:q]) }
     = link_to(t(:make_current_view_list), '#')

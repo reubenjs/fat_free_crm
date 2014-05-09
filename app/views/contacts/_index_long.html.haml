@@ -1,27 +1,44 @@
 - object = defined?(object) ? object : nil
 - registration = (object.present? && object.class == Event) ? object.registrations.find_by_contact_id(contact.id) : nil
-%li.draggable.highlight[contact]
+%li.card.highlight[contact]
   = avatar_for(contact, :size => "30x30")
-  %ul.tools
-    = hook(:contact_tools_before, self, :contact => contact)
+  
+  .btn-group{style: "float: right; margin-right:10px"}
+    %button.btn.btn-flat.btn-default.dropdown-toggle{type: "button", data: {toggle: "dropdown"} }
+      %span.caret
+    %ul.dropdown-menu.pull-right{role: "menu"}
+      = hook(:contact_tools_before, self, :contact => contact)
     
-    - if !shown_on_landing_page?
-      %li= contact.inactive? ? link_to_activate(contact) : link_to_archive(contact)
+      - if registration.present? && can?(:update, registration)
+        - if object.try(&:class) == Event
+          %li= link_to_edit(registration, :edit_text => "Edit registration")
     
-    - if registration.present? && can?(:update, registration)
-      - if object.try(&:class) == Event
-        %li= link_to_edit(registration, :edit_text => "Edit registration")
-    
-    - if can?(:update, contact)
-      - unless (object.present? && object.try(&:class) == Event)
-        %li= link_to_edit(contact)
+      - if can?(:update, contact)
+        - unless (object.present? && object.try(&:class) == Event)
+          %li= link_to_edit(contact)
 
-    - if shown_on_landing_page?
-      - discard_text = (object.try(&:class) == Event ? "Unregister" : t(:discard))
-      %li= link_to_discard(contact, discard_text)
+      - if shown_on_landing_page?
+        - discard_text = (object.try(&:class) == Event ? "Unregister" : "Discard")
+        %li= link_to_discard(contact, discard_text)
 
-    - if can?(:destroy, contact)
-      %li= link_to_confirm(contact)
+      - if can?(:destroy, contact)
+        %li= link_to_confirm(contact)
+      
+      %li= link_to "Archive", "#"
+      
+      %li.divider
+      
+      - if !shown_on_landing_page?
+        %li= link_to_graduate(contact)
+      
+      %li= link_to "Add to group", "#"
+      
+      %li= link_to "Merge duplicate", "#modal", data: {toggle: "modal"}
+      
+  = modal_dialog :id => "modal",
+    :header => { :show_close => true, :dismiss => 'modal', :title => 'Graduate Aaron Leary' },
+    :body   => 'This is the body',
+    :footer => content_tag(:button, 'Save', :class => 'btn')
 
   .indentslim
     = link_to_if can?(:read, contact), contact.full_name(@current_user.preference[:contacts_naming]), contact
@@ -41,15 +58,17 @@
       - if can?(:read, contact)
         - if contact.email.present?
           = link_to_email(contact.email)
-          |
+          -#|
         - if contact.phone.present?
-          == #{t :phone_small}:
-          %b= link_to contact.phone, "tel:#{contact.phone}"
-          |
+          %span.nowrap
+            == #{t :phone_small}:
+            %b= link_to contact.phone, "tel:#{contact.phone}"
+          -#|
         - if contact.mobile.present?
-          == #{t :mobile_small}:
-          %b= link_to contact.mobile, "tel:#{contact.mobile}"
-          |
+          %span.nowrap
+            == #{t :mobile_small}:
+            %b= link_to contact.mobile, "tel:#{contact.mobile}"
+          -#|
         - if contact.has_subscription?
           = image_tag "/assets/sub-ad.png", :size => "16x12" if contact.cf_weekly_emails.include? "Adelaide"
           = image_tag "/assets/sub-cw.png", :size => "16x12" if contact.cf_weekly_emails.include? "City West"
@@ -58,13 +77,13 @@
           = image_tag "/assets/sub-ttm.png", :size => "16x12" if contact.cf_supporter_emails.include? "TT Mail"
           = image_tag "/assets/sub-pp.png", :size => "16x12" if contact.cf_supporter_emails.include? "Prayer Points"
           .mail_tools= link_to_mailing_lists(contact) unless object.try(&:class) == Event
-          |
+          -#|
         - elsif !contact.has_subscription? && contact.email.present?
           .mail_tools= link_to_mailing_lists(contact) unless object.try(&:class) == Event
         - assigned = User.find(contact.assigned_to) unless contact.assigned_to.blank?
         - if assigned.present?
-          = "[#{link_to assigned.first_name, assigned}] |".html_safe
-      = t(:added_ago, value: timeago(contact.created_at)).html_safe
+          = "[#{link_to assigned.first_name, assigned}] ".html_safe
+      %span.nowrap= t(:added_ago, time_ago_in_words(contact.created_at))
 
     = hook(:contact_bottom, self, :contact => contact)
 -#= draggable_element(dom_id(contact), :revert => true, :handle => "'gravatar'", :scroll => "window")

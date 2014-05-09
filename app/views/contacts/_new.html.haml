@@ -1,5 +1,5 @@
-= simple_form_for(@contact, :html => one_submit_only, :remote => true) do |f|
-  = link_to_close new_contact_path
+= simple_form_for(@contact, :html => {:class => "form-horizontal"}, :remote => true) do |f|
+  -#= link_to_close new_contact_path
   = f.hidden_field :user_id
   = hidden_field_tag "opportunity", "#{@opportunity.id if @opportunity}"
   - if called_from_landing_page?(:contact_groups) || called_from_landing_page?(:event_instances)
@@ -7,8 +7,12 @@
     = hidden_field_tag "contact_group", "#{@contact_group.id if @contact_group}"
     = hidden_field_tag "event_instance", "#{@event_instance.id if @event_instance}" #required to get mark/unmark to work on event instances page
 
-
-  = f.error_messages :object_name => t('contact')
+  - if notification = f.error_notification
+    .alert.alert-error.fade.in
+      = link_to "&times;".html_safe, "#", :class => "close", :data => {:dismiss => "alert"}
+      = notification
+      
+  -#= f.error_messages :object_name => t('contact')
 
   = render "contacts/top_section", :f => f
   = render "fields/edit_custom_field_group", :f => f
@@ -18,7 +22,7 @@
   = render "fields/groups",        :f => f
   = render "entities/permissions", :f => f, :entity => @contact
 
-  .buttonbar
-    = f.submit t(:create_contact), :onclick => "crm.create_contact()"
+  .form-actions
+    = f.button :submit, t(:create_contact), :onclick => "crm.create_contact()"
     #{t :or}
     = link_to_cancel new_contact_path

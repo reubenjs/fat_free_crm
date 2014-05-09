@@ -1,19 +1,34 @@
-.tabs
-  %ul
-    - conference_manager_hidden = [:tab_tasks, :tab_accounts, :tab_contacts, :tab_groups]
-    - mandrill = @current_user.mandrill?
-    - conference = @current_user.groups.collect(&:name).include?("Conference Manager") || @current_user.groups.collect(&:name).include?("BSG Data Entry")
-    - tabs.each do |tab|
-      -unless (tab[:text] == :tab_mandrill && !mandrill) || (conference_manager_hidden.include?(tab[:text]) && conference)
-        %li
-          = link_to(tab[:url], :class => tab[:active] ? "active" : nil) do
-            %i.fa{class: tab[:icon]}
-            = t(tab[:text])
+- conference_manager_hidden = [:tab_tasks, :tab_accounts, :tab_contacts, :tab_groups]
+- mandrill = @current_user.mandrill?
+- conference = @current_user.groups.collect(&:name).include? "Conference Manager"
 
-= show_flash
-%table{ :width => "100%", :height => "100%", :cellpadding => 0, :cellspacing => 0, :class => :tabbed }
-  %tr
-    %td{ :class => :sidebar, :id => :sidebar, :valign => :top }
-      = render "layouts/sidebar"
-    %td{ :class => :main, :id => :main, :valign => :top }
-      = yield
+.navbar.navbar-fixed-top
+  .navbar-inner
+    = content_tag :a, "<span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span> <span class=\"icon-bar\"></span>".html_safe, :class => "btn btn-navbar", :data => {:toggle => "collapse", :target => ".nav-collapse"}
+      
+
+
+    = link_to "Mojo", "#", :class => "brand"
+    
+    .nav-collapse.collapse
+      -# if current_user
+      %ul.nav.pull-right
+        = drop_down "#{t :welcome}, #{current_user.name}!" do
+          = menu_item t(:profile), profile_path
+          - if current_user.admin?
+            = menu_item t(:admin), admin_path
+          = menu_item t(:logout), logout_path
+      %ul.nav
+        - tabs.each do |tab|
+          -unless (tab[:text] == :tab_mandrill && !mandrill) || (conference_manager_hidden.include?(tab[:text]) && conference)
+            = menu_item "<i class=\"fa icon-home fa-li\"></i> #{t(tab[:text])}".html_safe, url_for(tab[:url])
+.row
+  .span12
+    = show_flash
+.row
+  .span3#sidebar
+    -#%td{ :class => :sidebar, :id => :sidebar, :valign => :top }
+    = render "layouts/sidebar"
+    -#%td{ :class => :main, :id => :main, :valign => :top }
+  .span9#main
+    = yield

@@ -81,6 +81,8 @@ group :assets do
   gem 'uglifier',     '>= 1.0.3'
   gem 'execjs'
   gem 'therubyracer', :platform => :ruby unless ENV["CI"]
+  gem 'twitter-bootstrap-rails', '~> 2.2.7'
+  gem 'less-rails'
 end
 
 gem 'turbo-sprockets-rails3'

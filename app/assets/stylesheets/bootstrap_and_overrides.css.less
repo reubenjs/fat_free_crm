@@ -1,0 +1,403 @@
+@import "twitter/bootstrap/bootstrap";
+
+body {padding-top:60px;}
+
+.navbar-inner {
+  background-color: #327ccb;
+  background-image: none;
+  background-repeat: no-repeat;
+  filter: none;
+}
+
+.navbar .nav > li > a {
+    color: white;
+    float: none;
+    padding: 10px 15px;
+    text-decoration: none;
+    text-shadow: 0 0px 0 #ffffff;
+}
+
+.navbar .brand {
+  display: block;
+  float: left;
+  padding: 10px 20px 10px;
+  margin-left: 20px;
+  font-size: 20px;
+  font-weight: 200;
+  color: white;
+  text-shadow: 0 0px 0 #ffffff;
+  font-family: "Lobster", "Lucida Grande", Arial, Helvetica, sans-serif;
+}
+
+.navbar .nav > li > a:focus,
+.navbar .nav > li > a:hover {
+  color: navy;
+  text-decoration: none;
+  background-color: #97baff;
+}
+
+.navbar .nav > li > a:focus {
+  background-color: #E5E5E5;
+}
+
+.navbar-text {
+  margin-bottom: 0;
+  line-height: 40px;
+  color: white;
+}
+
+.dropdown-menu li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: normal;
+  line-height: 20px;
+  color: charcoal;
+  white-space: nowrap;
+}
+
+.navbar .nav > li.dropdown > .dropdown-toggle .caret {
+  border-top: 6px solid white;
+  //border-bottom: 6px solid white;
+}
+
+.navbar-link {
+  color: white;
+}
+
+.navbar-link:hover {
+  color: white;
+}
+
+.tab-content {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+.nav-tabs {
+    margin-bottom: 0;
+}
+
+// Indentation classes:
+//   - indent: for use with strip (regular indentation).
+//   - indentslim: for use with avatar and no strip (Contacts).
+//   - indentwide: for use with strip + checkbox (Tasks).
+//   - indentfull: for use with strip + avatar (Admin/Users).
+.indent {
+	//margin-left: 0px;
+  margin-left: 75px;
+}
+
+.indent-old {
+  margin-left: 88px; 
+  }
+
+.indentnone {
+  margin-left: 25px;
+}
+
+.indentslim {
+  margin-left: 38px;
+}
+
+.indentwide {
+  margin-left: 106px; }
+
+.indentfull {
+  margin-left: 126px; }
+
+.indent, .indentnone, .indentslim {
+  .subtitle {
+    border-bottom: 0px silver solid;
+    color: #2f2f2f;
+    font-size: 11px;
+    font-weight: bold; 
+  }
+  .section {
+    padding: 0px;
+    
+  }
+	img {
+		vertical-align: bottom;
+	}
+}
+
+//---end indents
+
+// Two-row lists.
+//------------------------------------------------------------------------------
+.list {
+  padding: 8px 0px 7px 0px;
+  li.card {
+    border-bottom: 1px silver dotted;
+    clear: both;
+    color: #3f3f3f;
+    font-size: 12px;
+    list-style: none;
+    padding: 5px 0px 5px 0px;
+    line-height: 14px;
+    .gravatar {
+      float: left;
+      padding: 0px 0px 0px 0px; }
+    tt {
+      color: dimgray;
+      font-size: 11px; }
+    dt {
+      line-height: 13px;
+      color: #3f3f3f;
+      font-size: 11px;
+      padding: 2px 0px 0px 0px; } }
+	li.version {
+		font-size: 11px;
+		font-weight: bold;
+		tt {
+			font-weight: normal;
+		}
+	}
+  input[type=checkbox] {
+    float: left;
+    margin: 0px 4px 0px 0px; } 
+	.comment {
+		tt {
+			display: inline;
+   		font-size: 11px;
+   		color: #333333; }
+ 		dt {
+   		padding: 0px;
+   		margin: 0px 0px 0px 29px;
+			color: #666666;
+   			p {
+     			margin: 10px 0px 0px 0px; } }
+		border-bottom: none;
+	}
+}
+//---end list
+
+//---Sidebar
+
+#lists {
+  .show_lists_save_form {
+    text-align: right; }
+  .show_lists_save_form, .save_list {
+    margin: 10px 0 0; }
+  .list_icon {
+    opacity: 0.5;
+    width: 12px; }
+  img.input_info {
+    vertical-align: middle; }
+  input#save_list {
+    margin-top: 6px; } }
+  label {
+    display: inline;
+  }
+  
+.nav-list {
+  dt {
+      float: right;
+    }
+}
+    
+.panel {
+  div {
+    margin: 0px 0px 10px 0px; }
+  h4 {
+    font-size: 13px;
+    font-weight: bold; }
+  li {
+    border-bottom: 1px silver dotted;
+    font-size: 12px;
+    list-style: none;
+    padding: 2px 0px 3px 0px;
+    dt {
+      float: right;
+      font-size: 11px;
+      font-weight: bold; }
+    tt {
+      font-size: 11px; }
+    &.last {
+      border-bottom: none; } }
+  &#recently {
+    background: floralwhite; }
+  &#summary {
+    background: oldlace;
+    p {
+      margin: 4px 0px 4px 0px; } } }
+
+
+//----end sidebar
+
+//----title
+@color_title: #342d7e;
+@color_subtitle: darkslateblue;
+@sidebar_width: 210px;
+
+.title {
+  border-bottom: 1px #E3E3E3 solid;
+  color: @color_title;
+  font-size: 15px;
+  font-weight: bold;
+  padding-bottom: 2px;
+  margin-top: 6px;
+  img {
+    position: relative;
+    top: 2px; } }
+
+.title_tools {
+  font-size: 12px;
+  float: right;
+  margin: 0;
+  margin-top: 4px;
+
+  .sorting_options, .create_asset {
+    margin-left: 24px;
+    display: inline-block;
+    vertical-align: top;
+  }
+}
+
+.subtitle {
+	height: 21px;
+  border-bottom: 1px silver solid;
+  color: #2f2f2f;
+  font-size: 12px;
+  font-weight: bold;
+  small {
+    font-weight: normal;
+    font-size: 10px;
+    padding-left: 5px; }
+  a:link, a:visited {
+    color: @color_subtitle;
+    text-decoration: none; }
+  a:hover {
+    background: none; };
+  &.show_attributes {
+    margin-top: 6px; } }
+
+.subtitle_inline_info {
+  margin-left: 5px }
+
+.subtitle_tools {
+  font-size: 11px;
+  float: right; }
+  
+.tools, .sub_tools {
+  font-size: 10px;
+  float: right;
+  padding: 0px 0px 0px 4px;
+  &#comment_new_tools {
+    margin: 8px 0px 0px 0px; } }
+
+ul.tools, ul.sub_tools {
+  display: inline;
+  li {
+    border-right: 1px black solid;
+    border-bottom: none;
+    padding: 0 4px;
+    font-size: 10px;
+    float: left;
+    clear: none; }
+  li:last-child {
+    border-right: none; } }
+
+.highlight, .sub_highlight{
+  background-color: white;
+  .tools, .sub_tools {
+    visibility: hidden; }
+	.mail_tools {
+		visibility: hidden;
+		display: none; 
+		a {
+			&:hover {
+		    background: aliceblue; }
+		img {
+			background-color: aliceblue;
+		}
+		}}
+ 	}
+
+.mail.highlight,
+.comment.highlight {
+  background-color: #f2f2f2; }
+
+.highlight:hover {
+  background-color: aliceblue;
+  .tools {
+    visibility: visible; }
+	.mail_tools {
+		visibility: visible;
+		display: inline; }
+ }
+
+.sub_highlight:hover {
+  background-color: seashell;
+  .sub_tools {
+    visibility: visible; } }
+
+
+//---end title
+
+.form-horizontal .control-label {
+    width: 100px;
+}
+
+.form-horizontal .controls {
+    margin-left: 120px;
+}
+
+.remote {
+  padding-top: 20px;
+  padding-left: 10px;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+}
+
+// For IE
+ 
+.btn-inverse:active,
+.btn-inverse.active {
+  background-color: #080808 \9;
+}
+ 
+// Add 'btn-flat' to your buttons
+.btn-flat {
+    filter:progid:DXImageTransform.Microsoft.Gradient(enabled='false');
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    background-image:none;
+    border:0;
+}
+
+
+@import "twitter/bootstrap/responsive";
+
+// Set the correct sprite paths
+@iconSpritePath: image-url("twitter/bootstrap/glyphicons-halflings.png");
+@iconWhiteSpritePath: image-url("twitter/bootstrap/glyphicons-halflings-white.png");
+
+// Set the Font Awesome (Font Awesome is default. You can disable by commenting below lines)
+@fontAwesomeEotPath: asset-url("fontawesome-webfont.eot");
+@fontAwesomeEotPath_iefix: asset-url("fontawesome-webfont.eot?#iefix");
+@fontAwesomeWoffPath: asset-url("fontawesome-webfont.woff");
+@fontAwesomeTtfPath: asset-url("fontawesome-webfont.ttf");
+@fontAwesomeSvgPath: asset-url("fontawesome-webfont.svg#fontawesomeregular");
+
+// Font Awesome
+@import "fontawesome/font-awesome";
+
+// Glyphicons
+//@import "twitter/bootstrap/sprites.less";
+
+// Your custom LESS stylesheets goes here
+//
+// Since bootstrap was imported above you have access to its mixins which
+// you may use and inherit here
+//
+// If you'd like to override bootstrap's own variables, you can do so here as well
+// See http://twitter.github.com/bootstrap/customize.html#variables for their names and documentation
+//
+// Example:
+// @linkColor: #ff0000;
