@@ -83,7 +83,7 @@ class Contact < ActiveRecord::Base
       rest.map{|r| scope = scope.or(r)} if scope
       scope
     else
-      t[:first_name].matches("%#{query}%").or(t[:last_name].matches("%#{query}%"))
+      t[:first_name].matches("%#{query}%").or(t[:last_name].matches("%#{query}%")).or(t[:preferred_name].matches("%#{query}%"))
     end
 
     other = t[:email].matches("%#{query}%").or(t[:alt_email].matches("%#{query}%"))
@@ -129,10 +129,10 @@ class Contact < ActiveRecord::Base
       if !self.cf_mailing_first_name.blank? && self.cf_mailing_first_name != self.first_name
         "#{self.first_name} #{self.last_name} (#{self.cf_mailing_first_name})"
       else
-        "#{self.first_name} #{self.last_name}"
+        "#{self.first_name} #{self.preferred_name.present? ? "(#{self.preferred_name})" : ""} #{self.last_name}"
       end
     else
-      "#{self.last_name}, #{self.first_name}"
+      "#{self.last_name}, #{self.first_name} #{self.preferred_name.present? ? "(#{self.preferred_name})" : ""}"
     end
   end
   alias :name :full_name

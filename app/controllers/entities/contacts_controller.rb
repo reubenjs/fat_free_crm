@@ -126,7 +126,7 @@ class ContactsController < EntitiesController
 
       contact.update_attributes(
         :first_name => params[:first_name],
-        :preferred_name => params[:preferred_name],
+        :preferred_name => params[:preferred_name].gsub(/N\/A/, ""),
         :last_name => params[:last_name],
         :email => params[:email],
         :cf_gender => params[:gender],
@@ -145,6 +145,10 @@ class ContactsController < EntitiesController
         :cf_emergency_contact_relationship => params[:emergency_contact_relationship],
         :cf_emergency_contact_number => params[:emergency_contact_phone]
        )
+      
+      if contact.first_name == contact.preferred_name
+        contact.preferred_name = nil
+      end
 
       if params[:first_time] == "yes"
         contact.tag_list << "first-myc-2014" unless contact.tag_list.include?("first-myc-2014")

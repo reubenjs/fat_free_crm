@@ -10,6 +10,16 @@
       %tr
         %td
           .label 
+            International student (FOCUS)
+            = f.check_box :international_student, :style => "float:left;"
+        %td=spacer
+        %td
+          .label 
+            Reqiures sleeping bag
+            = f.check_box :requires_sleeping_bag, :style => "float:left;"
+      %tr
+        %td
+          .label 
             Part time
             = f.check_box :part_time, :style => "float:left;", :onclick => "crm.update_part_time($('#registration_part_time').prop('checked'))"
     %div#part_time{ hidden_if(!@registration.part_time) }
@@ -42,7 +52,7 @@
       %tr
         %td
           .label 
-            Number of T-Shirts ordered
+            Number of T-Shirts/jumpers ordered
             = f.text_field :t_shirt_ordered
       %tr
         %td
