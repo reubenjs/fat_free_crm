@@ -18,8 +18,8 @@
         %li= link_to_edit(contact)
 
     - if shown_on_landing_page?
-      - discard_text = (object.try(&:class) == Event ? "Unregister" : "Discard")
-      %li= link_to_discard(contact, discard_text)
+      - discard_text = (object.try(&:class) == Event ? "Unregister" : t(:discard))
+      %li= link_to_confirm_discard(contact, :discard_text => discard_text)
 
 
     - if can?(:destroy, contact)

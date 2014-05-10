@@ -72,7 +72,7 @@ class Event < ActiveRecord::Base
   
   def contacts_accommodated_on(day)
     if self.registrations.any?
-      contacts = self.contacts.where('registrations.sleeps LIKE (?) OR registrations.part_time = false', "%#{day}%") #.map{|r| r.contact} 
+      contacts = self.contacts.where('registrations.sleeps LIKE (?) OR registrations.part_time = false OR registrations.part_time IS NULL', "%#{day}%") #.map{|r| r.contact} 
     end   
   end
   

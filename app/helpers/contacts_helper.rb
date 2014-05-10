@@ -94,6 +94,12 @@ module ContactsHelper
   end
   
   #----------------------------------------------------------------------------
+  def link_to_confirm_discard(contact, options = {})
+    discard_text = (options[:discard_text] == t(:discard)) ? "remove" : "unregister"
+    link_to(options[:discard_text] + "?", confirm_discard_contact_path(contact, :discard_text => discard_text), :method => :get, :remote => true)
+  end
+  
+  #----------------------------------------------------------------------------
   def link_to_mailing_lists(contact)
     link_to(image_tag("/assets/mail_edit.png", :size => "16x12"), 
             mailing_lists_contact_path(contact), 
