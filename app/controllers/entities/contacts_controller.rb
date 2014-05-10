@@ -13,8 +13,10 @@ class ContactsController < EntitiesController
   end
   
   def confirm
+    @discard_text = params[:discard_text] || "remove"
     respond_with(@contact)
   end
+  alias :confirm_discard :confirm
   
   def mailing_lists
     @account = @contact.account || Account.new(:user => current_user)

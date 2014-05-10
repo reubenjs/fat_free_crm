@@ -1,0 +1,5 @@
+.confirm[@contact, :confirm]
+  Are you sure you want to
+  #{@discard_text.downcase} <b>#{@contact.full_name}</b> from here?
+  = link_to_discard(@contact, "Yes") << " : "
+  = link_to_function(t(:no_button), "crm.flick('#{dom_id(@contact, :confirm)}', 'remove')")

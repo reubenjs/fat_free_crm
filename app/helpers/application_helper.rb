@@ -150,14 +150,16 @@ module ApplicationHelper
   end
 
   #----------------------------------------------------------------------------
-  def link_to_discard(object, discard_text="Discard")
+  def link_to_discard(object, discard_text="Discard", options = {})
     current_url = (request.xhr? ? request.referer : request.fullpath)
+    confirm = options[:confirm] || nil
     parent, parent_id = current_url.scan(%r|/(\w+)/(\d+)|).flatten
 
     link_to(discard_text,
       url_for(:controller => parent, :action => :discard, :id => parent_id, :attachment => object.class.name, :attachment_id => object.id),
       :method  => :post,
-      :remote  => true
+      :remote  => true,
+      :confirm => confirm
     )
   end
 

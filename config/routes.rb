@@ -99,6 +99,7 @@ Rails.application.routes.draw do
       get :mailing_lists
       get :tags
       get :confirm
+      get :confirm_discard
       get :archive
       get :activate
       post :graduate
