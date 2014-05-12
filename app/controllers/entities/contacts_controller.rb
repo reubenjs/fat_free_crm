@@ -131,7 +131,7 @@ class ContactsController < EntitiesController
         :preferred_name => params[:preferred_name].gsub(/N\/A/, ""),
         :last_name => params[:last_name],
         :email => params[:email],
-        :cf_gender => params[:gender],
+        :cf_gender => params[:gender].titleize,
         #:phone => row[:_home_phone],
         :mobile => params[:phone].gsub(/[\(\) ]/, ""),
         #address?
