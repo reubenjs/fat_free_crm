@@ -86,7 +86,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         #Semester 2
         
         xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 34 do
-          xml.Data "Semester 2 BSG/ACT", 
+          xml.Data "Semester 1 Munchies", 
                     'ss:Type' => 'String'
         end
         #yellow background
@@ -107,8 +107,8 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
       xml.Row 'ss:StyleID'=>"s27" do
         numbers = *(1..13)
         heads = [I18n.t('name'),
-                 I18n.t('email'),
-                 I18n.t('mobile'),
+                 "Core",
+                 "Leader",
                  "Tags",
                  "Last TBT",
                  "Last BSG",
@@ -128,6 +128,8 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         end
       end
       
+      adelaide_leaders = ContactGroup.find_by_name("Adelaide Leaders")
+      
       # Contact rows.
       @account.contacts.sort_by(&:first_name).each do |contact|
         tbt = contact.last_attendance_at_event_category("bible_talk")
@@ -135,17 +137,20 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         tbt_by_weeks_s1 = contact.attendance_by_week_at_event_category("bible_talk", "1")
         tbt_by_weeks_s2 = contact.attendance_by_week_at_event_category("bible_talk", "2")
         
-        bsg_by_weeks_s1 = contact.attendance_by_week_at_event_category("bsg", "1") 
+        bsg_by_weeks_s1 = contact.attendance_by_week_at_event_category("bsg", "1")
+        munchies_by_weeks_s1 = contact.attendance_by_week_at_event_category("munchies", "1") 
         
         bsg_by_weeks_s2 = contact.attendance_by_week_at_event_category("bsg", "2")
         act_by_weeks_s2 = contact.attendance_by_week_at_event_category("act", "2")
         
         bsg_by_weeks_s2 = bsg_by_weeks_s2.each_with_index.map{|v,i| v.empty? ? act_by_weeks_s2[i] : v }
+        core = contact.tag_list.include?("core") ? "Y" : ""
+        leader = adelaide_leaders.memberships.find_by_contact_id(contact.id) ? "Y" : ""
         
         xml.Row do
           data    = [contact.name,
-                     contact.email,
-                     contact.mobile,
+                     core,
+                     leader,
                      contact.tags.collect(&:name).join(", "),
                      (!tbt.nil? && tbt > (Time.now - 4.weeks)) ? tbt.strftime("%d/%m") : "",
                      (!bsg.nil? && bsg > (Time.now - 4.weeks)) ? bsg.strftime("%d/%m") : "",
@@ -153,7 +158,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
                      
           data.concat(bsg_by_weeks_s1)
           data.concat(tbt_by_weeks_s1)
-          data.concat(bsg_by_weeks_s2)
+          data.concat(munchies_by_weeks_s1)
           data.concat(tbt_by_weeks_s2)
                      
           data.each_with_index do |value, index|
