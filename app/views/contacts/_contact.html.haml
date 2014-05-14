@@ -1,7 +1,7 @@
 - object_hash = defined?(object) ? {:contact => contact, :object => object} : {:contact => contact}
 - if (template = template_for_current_view).present?
   - account_updated = contact.account.present? ? contact.account.updated_at : 0
-  - cache ["contact-#{contact.id}", params[:controller], template, contact.updated_at.to_i, account_updated.to_i, mobile_device? ? "mob" : "dt"] do
+  - cache ["contact-#{contact.id}", current_user.id, params[:controller], template, contact.updated_at.to_i, account_updated.to_i, mobile_device? ? "mob" : "dt"] do
     = render(template, object_hash)
 - else
   -# default view
