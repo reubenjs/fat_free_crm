@@ -109,7 +109,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         heads = [I18n.t('name'),
                  "Core",
                  "Leader",
-                 "Tags",
+                 "BSG",
                  "Last TBT",
                  "Last BSG",
                  "Neither"
@@ -151,7 +151,8 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
           data    = [contact.name,
                      core,
                      leader,
-                     contact.tags.collect(&:name).join(", "),
+                     #contact.tags.collect(&:name).join(", "),
+                     contact.current_bsg,
                      (!tbt.nil? && tbt > (Time.now - 4.weeks)) ? tbt.strftime("%d/%m") : "",
                      (!bsg.nil? && bsg > (Time.now - 4.weeks)) ? bsg.strftime("%d/%m") : "",
                      (tbt.nil? && bsg.nil?) ? "True" : "False"]
