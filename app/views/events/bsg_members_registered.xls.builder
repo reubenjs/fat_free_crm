@@ -16,24 +16,22 @@ xml.Worksheet 'ss:Name' => (@event.name + " contact list") do
         end
       end
       
-      contact_groups = ContactGroup.where(:category => :bsg)
+      contact_groups = ContactGroup.where(:category => :bsg, :inactive => false)
       registered = @event.contacts.collect(&:id)
       
-      contact_groups.each do |contact_group|
-        unless ["Adelaide BSG 2013", "City East BSG 2013", "City West BSG 2013"].include?(contact_group.name)
-          # Contact rows.
-          contact_group.contacts.each do |contact|
-            xml.Row do
-              data    = [contact_group.name, 
-                         registered.include?(contact.id) ? "Yes" : "No",
-                         contact.first_name,
-                         contact.last_name]
-          
-              data.each do |value|
-                xml.Cell do
-                  xml.Data value,
-                           'ss:Type' => "#{value.respond_to?(:abs) ? 'Number' : 'String'}"
-                end
+      contact_groups.each do |contact_group|        
+        # Contact rows.
+        contact_group.contacts.each do |contact|
+          xml.Row do
+            data    = [contact_group.name, 
+                       registered.include?(contact.id) ? "Yes" : "No",
+                       contact.first_name,
+                       contact.last_name]
+        
+            data.each do |value|
+              xml.Cell do
+                xml.Data value,
+                         'ss:Type' => "#{value.respond_to?(:abs) ? 'Number' : 'String'}"
               end
             end
           end
