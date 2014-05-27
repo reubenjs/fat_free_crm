@@ -63,7 +63,7 @@ module ApplicationHelper
     html << content_tag(:div, view_buttons, :class => :subtitle_tools, :id => "buttons") if views
     html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if views
     html << content_tag(:div, t(:sort_by, :models => t(:"#{controller_name}_small"), :field => link_to(current_sort_by, "#", :id => :sort_by)).html_safe , :class => "subtitle_tools") if (views && related.present?)
-    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if (views && related.present? && !no_create)
+    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") if (views && related.present? && (!no_select || !no_create))
     html << javascript_tag(
       "new crm.Menu({
         trigger   : \"\#sort_by\",
@@ -73,7 +73,7 @@ module ApplicationHelper
       });" 
     ) if (views && related.present?)
     html << content_tag(:div, link_to(t(select_id), "#", :id => select_id), :class => "subtitle_tools") unless no_select
-    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") unless no_select
+    html << content_tag(:div, "&nbsp;|&nbsp;".html_safe, :class => "subtitle_tools") unless no_create
     html << content_tag(:div, link_to_inline(create_id, create_url, :related => dom_id(related), :text => t(create_id)), :class => "subtitle_tools") unless no_create
     html << content_tag(:div, (asset_count > 0 ? t(asset_title) + " (#{asset_count})" : t(assets)), :class => :subtitle, :id => "create_#{asset}_title")
     html << content_tag(:div, "", :class => :remote, :id => create_id, :style => "display:none;")

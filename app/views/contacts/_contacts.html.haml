@@ -1,6 +1,6 @@
 - show_views = (object.class == ContactGroup || object.class == Account || object.class == Event) ? true : false
-- no_select_create = object.class == Event ? true : false
-= section(object, :contacts, no_select_create, show_views, Contact, no_select_create)
+- no_create = object.class == Event ? true : false
+= section(object, :contacts, false, show_views, Contact, no_create)
 
 #search{:style => "margin-top:0px"}
   .search_form.show#basic_search{:style => "padding:0 4px 0 4px"}

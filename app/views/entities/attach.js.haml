@@ -21,6 +21,8 @@
       } else {
       $('##{h params[:assets]}').prepend('#{ j render(:partial => "event_instances/#{partial}", :collection => [ @attachment ], :locals => {:object => @event_instance}) }');
       }
+    - elsif called_from_landing_page?(:events) && partial == "contact"
+      $('##{h params[:assets]}').prepend('#{ j render(:partial => "#{params[:assets]}/#{partial}", :collection => [ @attachment ], :locals => {:object => @event}) }');
     - else
       $('##{h params[:assets]}').prepend('#{ j render(:partial => "#{params[:assets]}/#{partial}", :collection => [ @attachment ]) }');
     - if called_from_landing_page?(:accounts)
