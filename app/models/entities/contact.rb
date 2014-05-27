@@ -176,6 +176,10 @@ class Contact < ActiveRecord::Base
     end
     current_bsg
   end
+  
+  def registered_for?(event_id)
+    self.registrations.map(&:event_id).include?(event_id)
+  end
 
   # Backend handler for [Create New Contact] form (see contact/create).
   #----------------------------------------------------------------------------

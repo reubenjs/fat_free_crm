@@ -1,3 +1,6 @@
+registerables = Event.where(:inactive => false, :has_registrations => true)
+registerables_heads = registerables.map(&:name)
+  
 xml.Styles do
   xml.Style 'ss:ID' => "Default", 'ss:Name' => "Normal" do
     xml.Alignment 'ss:Vertical' => "Bottom"
@@ -106,6 +109,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
       # Header.
       xml.Row 'ss:StyleID'=>"s27" do
         numbers = *(1..13)
+        
         heads = [I18n.t('name'),
                  "Core",
                  "Leader",
@@ -118,6 +122,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         heads.concat(numbers)
         heads.concat(numbers)
         heads.concat(numbers)
+        heads.concat(registerables_heads)
         
         heads.each do |head|
           hash = head == 1 ? {'ss:StyleID' => "s29"} : {}
@@ -144,6 +149,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         act_by_weeks_s2 = contact.attendance_by_week_at_event_category("act", "2")
         
         bsg_by_weeks_s2 = bsg_by_weeks_s2.each_with_index.map{|v,i| v.empty? ? act_by_weeks_s2[i] : v }
+        
         core = contact.tag_list.include?("core") ? "Y" : ""
         leader = adelaide_leaders.memberships.find_by_contact_id(contact.id) ? "Y" : ""
         
@@ -161,6 +167,9 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
           data.concat(tbt_by_weeks_s1)
           data.concat(munchies_by_weeks_s1)
           data.concat(tbt_by_weeks_s2)
+          registerables.each do |e|
+            data << (contact.registered_for?(e.id) ? "\u{2022}" : "")
+          end
                      
           data.each_with_index do |value, index|
             hash = (index > 6) ? {'ss:StyleID' => "s21"} : {}
