@@ -24,6 +24,7 @@ class Registration < ActiveRecord::Base
   
   validate :users_for_shared_access
   
+  before_create :create_saasu_invoice
 
   # Default values provided through class methods.
   #----------------------------------------------------------------------------
@@ -56,14 +57,27 @@ class Registration < ActiveRecord::Base
   # Backend handler for [Update Contact] form (see contact/update).
   #----------------------------------------------------------------------------
   def update_with_permissions(params)
+    extend SaasuHandler
     #self.reload
     # Must set access before user_ids, because user_ids= method depends on access value.
     self.access = params[:registration][:access] if params[:registration][:access]
     self.attributes = params[:registration]
+    
+    if (self.fee.to_i > 0) || self.saasu_uid.present?
+      update_saasu(self, params[:send_invoice].present?)
+    end
+    
     self.save
   end
 
   private
+  
+  def create_saasu_invoice
+    extend SaasuHandler
+    if self.fee.to_i > 0
+      add_saasu(self) 
+    end
+  end
   
   # Make sure at least one user has been selected if the campaign is being shared.
   #----------------------------------------------------------------------------

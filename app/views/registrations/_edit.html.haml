@@ -15,5 +15,6 @@
         = f.submit t(:save_registration), :onclick => "crm.clear_all_hints()"
       - else
         = f.submit t(:save_registration)
+      = f.button :submit, name: "send_invoice", value: "Save and (re)send invoice"
       #{t :or}
       = link_to_cancel edit_registration_path(@registration)

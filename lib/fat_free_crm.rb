@@ -63,5 +63,6 @@ require "mandrill_email_job"
 require "conference_email_job"
 require "add_or_update_chimp"
 require "delete_chimp_by_email"
+require "saasu_handler"
 #require "ffcrm_merge"
 #require 'ffcrm_merge/merge_view_hooks'
