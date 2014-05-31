@@ -195,7 +195,7 @@ class ContactsController < EntitiesController
       # to raise an invoice
       #-------------------------
     
-      if registration.save #only synclog if successful (save will trigger registration observer which might fail if connection to saasu is down etc.)
+      if registration.save
     
         # Check for suspected duplicate contacts after syncing this item
         # --------------------------------------------------------------- 

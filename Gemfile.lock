@@ -6,7 +6,7 @@ GIT
 
 GIT
   remote: git://github.com/reubenjs/saasu.git
-  revision: d214f0d6ea220dd4f9b4e29bf8bfc10a47bdc346
+  revision: c229c0eba832709fcb52abc75f1e5b052eab85b3
   specs:
     saasu (0.0.15)
       activesupport (>= 2.3.2)
