@@ -104,6 +104,12 @@
         %td
           .label Payment Method
           = f.select :payment_method, [["Cash","Cash"],["PayPal","PayPal"]], { :style => "width:160px" }, {:disabled => (f.object.payment_method == "PayPal")}
+    %table
+      %tr
+        %td
+          .label 
+            Include early payment discount on invoice?
+            = f.check_box :discount_allowed, :style => "float:left"
     
     
             

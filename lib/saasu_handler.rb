@@ -25,7 +25,8 @@ module SaasuHandler
       else
         if (registration.t_shirt_ordered_changed? || 
             registration.donate_amount_changed? || 
-            registration.fee_changed?)
+            registration.fee_changed? ||
+            registration.discount_allowed_changed?)
     
           i.invoice_items = calculate_invoice_items(registration)
         end
@@ -131,8 +132,8 @@ module SaasuHandler
     fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 35)
   
     invoice_items << fee
-  
-    if registration.payment_method != "PayPal"
+
+    if registration.payment_method != "PayPal" && registration.discount_allowed
       discount = Saasu::ServiceInvoiceItem.new
       discount.description = "Online payment discount (if paid before 20th June)"
       discount.account_uid = Setting.saasu[:myc_income_account]
