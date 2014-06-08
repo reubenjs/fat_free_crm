@@ -187,8 +187,8 @@ class ContactsController < EntitiesController
         :lunches => (params[:lunch].blank? ? nil : params[:lunch].split(", ")),
         :dinners => (params[:dinner].blank? ? nil : params[:dinner].split(", ")),
         :sleeps => (params[:sleeping].blank? ? nil : params[:sleeping].split(", ")),
-        :international_student => params[:international_student],
-        :requires_sleeping_bag => params[:sleeping_bag_required]
+        :international_student => (params[:international_student] == "yes"),
+        :requires_sleeping_bag => (params[:sleeping_bag_required] == "yes")
       )
               
       # There is now enough info in registration for observers/registration_observer 
