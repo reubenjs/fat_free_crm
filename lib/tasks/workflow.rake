@@ -707,4 +707,23 @@ namespace :ffcrm do
     end
   end
   
+  task :end_of_earlybird => :environment do
+    extend SaasuHandler
+    PaperTrail.whodunnit = 1
+    
+    event = Event.find_by_name("MYC 2014")
+    
+    event.registrations.each do |r|
+      if r.payment_method == "Cash" && r.discount_allowed == true
+        if (r.fee.to_i > 0) || r.saasu_uid.present?
+          r.discount_allowed = false
+          update_saasu(r, true, true) #send invoice, end_of_earlybird
+          r.save
+          puts "changed invoice for #{r.contact.first_name r.contact.last_name}"
+        end
+      end
+    end
+    
+  end
+  
 end

@@ -1,5 +1,5 @@
 module SaasuHandler
-  def update_saasu(registration, send_invoice=false)
+  def update_saasu(registration, send_invoice=false, end_of_earlybird=false)
     i = Saasu::Invoice.find(registration.saasu_uid)
 
     if i.errors.present? && rnf_error(i.errors)
@@ -34,7 +34,9 @@ module SaasuHandler
           i.quick_payment = calculate_payment(registration)
         end
     
-        if send_invoice
+        if send_invoice && end_of_earlybird
+          response = Saasu::Invoice.update_and_email(i, generate_end_of_earlybird_email(registration), Setting.conference[:email_template].to_i)
+        elsif send_invoice 
           response = Saasu::Invoice.update_and_email(i, generate_email(registration), Setting.conference[:email_template].to_i)
         else
           response = Saasu::Invoice.update(i)
@@ -106,6 +108,24 @@ module SaasuHandler
     email.subject = Setting.conference[:email_subject]
     email.body = "Dear #{registration.contact.first_name},\r\n\r\n
       Please find your invoice/receipt attached. If you have not already paid, the invoice contains a link to pay online that you can use at any time.\r\n\r\n
+      Thank you,\r\n\r\n
+      The MYC Team"
+    
+    email
+  end
+  
+  def generate_end_of_earlybird_email(registration)
+    email = Saasu::EmailMessage.new
+    if Rails.env.production?
+      email.to = registration.contact.email
+      email.bcc = Setting.conference[:bcc]
+    else
+      email.to = Setting.conference[:bcc]
+    end
+    email.from = Setting.conference[:email_address]
+    email.subject = Setting.conference[:email_subject]
+    email.body = "Dear #{registration.contact.first_name},\r\n\r\n
+      Our earlybird pricing has now ended. Please find your amended invoice attached.\r\n\r\n Do not use your previous invoice to pay online!!\r\n\r\nThe invoice attached contains a link to pay online that you can use at any time.\r\n\r\n
       Thank you,\r\n\r\n
       The MYC Team"
     
