@@ -719,7 +719,7 @@ namespace :ffcrm do
           r.discount_allowed = false
           update_saasu(r, true, true) #send invoice, end_of_earlybird
           r.save
-          puts "changed invoice for #{r.contact.first_name r.contact.last_name}"
+          puts "changed invoice for #{r.contact.first_name} #{r.contact.last_name}"
         end
       end
     end
