@@ -5,6 +5,13 @@ GIT
     secret_token_replacer (0.1.0)
 
 GIT
+  remote: git://github.com/reubenjs/ffcrm_merge.git
+  revision: 7e823a6b3853d2845a73f2b4336700168ba8a6f8
+  specs:
+    ffcrm_merge (1.3.1)
+      fat_free_crm
+
+GIT
   remote: git://github.com/reubenjs/saasu.git
   revision: c229c0eba832709fcb52abc75f1e5b052eab85b3
   specs:
@@ -130,6 +137,34 @@ GEM
     factory_girl_rails (4.3.0)
       factory_girl (~> 4.3.0)
       railties (>= 3.0.0)
+    fat_free_crm (0.13.2)
+      acts-as-taggable-on (~> 2.3.3)
+      acts_as_commentable (~> 3.0.1)
+      acts_as_list (~> 0.1.4)
+      authlogic (= 3.1.0)
+      cancan
+      cocaine
+      dynamic_form
+      email_reply_parser_ffcrm
+      ffaker (>= 1.12.0)
+      font-awesome-rails
+      haml (~> 3)
+      jquery-rails (~> 2.1.4)
+      nokogiri
+      paper_trail (~> 2.7.0)
+      paperclip
+      premailer
+      prototype-rails
+      psych (~> 1)
+      rails (~> 3.2.12)
+      rails3-jquery-autocomplete
+      ransack_ui (>= 1.1.0)
+      responds_to_parent (>= 1.1.0)
+      sass (~> 3)
+      select2-rails
+      simple_form (~> 2.0.1)
+      valium
+      will_paginate (~> 3.0.2)
     ffaker (1.23.0)
     ffi (1.9.3)
     font-awesome-rails (4.0.3.1)
@@ -204,6 +239,8 @@ GEM
     premailer (1.8.0)
       css_parser (>= 1.3.5)
       htmlentities (>= 4.0.0)
+    prototype-rails (3.2.1)
+      rails (~> 3.2)
     pry (0.9.12.4)
       coderay (~> 1.0)
       method_source (~> 0.8)
@@ -388,6 +425,7 @@ DEPENDENCIES
   execjs
   factory_girl_rails
   ffaker (>= 1.12.0)
+  ffcrm_merge!
   font-awesome-rails
   guard
   guard-rails
