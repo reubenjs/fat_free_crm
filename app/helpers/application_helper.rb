@@ -201,12 +201,12 @@ module ApplicationHelper
 
   #----------------------------------------------------------------------------
   def link_to_archive(entity)
-    link_to(t(:archive), url_for(:controller => controller_name, :action => :archive, :id => entity.id), :method => :get, :remote => true)
+    link_to(t(:archive), url_for(:controller => entity.class.name.underscore.pluralize, :action => :archive, :id => entity.id), :method => :get, :remote => true)
   end
   
   #----------------------------------------------------------------------------
   def link_to_activate(entity)
-    link_to(t(:activate), url_for(:controller => controller_name, :action => :activate, :id => entity.id), :method => :get, :remote => true)
+    link_to(t(:activate), url_for(:controller => entity.class.name.underscore.pluralize, :action => :activate, :id => entity.id), :method => :get, :remote => true)
   end
 
   #----------------------------------------------------------------------------

@@ -213,6 +213,35 @@ class Contact < ActiveRecord::Base
       subs = ""
     end
   end
+  
+  def merge_hook(duplicate)
+    if duplicate.saasu_uid.present?
+      invoices_for_contact = Saasu::Invoice.all(
+        :request_url => "invoiceList",
+        :contactUid => duplicate.saasu_uid,
+        :paidStatus => "all",
+        :invoiceDateFrom => "2000-01-01T00:00",
+        :invoiceDateTo => Date.today
+      )
+      
+      invoices_for_contact += Saasu::Invoice.all(
+        :request_url => "invoiceList",
+        :transaction_type => "p",
+        :contactUid => duplicate.saasu_uid,
+        :paidStatus => "all",
+        :invoiceDateFrom => "2000-01-01T00:00",
+        :invoiceDateTo => Date.today
+      )
+    
+      invoices_for_contact.each do |i|
+        invoice_to_update = Saasu::Invoice.find(i.uid)
+        invoice_to_update.contact_uid = self.saasu_uid
+        Saasu::Invoice.update(invoice_to_update)
+      end
+      
+      Saasu::Contact.delete(duplicate.saasu_uid)
+    end
+  end
 
   # Backend handler for [Update Contact] form (see contact/update).
   #----------------------------------------------------------------------------
