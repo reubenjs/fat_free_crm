@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140531134800) do
+ActiveRecord::Schema.define(:version => 20140630070755) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -27,6 +27,9 @@ ActiveRecord::Schema.define(:version => 20140531134800) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "account_contacts", ["account_id"], :name => "index_account_contacts_account_id"
+  add_index "account_contacts", ["contact_id"], :name => "index_account_contacts_contact_id"
 
   create_table "account_opportunities", :force => true do |t|
     t.integer  "account_id"
@@ -57,6 +60,7 @@ ActiveRecord::Schema.define(:version => 20140531134800) do
   end
 
   add_index "accounts", ["assigned_to"], :name => "index_accounts_on_assigned_to"
+  add_index "accounts", ["inactive"], :name => "index_accounts_inactive"
   add_index "accounts", ["user_id", "name", "deleted_at"], :name => "index_accounts_on_user_id_and_name_and_deleted_at", :unique => true
 
   create_table "activities", :force => true do |t|
@@ -192,6 +196,7 @@ ActiveRecord::Schema.define(:version => 20140531134800) do
   end
 
   add_index "contact_groups", ["assigned_to"], :name => "index_contact_groups_on_assigned_to"
+  add_index "contact_groups", ["inactive"], :name => "index_contact_groups_inactive"
   add_index "contact_groups", ["user_id", "name", "deleted_at"], :name => "index_contact_groups_on_user_id_and_name_and_deleted_at", :unique => true
 
   create_table "contact_opportunities", :force => true do |t|
@@ -237,6 +242,10 @@ ActiveRecord::Schema.define(:version => 20140531134800) do
   end
 
   add_index "contacts", ["assigned_to"], :name => "index_contacts_on_assigned_to"
+  add_index "contacts", ["first_name"], :name => "index_contacts_on_first_name"
+  add_index "contacts", ["inactive", "assigned_to"], :name => "index_contacts_on_inactive_assigned_to"
+  add_index "contacts", ["inactive"], :name => "index_contacts_inactive"
+  add_index "contacts", ["last_name"], :name => "index_contacts_on_last_name"
   add_index "contacts", ["user_id", "last_name", "deleted_at"], :name => "id_last_name_deleted", :unique => true
 
   create_table "delayed_jobs", :force => true do |t|
@@ -318,6 +327,7 @@ ActiveRecord::Schema.define(:version => 20140531134800) do
   end
 
   add_index "events", ["assigned_to"], :name => "index_events_on_assigned_to"
+  add_index "events", ["inactive"], :name => "index_events_inactive"
   add_index "events", ["user_id", "name", "deleted_at"], :name => "index_events_on_user_id_and_name_and_deleted_at", :unique => true
 
   create_table "field_groups", :force => true do |t|
