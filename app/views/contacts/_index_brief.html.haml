@@ -25,7 +25,7 @@
     - if can?(:destroy, contact)
       %li= link_to_confirm(contact)
 
-  .indentnone
+  .indentnone.name
     = link_to_if can?(:read, contact), contact.full_name(@current_user.preference[:contacts_naming]), contact
     %tt
       = brief_account_info(contact)
