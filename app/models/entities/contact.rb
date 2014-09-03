@@ -170,7 +170,7 @@ class Contact < ActiveRecord::Base
     
     groups = self.contact_groups.where(:inactive => false, :category => "bsg")
     groups.each do |g|
-      if g.name.include?("BSG14-")
+      if g.name.include?("BSG14S2-")
         current_bsg = g.name.split("-")[2]
       end
     end
