@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140630070755) do
+ActiveRecord::Schema.define(:version => 20140630124337) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -309,6 +309,8 @@ ActiveRecord::Schema.define(:version => 20140630070755) do
     t.datetime "ends_at"
   end
 
+  add_index "event_instances", ["event_id"], :name => "event_instances_index_on_event_id"
+
   create_table "events", :force => true do |t|
     t.string   "uuid",              :limit => 36
     t.integer  "user_id"
@@ -456,6 +458,7 @@ ActiveRecord::Schema.define(:version => 20140630070755) do
   add_index "memberships", ["contact_group_id"], :name => "index_contact_groups_contacts_on_contact_group_id"
   add_index "memberships", ["contact_id", "contact_group_id"], :name => "index_contact_groups_contacts_on_contact_id_and_contact_group_id"
   add_index "memberships", ["contact_id"], :name => "index_contact_groups_contacts_on_contact_id"
+  add_index "memberships", ["contact_id"], :name => "memberships_index_on_contact_id"
 
   create_table "opportunities", :force => true do |t|
     t.integer  "user_id"

@@ -67,10 +67,9 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
 
       # Header 1
       xml.Row 'ss:StyleID' => "s24" do
-        #Semester 1
         
         xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 8 do
-          xml.Data "Semester 1 BSG", 
+          xml.Data "Semester 2 BSG", 
                     'ss:Type' => 'String'
         end
         #yellow background
@@ -78,25 +77,6 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
           xml.Cell 'ss:StyleID' => "s25"
         end
         xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 21 do
-          xml.Data "Semester 1 TBT", 
-                    'ss:Type' => 'String'
-        end
-        #green background
-        for i in 1..12
-          xml.Cell 'ss:StyleID' => "s26"
-        end
-        
-        #Semester 2
-        
-        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 34 do
-          xml.Data "Semester 1 Munchies", 
-                    'ss:Type' => 'String'
-        end
-        #yellow background
-        for i in 1..12
-          xml.Cell 'ss:StyleID' => "s25"
-        end
-        xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 47 do
           xml.Data "Semester 2 TBT", 
                     'ss:Type' => 'String'
         end
@@ -104,6 +84,23 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         for i in 1..12
           xml.Cell 'ss:StyleID' => "s26"
         end
+        
+        xml.Cell 'ss:StyleID'=>"s28", 'ss:Index' => 34 do
+          xml.Data "Semester 2 Munchies", 
+                    'ss:Type' => 'String'
+        end
+        #yellow background
+        for i in 1..12
+          xml.Cell 'ss:StyleID' => "s25"
+        end
+        # xml.Cell 'ss:StyleID'=>"s32", 'ss:Index' => 47 do
+        #   xml.Data "Semester 2 TBT",
+        #             'ss:Type' => 'String'
+        # end
+        # #green background
+        # for i in 1..12
+        #   xml.Cell 'ss:StyleID' => "s26"
+        # end
         
       end
       # Header.
@@ -121,7 +118,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         heads.concat(numbers)
         heads.concat(numbers)
         heads.concat(numbers)
-        heads.concat(numbers)
+        #heads.concat(numbers)
         heads.concat(registerables_heads)
         
         heads.each do |head|
@@ -148,7 +145,7 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
         bsg_by_weeks_s2 = contact.attendance_by_week_at_event_category("bsg", "2")
         act_by_weeks_s2 = contact.attendance_by_week_at_event_category("act", "2")
         
-        bsg_by_weeks_s2 = bsg_by_weeks_s2.each_with_index.map{|v,i| v.empty? ? act_by_weeks_s2[i] : v }
+        munchies_by_weeks_s2 = contact.attendance_by_week_at_event_category("munchies", "2") 
         
         core = contact.tag_list.include?("core") ? "Y" : ""
         leader = adelaide_leaders.memberships.find_by_contact_id(contact.id) ? "Y" : ""
@@ -163,10 +160,10 @@ xml.Worksheet 'ss:Name' => I18n.t(:tab_accounts) do
                      (!bsg.nil? && bsg > (Time.now - 4.weeks)) ? bsg.strftime("%d/%m") : "",
                      (tbt.nil? && bsg.nil?) ? "True" : "False"]
                      
-          data.concat(bsg_by_weeks_s1)
-          data.concat(tbt_by_weeks_s1)
-          data.concat(munchies_by_weeks_s1)
+          data.concat(bsg_by_weeks_s2)
           data.concat(tbt_by_weeks_s2)
+          data.concat(munchies_by_weeks_s2)
+          #data.concat(tbt_by_weeks_s2)
           registerables.each do |e|
             data << (contact.registered_for?(e.id) ? "\u{2022}" : "")
           end
