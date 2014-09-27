@@ -137,7 +137,7 @@ module SaasuHandler
     qp.date_paid = Time.now.strftime("%Y-%m-%d")
     qp.banked_to_account_uid = Setting.saasu[:paypal_account]
     qp.amount = registration.fee.to_i
-    qp.summary = "auto entered: paypal payment"
+    qp.summary = "auto entered: paypal payment" #TODO: change to paypal id number and name?
   
     [qp]
   end
