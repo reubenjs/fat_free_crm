@@ -51,7 +51,7 @@ end
 group :development, :test do
   gem 'rspec-rails'
   gem 'headless'
-  gem 'debugger' unless ENV["CI"]
+  gem 'byebug' unless ENV["CI"]
   gem 'pry-rails' unless ENV["CI"]
   gem 'pry-nav' unless ENV["CI"]
   gem 'pry-stack_explorer' unless ENV["CI"]
