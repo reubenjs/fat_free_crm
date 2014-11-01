@@ -20,7 +20,7 @@ set :deploy_to,       "/var/www/#{application}"
 set :user,            'deploy'
 set :use_sudo,        false
 set :rvm_type,        :system
-set :rvm_ruby_string, '1.9.3-p327'
+set :rvm_ruby_string, '2.1'
 set :whenever_command, "bundle exec whenever"
 set :rails_env, "production" #added for delayed job 
 server                '192.168.5.223', :app, :web, :db, primary: true
