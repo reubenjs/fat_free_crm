@@ -20,13 +20,13 @@ set :output, 'log/rake_tasks.log'
 job_type :envcommand, 'cd :path && RAILS_ENV=:environment :task'
 
 
-every 10.minutes do
-  rake "ffcrm:registrations:sync"
-end
-# 
 # every 10.minutes do
-#   rake "ffcrm:dropbox:run"
+#   rake "ffcrm:registrations:sync"
 # end
+# 
+every 10.minutes do
+  rake "ffcrm:dropbox:run"
+end
 # 
 # every 10.minutes do
 #   rake "ffcrm:comment_replies:run"

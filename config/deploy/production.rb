@@ -20,10 +20,10 @@ set :deploy_to,       "/var/www/#{application}"
 set :user,            'deploy'
 set :use_sudo,        false
 set :rvm_type,        :system
-set :rvm_ruby_string, '1.9.3'
+set :rvm_ruby_string, '1.9.3-p327'
 set :whenever_command, "bundle exec whenever"
 set :rails_env, "production" #added for delayed job 
-server                '192.168.1.23', :app, :web, :db, primary: true
+server                '192.168.5.223', :app, :web, :db, primary: true
 
 # Use local key instead of key installed on the server.
 # If not working run "ssh-add ~/.ssh/id_rsa" on your local machine.
