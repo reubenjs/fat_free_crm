@@ -50,7 +50,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'daemons'
   gem.add_dependency 'dalli'
   gem.add_dependency 'chronic'
-  gem.add_dependency 'tinymce-rails'
+  gem.add_dependency 'tinymce-rails', '~> 4.1.6'
 
   # FatFreeCRM has released it's own versions of the following gems:
   #-----------------------------------------------------------------
