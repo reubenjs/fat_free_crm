@@ -42,6 +42,7 @@ group :development do
     gem 'guard'
     gem 'guard-rspec'
     gem 'guard-rails'
+    gem 'thor'
     gem 'rb-inotify', :require => false
     gem 'rb-fsevent', :require => false
     gem 'rb-fchange', :require => false
