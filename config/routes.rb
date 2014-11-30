@@ -264,6 +264,10 @@ Rails.application.routes.draw do
     end
   end
   
+  get 'registrations/pay/:token', to: 'registrations#pay', :token => /[a-zA-Z0-9]+/, :as =>'pay_registration'
+  get 'registrations/pay_not_found/:token', to: 'registrations#pay_not_found', :token => /[a-zA-Z0-9]+/, :as =>'pay_not_found_registration'
+  post 'registrations/pay_submit/:token', to: 'registrations#pay_submit', :token => /[a-zA-Z0-9]+/ 
+  
   resources :registrations, :id => /\d+/ do
     collection do
       #post :redraw

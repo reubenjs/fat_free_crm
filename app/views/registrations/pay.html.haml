@@ -1,0 +1,19 @@
+= form_tag :controller => :registrations, :action => :pay_submit, :token => @token do
+  %h2="Pay for #{@registration.event.name}"
+  %div=spacer
+  %div=spacer
+  %h3 Registration details
+  %p
+    %strong= "Name: "
+    = "#{@registration.contact.full_name}"
+  %p
+    %strong= "Fee: "
+    = number_to_currency(@registration.fee.to_i)
+  %div=spacer
+ 
+  = javascript_include_tag "https://checkout.stripe.com/v2/checkout.js", 
+    :class => "stripe-button", 
+    :"data-key" => "#{Setting.stripe['publishable_key']}", 
+    :"data-description" => "Payment for #{@registration.event.name}", 
+    :"data-amount" => "#{@registration.fee.to_i * 100}",
+    :"data-image" => "#{image_path('ES-logo-black.png')}"

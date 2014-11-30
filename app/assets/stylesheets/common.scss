@@ -85,6 +85,24 @@ $sidebar_width: 210px;
   margin: auto;
   width: 480px; }
 
+.webform {
+  background: #fff;
+  p, div {
+    &.flash_warning, &.flash_error {
+      text-align: center;
+    }
+  }
+  form {
+    padding: 20px;
+    border: #eee 1px solid;
+    clear: both;
+    overflow: hidden;
+  }
+  button {
+    float: right;
+  }
+}
+
 .standalone {
   background: whitesmoke;
   border: 20px lightsteelblue solid;
