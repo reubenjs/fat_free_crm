@@ -262,7 +262,9 @@ private
   #----------------------------------------------------------------------------
   def redirection_url
     # Try to redirect somewhere sensible. Note: not all controllers have an index action
-    url = if current_user.present?
+    url = if (self.controller_name == 'registrations' and self.action_name = 'pay')
+      pay_not_found_registration_path(:token => @token)
+    elsif current_user.present?
       (respond_to?(:index) and self.action_name != 'index') ? { action: 'index' } : root_url
     else
       login_url

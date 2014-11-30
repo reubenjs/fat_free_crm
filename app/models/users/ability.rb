@@ -12,6 +12,11 @@ class Ability
 
     # handle signup
     can(:create, User) if User.can_signup?
+    
+    #handle registration payments (can be made by non-user)
+    can(:pay, Registration)
+    can(:pay_submit, Registration)
+    can(:pay_not_found, Registration)
 
     if user.present?
       

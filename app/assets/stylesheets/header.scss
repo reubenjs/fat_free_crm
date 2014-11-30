@@ -130,6 +130,17 @@ $color_footer: grey;
 	}
 }
 
+#header.webform {
+  background: #fff;
+  
+  h3 {
+    text-align: center;
+    a {
+      background: #fff;
+    }
+  }
+}
+
 #footer {
   color: $color_footer;
   font-size: 10px;

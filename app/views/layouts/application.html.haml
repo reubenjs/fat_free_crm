@@ -36,10 +36,13 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-  %body
+  %body{:class => "#{'webform' if webform_layout?}"}
     %div.container
       -#= render "layouts/header"
-      - if tabless_layout? 
+      - if webform_layout?
+        = render "layouts/header_webform"
+        = render "layouts/webform"
+      - elsif tabless_layout?
         = render "layouts/tabless"
       - elsif mobile_device?
         = render 'layouts/mobile'
