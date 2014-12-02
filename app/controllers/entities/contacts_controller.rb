@@ -137,7 +137,7 @@ class ContactsController < EntitiesController
         #address?
         :cf_faculty => params[:faculty].gsub(/N\/A/, ""),
         :cf_campus => params[:campus].titleize,
-        :cf_course_1 => (params[:highschool].blank? or params[:highschool] == "N/A") ? nil : params[:course][:name],
+        :cf_course_1 => (params[:course].blank? or params[:course] == "N/A") ? nil : params[:course][:name],
         :cf_church_affiliation => params[:church].gsub(/N\/A/, ""),
         #:cf_denomination => params[:denomination].gsub(/N\/A/, ""),
         :cf_expected_grad_year => (params[:expected_graduation_year] == 'N/A or unknown' ? nil : params[:expected_graduation_year]),
