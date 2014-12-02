@@ -24,7 +24,7 @@ class Registration < ActiveRecord::Base
   
   validate :users_for_shared_access
   
-  before_create :create_saasu_invoice
+  after_create :create_saasu_invoice
 
   # Default values provided through class methods.
   #----------------------------------------------------------------------------

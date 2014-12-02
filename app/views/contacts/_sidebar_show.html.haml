@@ -46,6 +46,13 @@
       - else
         #{t :n_a}
     %tt #{t :campaign}:
+  %li
+    %dt
+      - if @contact.try(:referral_source)
+        = @contact.referral_source
+      - else
+        #{t :n_a}
+    %tt #{t :source}:
 
   - unless @contact.background_info.blank?
     .caption #{t :background_info}

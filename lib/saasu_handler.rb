@@ -30,7 +30,7 @@ module SaasuHandler
     
           i.invoice_items = calculate_invoice_items(registration)
         end
-        if registration.payment_method_was == "Cash" && registration.payment_method == "PayPal"
+        if registration.payment_method_was == "Cash" && registration.payment_method == "Online"
           i.quick_payment = calculate_payment(registration)
         end
     
@@ -62,8 +62,8 @@ module SaasuHandler
     i.status = "I"
     i.invoice_number = "&lt;Auto Number&gt;"
     i.invoice_type = "Sale Invoice"
-    i.tags = "myc14"
-    i.summary = "MYC 2014 Registration"
+    i.tags = "ccamp15,ccamp"
+    i.summary = "Commencement Camp 2015 Registration"
     i.notes = "Registration added by Mojo for #{registration.contact.full_name}"
   
     if registration.contact.present?
@@ -79,7 +79,7 @@ module SaasuHandler
   
     i.trading_terms = tt
   
-    if registration.payment_method == "PayPal"
+    if registration.payment_method == "Online"
       i.quick_payment = calculate_payment(registration)
     end
   
@@ -93,7 +93,7 @@ module SaasuHandler
       Delayed::Worker.logger.add(Logger::INFO, "Error adding invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
       UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
     end
-    #registration.save
+    registration.save
   end
   
   def generate_email(registration)
@@ -107,7 +107,8 @@ module SaasuHandler
     email.from = Setting.conference[:email_address]
     email.subject = Setting.conference[:email_subject]
     email.body = "Dear #{registration.contact.first_name},\r\n\r\n
-      Please find your invoice/receipt attached. If you have not already paid, the invoice contains a link to pay online that you can use at any time.\r\n\r\n
+      Please find your invoice/receipt attached. \r\n\r\n
+      If you have not already paid, you can pay online any time by using this link: https://#{Setting.host}/registrations/pay/#{generate_payment_link(registration)}\r\n\r\n
       Thank you,\r\n\r\n
       The MYC Team"
     
@@ -125,11 +126,17 @@ module SaasuHandler
     email.from = Setting.conference[:email_address]
     email.subject = Setting.conference[:email_subject]
     email.body = "Dear #{registration.contact.first_name},\r\n\r\n
-      Our earlybird pricing has now ended. Please find your amended invoice attached.\r\n\r\n Do not use your previous invoice to pay online!!\r\n\r\nThe invoice attached contains a link to pay online that you can use at any time.\r\n\r\n
+      Our earlybird pricing has now ended. Please find your amended invoice attached.\r\n\r\n 
+      If you have not already paid, you can pay online any time by using this link: https://#{Setting.host}/registrations/pay/#{generate_payment_link(registration)}\r\n\r\n
       Thank you,\r\n\r\n
       The MYC Team"
     
     email
+  end
+  
+  def generate_payment_link(registration)
+    hashids = Hashids.new(Setting.token_salt, 8)
+    token = hashids.encode(registration.id)
   end
 
   def calculate_payment(registration)
@@ -137,7 +144,7 @@ module SaasuHandler
     qp.date_paid = Time.now.strftime("%Y-%m-%d")
     qp.banked_to_account_uid = Setting.saasu[:paypal_account]
     qp.amount = registration.fee.to_i
-    qp.summary = "auto entered: paypal payment" #TODO: change to paypal id number and name?
+    qp.summary = "auto entered: online payment #{registration.contact.full_name}"
   
     [qp]
   end
@@ -147,13 +154,13 @@ module SaasuHandler
     invoice_items = []
   
     fee = Saasu::ServiceInvoiceItem.new
-    fee.description = "MYC registration fee"
-    fee.account_uid = Setting.saasu[:myc_income_account]
-    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 35)
+    fee.description = "Commencement Camp registration fee"
+    fee.account_uid = Setting.saasu[:ccamp_income_account]
+    fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 20)
   
     invoice_items << fee
 
-    if registration.payment_method != "PayPal" && registration.discount_allowed
+    if registration.payment_method != "Online" && registration.discount_allowed
       discount = Saasu::ServiceInvoiceItem.new
       discount.description = "Online payment discount (if paid before 20th June)"
       discount.account_uid = Setting.saasu[:myc_income_account]
@@ -164,9 +171,10 @@ module SaasuHandler
   
     if registration.t_shirt_ordered.to_i  > 0
       tshirt = Saasu::ServiceInvoiceItem.new
-      tshirt.description = "Jesus Week jumper"
-      tshirt.account_uid = Setting.saasu[:jw_jumper_account]
-      tshirt.total_amount_incl_tax = (registration.t_shirt_ordered.to_i * 35)
+      tshirt.description = "ES T-Shirt"
+      #tshirt.account_uid = Setting.saasu[:jw_jumper_account]
+      tshirt.account_uid = Setting.saasu[:tshirt_account]
+      tshirt.total_amount_incl_tax = (registration.t_shirt_ordered.to_i * 20)
 
       invoice_items << tshirt
     end
