@@ -110,7 +110,7 @@ module SaasuHandler
       Please find your invoice/receipt attached. \r\n\r\n
       If you have not already paid, you can pay online any time by using this link: https://#{Setting.host}/registrations/pay/#{generate_payment_link(registration)}\r\n\r\n
       Thank you,\r\n\r\n
-      The MYC Team"
+      The Commencement Camp Team"
     
     email
   end
@@ -129,7 +129,7 @@ module SaasuHandler
       Our earlybird pricing has now ended. Please find your amended invoice attached.\r\n\r\n 
       If you have not already paid, you can pay online any time by using this link: https://#{Setting.host}/registrations/pay/#{generate_payment_link(registration)}\r\n\r\n
       Thank you,\r\n\r\n
-      The MYC Team"
+      The Commencement Camp Team"
     
     email
   end
