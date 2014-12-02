@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140630124337) do
+ActiveRecord::Schema.define(:version => 20141201033750) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -213,32 +213,37 @@ ActiveRecord::Schema.define(:version => 20140630124337) do
     t.integer  "lead_id"
     t.integer  "assigned_to"
     t.integer  "reports_to"
-    t.string   "first_name",       :limit => 64,  :default => "",       :null => false
-    t.string   "last_name",        :limit => 64,  :default => ""
-    t.string   "access",           :limit => 8,   :default => "Public"
-    t.string   "title",            :limit => 64
-    t.string   "department",       :limit => 64
-    t.string   "source",           :limit => 32
-    t.string   "email",            :limit => 64
-    t.string   "alt_email",        :limit => 64
-    t.string   "phone",            :limit => 32
-    t.string   "mobile",           :limit => 32
-    t.string   "fax",              :limit => 32
-    t.string   "blog",             :limit => 128
-    t.string   "linkedin",         :limit => 128
-    t.string   "facebook",         :limit => 128
-    t.string   "twitter",          :limit => 128
+    t.string   "first_name",           :limit => 64,  :default => "",       :null => false
+    t.string   "last_name",            :limit => 64,  :default => ""
+    t.string   "access",               :limit => 8,   :default => "Public"
+    t.string   "title",                :limit => 64
+    t.string   "department",           :limit => 64
+    t.string   "source",               :limit => 32
+    t.string   "email",                :limit => 64
+    t.string   "alt_email",            :limit => 64
+    t.string   "phone",                :limit => 32
+    t.string   "mobile",               :limit => 32
+    t.string   "fax",                  :limit => 32
+    t.string   "blog",                 :limit => 128
+    t.string   "linkedin",             :limit => 128
+    t.string   "facebook",             :limit => 128
+    t.string   "twitter",              :limit => 128
     t.date     "born_on"
-    t.boolean  "do_not_call",                     :default => false,    :null => false
+    t.boolean  "do_not_call",                         :default => false,    :null => false
     t.datetime "deleted_at"
-    t.datetime "created_at",                                            :null => false
-    t.datetime "updated_at",                                            :null => false
+    t.datetime "created_at",                                                :null => false
+    t.datetime "updated_at",                                                :null => false
     t.string   "background_info"
-    t.string   "skype",            :limit => 128
+    t.string   "skype",                :limit => 128
     t.text     "subscribed_users"
     t.string   "saasu_uid"
-    t.boolean  "inactive",                        :default => false
+    t.boolean  "inactive",                            :default => false
     t.string   "preferred_name"
+    t.string   "facebook_uid"
+    t.string   "facebook_token"
+    t.string   "school"
+    t.string   "referral_source"
+    t.string   "referral_source_info"
   end
 
   add_index "contacts", ["assigned_to"], :name => "index_contacts_on_assigned_to"

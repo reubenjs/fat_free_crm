@@ -7,9 +7,41 @@ class RegistrationsController < EntitiesController
   before_filter :get_registrations, :only => [ :new, :create, :edit, :update ]
   before_filter :check_for_mobile
   before_filter :get_data_for_sidebar, :only => :index
+  skip_before_filter :require_user, :only => [ :pay, :pay_submit, :pay_not_found ]
   
   def confirm
     respond_with(@contact)
+  end
+  
+  def pay
+    hashids = Hashids.new(Setting.token_salt, 8)
+    @token = params[:token]
+    @registration = Registration.find(hashids.decode(params[:token])[0])
+    
+  end
+  
+  def pay_submit
+    hashids = Hashids.new(Setting.token_salt, 8)
+    @token = params[:token]
+    @registration = Registration.find(hashids.decode(params[:token])[0])
+    
+    charge = Stripe::Charge.create(
+    :card => params[:stripeToken],
+    :amount => @registration.fee.to_i * 100, #stripe expects amount in cents
+    :description => "#{@registration.event.name} fee payment for #{@registration.contact.full_name}",
+    :currency => "aud",
+    :expand => ['balance_transaction']
+    )
+    
+    #change payment method
+    #update saasu invoice
+    
+  rescue Stripe::CardError => e
+    flash[:error] = e.message
+    redirect_to pay_registration_path(:token => @token)
+  end
+  
+  def pay_not_found
   end
   
   # GET /contacts

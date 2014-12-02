@@ -9,6 +9,14 @@
       = hook(:contact_extra_details_form, self, :f => f) do
         %tr
           %td
+            .label Contact Source:
+            = f.text_field :referral_source
+          %td= spacer
+          %td
+            .label Referral Info:
+            = f.text_field :referral_source_info
+        %tr
+          %td
             .label #{t :job_title}:
             = f.text_field :title
           %td= spacer

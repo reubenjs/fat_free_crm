@@ -27,7 +27,7 @@ class ContactsController < EntitiesController
   def myc_webhooks
     if request.post?
       group = ContactGroup.find_or_initialize_by_name(
-          :name => "MYC 2014",
+          :name => "Commencement Camp 2015",
           :access => Setting.default_access,
           :user_id => 1,
           :category => "camp"
@@ -37,7 +37,7 @@ class ContactsController < EntitiesController
         end
   
       event = Event.find_or_initialize_by_name(
-          :name => "MYC 2014",
+          :name => "Commencement Camp 2015",
           :access => Setting.default_access,
           :user_id => 1,
           :category => "conference",
@@ -49,14 +49,14 @@ class ContactsController < EntitiesController
           ei = EventInstance.new(
             :access => Setting.default_access,
             :user_id => 1,
-            :name => "MYC 2014",
+            :name => "Commencement Camp 2015",
             :location => "Dzintari"
             #:starts_at => DateTime.parse("2013-07-22 10:00:00"),
             #:ends_at => DateTime.parse("2013-07-26 10:00:00")
             )
-            ei.calendar_start_date = "21/07/2014"
+            ei.calendar_start_date = "17/02/2015"
             ei.calendar_start_time = "10:00am"
-            ei.calendar_end_date = "25/07/2014"
+            ei.calendar_end_date = "20/02/2015"
             ei.calendar_end_time = "2:00pm"
         
           event.event_instances << ei
@@ -120,12 +120,12 @@ class ContactsController < EntitiesController
       if !contact.persisted?
         contact.user_id = 1
         contact.access = Setting.default_access
-        contact.tag_list << "new@myc14" unless contact.tag_list.include?("new@myc14")
+        contact.tag_list << "new@cc15" unless contact.tag_list.include?("new@cc15")
         log_string = "Created new contact: "
       else
         log_string = "Contact found by email. Registered: " if log_string.nil?
       end
-
+      
       contact.update_attributes(
         :first_name => params[:first_name],
         :preferred_name => params[:preferred_name].gsub(/N\/A/, ""),
@@ -137,15 +137,21 @@ class ContactsController < EntitiesController
         #address?
         :cf_faculty => params[:faculty].gsub(/N\/A/, ""),
         :cf_campus => params[:campus].titleize,
-        :cf_course_1 => params[:course].gsub(/N\/A/, ""),
+        :cf_course_1 => (params[:highschool].blank? or params[:highschool] == "N/A") ? nil : params[:course][:name],
         :cf_church_affiliation => params[:church].gsub(/N\/A/, ""),
-        :cf_denomination => params[:denomination].gsub(/N\/A/, ""),
+        #:cf_denomination => params[:denomination].gsub(/N\/A/, ""),
         :cf_expected_grad_year => (params[:expected_graduation_year] == 'N/A or unknown' ? nil : params[:expected_graduation_year]),
         :cf_has_dietary_or_health_issues => (params[:dietary_requirements] == "yes" || params[:health_issues] == "yes"),
         :cf_dietary_health_issue_details => "Dietary requirements: #{params[:please_specify_dietary]} \r\nHealth issues: #{params[:health_issues_specify]}",
         :cf_emergency_contact => params[:emergency_contact_name],
         :cf_emergency_contact_relationship => params[:emergency_contact_relationship],
-        :cf_emergency_contact_number => params[:emergency_contact_phone]
+        :cf_emergency_contact_number => params[:emergency_contact_phone],
+        :facebook_uid => params[:facebook_user],
+        :facebook_token => params[:facebook_token],
+        :facebook => (params[:facebook_user] != nil ? "fb.com/#{params[:facebook_user]}" : nil),
+        :school => (params[:highschool].blank? or params[:highschool] == "N/A") ? nil : params[:highschool][:name],
+        :referral_source_info => params[:source_info],
+        :referral_source => (params[:first_time] == "yes" and contact.referral_source.blank?) ? "Commencement Camp 2015" : contact.referral_source
        )
       
       if contact.first_name == contact.preferred_name
@@ -153,19 +159,19 @@ class ContactsController < EntitiesController
       end
 
       if params[:first_time] == "yes"
-        contact.tag_list << "first-myc-2014" unless contact.tag_list.include?("first-myc-2014")
+        contact.tag_list << "first-cc-2015" unless contact.tag_list.include?("first-cc-2015")
         registration.assign_attributes(:first_time => true)
       end
     
       if params[:part_time] == "yes"
-        contact.tag_list << "part_time@myc14" unless contact.tag_list.include?("part_time@myc14")
+        contact.tag_list << "part_time@cc15" unless contact.tag_list.include?("part_time@cc15")
         registration.assign_attributes(:part_time => true)
       end
     
       if params[:financial_assistance] == "yes"
         registration.assign_attributes(:need_financial_assistance => true)
         contact.tasks << Task.new(
-              :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("geoff")
+              :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("emily")
               )
       end
       
@@ -181,7 +187,8 @@ class ContactsController < EntitiesController
         :donate_amount => params[:donate_amount],
         :t_shirt_ordered => (params[:purchase_jumper] == "yes" ? 1 : 0),
         :t_shirt_size_ordered => params[:jumper_size],
-        :payment_method => (params[:payment_method] == "paypal_wps" ? "PayPal" : "Cash"),
+        #:payment_method => (params[:payment_method] == "paypal_wps" ? "PayPal" : "Cash"),
+        :payment_method => (params[:payment_method] == "commerce_stripe" ? "Online" : "Cash"),
         :fee => params[:total_amount].to_i / 100,
         :breakfasts => (params[:breakfast].blank? ? nil : params[:breakfast].split(", ")),
         :lunches => (params[:lunch].blank? ? nil : params[:lunch].split(", ")),
@@ -211,7 +218,7 @@ class ContactsController < EntitiesController
         group.contacts << contact unless group.contacts.include?(contact) 
       else
         #puts "Registration failed for #{contact.first_name} #{contact.last_name}"
-        UserMailer.delay.saasu_registration_error(contact, "MYC registration save failed")
+        UserMailer.delay.saasu_registration_error(contact, "CC registration save failed")
       end
       
       respond_to do |format|
