@@ -1,0 +1,30 @@
+- collapsed = session[:end_of_earlybird_email].nil?
+= subtitle :end_of_earlybird_email, collapsed, "End of earlybird email"
+.section
+  #end_of_earlybird_email{ hidden_if(collapsed) }
+    %table
+      %tr
+        %td
+          .label From Name:
+        %td
+          = f.text_field :end_earlybird_email_from_name, :default_value => Setting.conference[:email_from], :style => 'width:410px;'
+      %tr
+        %td
+          .label From Email:
+        %td
+          = f.text_field :end_earlybird_email_from_address, :default_value => Setting.conference[:email_address], :style => 'width:410px;' 
+      %tr
+        %td
+          .label BCC to:
+        %td
+          = f.text_field :end_earlybird_email_from_address, :default_value => Setting.conference[:email_bcc], :style => 'width:410px;'   
+      %tr
+        %td
+          .label Subject:
+        %td
+          = f.text_field :end_earlybird_email_subject, :style => 'width:410px;'
+      %tr
+        %td= spacer
+      %tr
+        %td{:colspan => 2}
+          = f.text_area :end_earlybird_email, :default_value => "Dear [contact.first_name],",:style => 'width:500px;', :class => "tinymce"

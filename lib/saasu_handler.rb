@@ -1,5 +1,12 @@
 module SaasuHandler
-  def update_saasu(registration, send_invoice=false, end_of_earlybird=false)
+  def update_saasu(registration, options={})# send_invoice=false, end_of_earlybird=false)
+    default_options = {
+      :send_invoice => false,
+      :end_of_earlybird => false,
+    }
+    
+    options = options.reverse_merge(default_options)
+    
     i = Saasu::Invoice.find(registration.saasu_uid)
 
     if i.errors.present? && rnf_error(i.errors)
@@ -34,16 +41,16 @@ module SaasuHandler
           i.quick_payment = calculate_payment(registration)
         end
     
-        if send_invoice && end_of_earlybird
-          response = Saasu::Invoice.update_and_email(i, generate_end_of_earlybird_email(registration), Setting.conference[:email_template].to_i)
-        elsif send_invoice 
-          response = Saasu::Invoice.update_and_email(i, generate_email(registration), Setting.conference[:email_template].to_i)
-        else
-          response = Saasu::Invoice.update(i)
-        end
+        response = Saasu::Invoice.update(i)
 
         if response.errors.nil?
           Delayed::Worker.logger.add(Logger::INFO, "Updated invoice for #{registration.contact.full_name} to saasu")
+          
+          generate_email(
+            registration, 
+            :send_invoice => options[:send_invoice], 
+            :earlybird => options[:end_of_earlybird]
+          )
         else
           Delayed::Worker.logger.add(Logger::INFO, "Error updating invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
           UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
@@ -62,8 +69,8 @@ module SaasuHandler
     i.status = "I"
     i.invoice_number = "&lt;Auto Number&gt;"
     i.invoice_type = "Sale Invoice"
-    i.tags = "ccamp15,ccamp"
-    i.summary = "Commencement Camp 2015 Registration"
+    i.tags = registration.event.saasu_tags
+    i.summary = "#{registration.event.name} Registration"
     i.notes = "Registration added by Mojo for #{registration.contact.full_name}"
   
     if registration.contact.present?
@@ -83,7 +90,7 @@ module SaasuHandler
       i.quick_payment = calculate_payment(registration)
     end
   
-    response = Saasu::Invoice.insert_and_email(i, generate_email(registration), Setting.conference[:email_template].to_i)
+    response = Saasu::Invoice.insert(i)
   
     if response.errors.nil?
       registration.saasu_uid = response.inserted_entity_uid
@@ -93,50 +100,62 @@ module SaasuHandler
       Delayed::Worker.logger.add(Logger::INFO, "Error adding invoice for #{registration.contact.full_name} to saasu. #{response.errors}")
       UserMailer.delay.saasu_registration_error(registration.contact, response.errors[0].message)
     end
+    
     registration.save
-  end
-  
-  def generate_email(registration)
-    email = Saasu::EmailMessage.new
-    if Rails.env.production?
-      email.to = registration.contact.email
-      email.bcc = Setting.conference[:bcc]
-    else
-      email.to = Setting.conference[:bcc]
-    end
-    email.from = Setting.conference[:email_address]
-    email.subject = Setting.conference[:email_subject]
-    email.body = "Dear #{registration.contact.first_name},\r\n\r\n
-      Please find your invoice/receipt attached. \r\n\r\n
-      If you have not already paid, you can pay online any time by using this link: https://#{Setting.host}/registrations/pay/#{generate_payment_link(registration)}\r\n\r\n
-      Thank you,\r\n\r\n
-      The Commencement Camp Team"
     
-    email
-  end
-  
-  def generate_end_of_earlybird_email(registration)
-    email = Saasu::EmailMessage.new
-    if Rails.env.production?
-      email.to = registration.contact.email
-      email.bcc = Setting.conference[:bcc]
-    else
-      email.to = Setting.conference[:bcc]
-    end
-    email.from = Setting.conference[:email_address]
-    email.subject = Setting.conference[:email_subject]
-    email.body = "Dear #{registration.contact.first_name},\r\n\r\n
-      Our earlybird pricing has now ended. Please find your amended invoice attached.\r\n\r\n 
-      If you have not already paid, you can pay online any time by using this link: https://#{Setting.host}/registrations/pay/#{generate_payment_link(registration)}\r\n\r\n
-      Thank you,\r\n\r\n
-      The Commencement Camp Team"
+    generate_email(registration, :send_invoice => true)
     
-    email
   end
   
-  def generate_payment_link(registration)
-    hashids = Hashids.new(Setting.token_salt, 8)
-    token = hashids.encode(registration.id)
+  def generate_email(registration, options={})
+    default_options = {
+      :earlybird => false,
+      :send_invoice => false
+    }
+    
+    options = options.reverse_merge(default_options)
+    
+    type = options[:earlybird] ? "end_earlybird" : "confirmation"
+    
+    # Send confirmation email
+    # ------------------------
+    Delayed::Job.enqueue(ConferenceEmailJob.new(
+      registration.id, 
+      registration.event["#{type}_email_subject"], 
+      registration.event["#{type}_email_from_name"], 
+      registration.event["#{type}_email_from_address"], 
+      parse_email_body(registration, registration.event["#{type}_email"]), 
+      options[:send_invoice]
+    ))
+  end
+  
+  def parse_email_body(registration, text)
+    allowed_fields = {
+      :contact => %w(first_name preferred_name last_name cf_gender cf_campus cf_faculty cf_course_1 cf_expected_grad_year cf_church_affiliation cf_denomination email mobile cf_dietary_health_issue_details cf_emergency_contact cf_emergency_contact_relationship cf_emergency_contact_number school),
+      
+      :registration => %w(transport_required driver_for can_transport first_time part_time breakfasts lunches dinners sleeps donate_amount fee need_financial_assistance payment_method t_shirt_ordered t_shirt_size_ordered international_student requires_sleeping bag payment_link)
+    }
+    
+    to_replace = text.scan( /\[([^\]]*)\]/)
+    to_replace.each do |merge_var|
+      split_merge_var = merge_var[0].split(".")
+      if split_merge_var.length == 2
+        merge_model = split_merge_var[0]
+        merge_field = split_merge_var[1]
+
+        if (allowed_fields[merge_model.to_sym] &&
+          allowed_fields[merge_model.to_sym].include?(merge_field))
+          
+          record = merge_model == "contact" ? registration.contact : registration.instance_eval { attributes.merge("payment_link" => payment_link)}
+          replacement = record[merge_field]
+          
+          text.gsub!("[#{merge_model}.#{merge_field}]", replacement.nil? ? "" : replacement.to_s) 
+        end
+      end
+    end
+
+    text
+    
   end
 
   def calculate_payment(registration)
@@ -154,7 +173,7 @@ module SaasuHandler
     invoice_items = []
   
     fee = Saasu::ServiceInvoiceItem.new
-    fee.description = "Commencement Camp registration fee"
+    fee.description = "#{registration.event.name} registration fee"
     fee.account_uid = Setting.saasu[:ccamp_income_account]
     fee.total_amount_incl_tax = registration.fee.to_i - registration.donate_amount.to_i - (registration.t_shirt_ordered.to_i * 20)
   

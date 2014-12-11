@@ -1,0 +1,10 @@
+- collapsed = session[:invoice_settings].nil?
+= subtitle :invoice_settings, collapsed, "Invoice Settings"
+.section
+  #invoice_settings{ hidden_if(collapsed) }
+    %table
+      %tr
+        %td
+          .label Invoice tags:
+        %td
+          = f.text_field :saasu_tags, :default_value => Setting.conference[:saasu_tags]

@@ -64,10 +64,17 @@ class Registration < ActiveRecord::Base
     self.attributes = params[:registration]
     
     if (self.fee.to_i > 0) || self.saasu_uid.present?
-      update_saasu(self, params[:send_invoice].present?)
+      update_saasu(self, :send_invoice => params[:send_invoice].present?)
     end
     
     self.save
+  end
+  
+  def payment_link
+    hashids = Hashids.new(Setting.token_salt, 8)
+    token = hashids.encode(self.id)
+    
+    return "https://#{Setting.host}/registrations/pay/#{token}"
   end
 
   private
@@ -84,7 +91,6 @@ class Registration < ActiveRecord::Base
   def users_for_shared_access
     errors.add(:access, :share_registration) if self[:access] == "Shared" && !self.permissions.any?
   end
-  
   
 
 end

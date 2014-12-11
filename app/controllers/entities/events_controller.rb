@@ -219,8 +219,9 @@ class EventsController < EntitiesController
     
     if params[:attachment] == "Contact"
       contact = Contact.find(params[:attachment_id])
-      if @event.contact_group
-        @event.contact_group.memberships.find_by_contact_id(contact.id).destroy
+      if @event.contact_group && @event.contact_group.memberships.any?
+        membership = @event.contact_group.memberships.find_by_contact_id(contact.id)
+        membership.detroy if membership
       end
     end
     super

@@ -717,7 +717,7 @@ namespace :ffcrm do
       if r.payment_method == "Cash" && r.discount_allowed == true
         if (r.fee.to_i > 0) || r.saasu_uid.present?
           r.discount_allowed = false
-          update_saasu(r, true, true) #send invoice, end_of_earlybird
+          update_saasu(r, :send_invoice => true, :end_of_earlybird => true)
           r.save
           puts "changed invoice for #{r.contact.first_name} #{r.contact.last_name}"
         end
