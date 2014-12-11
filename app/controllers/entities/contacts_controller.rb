@@ -26,22 +26,12 @@ class ContactsController < EntitiesController
   
   def myc_webhooks
     if request.post?
-      group = ContactGroup.find_or_initialize_by_name(
-          :name => "Commencement Camp 2015",
-          :access => Setting.default_access,
-          :user_id => 1,
-          :category => "camp"
-          )
-        unless group.persisted?
-          group.save
-        end
   
       event = Event.find_or_initialize_by_name(
           :name => "Commencement Camp 2015",
           :access => Setting.default_access,
           :user_id => 1,
           :category => "conference",
-          :contact_group => group,
           :has_registrations => true
           )
         unless event.persisted?
@@ -72,11 +62,10 @@ class ContactsController < EntitiesController
         log_string = "Contact found by mobile. Registered: "
       end
     
-      if registration = event.registrations.find_by_contact_id(contact.id)
-      
-      else          
-        # Create the registration
-        #-------------------------
+      unless registration = event.registrations.find_by_contact_id(contact.id)         
+        
+        # Create the registration if not found
+        #-------------------------------------
     
         registration = Registration.new(
           :contact => contact, 
@@ -214,15 +203,18 @@ class ContactsController < EntitiesController
                 :name => "Possible duplicate from registration sync", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("reuben")
                 )
         end
-    
-        group.contacts << contact unless group.contacts.include?(contact) 
+        
+        respond_to do |format|
+          format.all {head :ok, :content_type => 'text/html'}
+        end
+        
       else
         #puts "Registration failed for #{contact.first_name} #{contact.last_name}"
         UserMailer.delay.saasu_registration_error(contact, "CC registration save failed")
-      end
-      
-      respond_to do |format|
-        format.all {head :ok, :content_type => 'text/html'}
+        
+        respond_to do |format|
+          format.all {head 500, :content_type => 'text/html'}
+        end
       end
       
     else # GET

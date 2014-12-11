@@ -47,5 +47,9 @@
             = f.text_area :background_info, :style =>"width:500px", :rows => 3
 
       = render :partial => "/shared/tags", :locals => {:f => f, :span => 3}
-
+      
       = hook(:event_top_section_bottom, self, :f => f)
+  
+  = render :partial => "invoice_settings", :locals => {:f => f}
+  = render :partial => "confirmation_email", :locals => {:f => f}
+  = render :partial => "end_earlybird_email", :locals => {:f => f}

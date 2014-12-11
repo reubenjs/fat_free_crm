@@ -1,3 +1,4 @@
+= tinymce_assets
 .remote
   = simple_form_for(@event, :html => one_submit_only(:event), :remote => true) do |f|
     = link_to_close edit_event_path(@event)
@@ -17,3 +18,4 @@
         = f.submit t(:save_event)
       #{t :or}
       = link_to_cancel edit_event_path(@event)
+=tinymce

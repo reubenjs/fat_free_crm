@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141201033750) do
+ActiveRecord::Schema.define(:version => 20141208230747) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -317,20 +317,31 @@ ActiveRecord::Schema.define(:version => 20141201033750) do
   add_index "event_instances", ["event_id"], :name => "event_instances_index_on_event_id"
 
   create_table "events", :force => true do |t|
-    t.string   "uuid",              :limit => 36
+    t.string   "uuid",                             :limit => 36
     t.integer  "user_id"
     t.integer  "contact_group_id"
     t.integer  "assigned_to"
-    t.string   "name",              :limit => 64, :default => "",       :null => false
+    t.string   "name",                             :limit => 64, :default => "",       :null => false
     t.text     "subscribed_users"
-    t.string   "access",            :limit => 8,  :default => "Public"
-    t.string   "category",          :limit => 32
+    t.string   "access",                           :limit => 8,  :default => "Public"
+    t.string   "category",                         :limit => 32
     t.datetime "deleted_at"
-    t.datetime "created_at",                                            :null => false
-    t.datetime "updated_at",                                            :null => false
+    t.datetime "created_at",                                                           :null => false
+    t.datetime "updated_at",                                                           :null => false
     t.boolean  "has_registrations"
     t.string   "semester"
-    t.boolean  "inactive",                        :default => false
+    t.boolean  "inactive",                                       :default => false
+    t.text     "confirmation_email"
+    t.string   "confirmation_email_from_name"
+    t.string   "confirmation_email_from_address"
+    t.string   "confirmation_email_subject"
+    t.string   "confirmation_email_bcc"
+    t.string   "saasu_tags"
+    t.text     "end_earlybird_email"
+    t.string   "end_earlybird_email_from_name"
+    t.string   "end_earlybird_email_from_address"
+    t.string   "end_earlybird_email_subject"
+    t.string   "end_earlybird_email_bcc"
   end
 
   add_index "events", ["assigned_to"], :name => "index_events_on_assigned_to"
