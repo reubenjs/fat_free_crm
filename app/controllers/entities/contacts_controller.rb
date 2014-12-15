@@ -26,7 +26,7 @@ class ContactsController < EntitiesController
   
   def myc_webhooks
     if request.post?
-  
+      #TODO: include event id (hashid'd?) in params, so that the following section can be removed
       event = Event.find_or_initialize_by_name(
           :name => "Commencement Camp 2015",
           :access => Setting.default_access,
@@ -87,7 +87,8 @@ class ContactsController < EntitiesController
       contact.business_address.zipcode = params[:address][:postal_code]
       contact.business_address.country = "Australia"
       contact.business_address.address_type = "Business"   
-    
+      
+      #TODO: add settings page that allows this notification logic to be defined by user
       unless contact.assigned_to.present?
         if (params[:campus] == "city_east" || params[:campus] == "city_west")
           #contact.cf_weekly_emails << row[:_campus] unless contact.cf_weekly_emails.include?(row[:_campus])
@@ -109,6 +110,7 @@ class ContactsController < EntitiesController
       if !contact.persisted?
         contact.user_id = 1
         contact.access = Setting.default_access
+        #TODO: add setting on event form "tag for new contact"
         contact.tag_list << "new@cc15" unless contact.tag_list.include?("new@cc15")
         log_string = "Created new contact: "
       else
@@ -146,19 +148,22 @@ class ContactsController < EntitiesController
       if contact.first_name == contact.preferred_name
         contact.preferred_name = nil
       end
-
+      
       if params[:first_time] == "yes"
+        #TODO: add event setting "tag for first timer"
         contact.tag_list << "first-cc-2015" unless contact.tag_list.include?("first-cc-2015")
         registration.assign_attributes(:first_time => true)
       end
     
       if params[:part_time] == "yes"
+        #TODO: add event setting "tag for part-timer"
         contact.tag_list << "part_time@cc15" unless contact.tag_list.include?("part_time@cc15")
         registration.assign_attributes(:part_time => true)
       end
     
       if params[:financial_assistance] == "yes"
         registration.assign_attributes(:need_financial_assistance => true)
+        #TODO: add event setting "who to notify for financial assistance required"
         contact.tasks << Task.new(
               :name => "Requires financial assistance", :category => :follow_up, :bucket => "due_this_week", :user => User.find_by_first_name("emily")
               )
