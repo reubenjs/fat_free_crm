@@ -1,4 +1,4 @@
-class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :from_email, :email_body, :send_invoices)
+class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :from_email, :email_body, :send_invoices, :bcc_email)
   def perform
     if Setting.mandrill[:enabled]  
       registration = Registration.find(registration_id)
@@ -53,7 +53,7 @@ class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :f
             :subject => subject,
             :from_name => from_name,
             :from_email => from_email,
-            :to => [{:email => registration.contact.email, :name => registration.contact.name}],
+            :to => email_recipients(registration.contact.email, registration.contact.name, bcc_email),
             :global_merge_vars => [{:name => "fname", :content => registration.contact.first_name}],
             :attachments => attached_array
           }
@@ -67,5 +67,12 @@ class ConferenceEmailJob < Struct.new(:registration_id, :subject, :from_name, :f
       end
     end
   end
+  
+  def email_recipients(to_email, to_name, bcc)
+    recipients = [{:email => to_email, :name => to_name, :type => "to"}]
+    recipients << {:email => bcc_email, :type => "bcc"} if !bcc.blank?
+    recipients
+  end
+  
 end
 
