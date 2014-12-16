@@ -260,7 +260,7 @@ class EventsController < EntitiesController
   def send_emails
     event = Event.find(params[:id])
     event.registrations.each do |registration|
-      Delayed::Job.enqueue(ConferenceEmailJob.new(registration.id, params[:message_subject], params[:from_name], params[:from_address], params[:message_body], params[:send_invoices]))
+      Delayed::Job.enqueue(ConferenceEmailJob.new(registration.id, params[:message_subject], params[:from_name], params[:from_address], params[:message_body], params[:send_invoices], ""))
     end
   end
   

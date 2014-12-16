@@ -125,7 +125,8 @@ module SaasuHandler
       registration.event["#{type}_email_from_name"], 
       registration.event["#{type}_email_from_address"], 
       parse_email_body(registration, registration.event["#{type}_email"]), 
-      options[:send_invoice]
+      options[:send_invoice],
+      registration.event["#{type}_email_bcc"]
     ))
   end
   
