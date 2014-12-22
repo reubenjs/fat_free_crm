@@ -139,7 +139,7 @@ class ContactsController < EntitiesController
         :cf_emergency_contact_number => params[:emergency_contact_phone],
         :facebook_uid => params[:facebook_user],
         :facebook_token => params[:facebook_token],
-        :facebook => (params[:facebook_user] != nil ? "fb.com/#{params[:facebook_user]}" : nil),
+        :facebook => ((params[:facebook_user] != nil && params[:facebook_user] != "0") ? "fb.com/#{params[:facebook_user]}" : nil),
         :school => (params[:highschool].blank? or params[:highschool] == "N/A") ? nil : params[:highschool][:name],
         :referral_source_info => params[:source_info],
         :referral_source => (params[:first_time] == "yes" and contact.referral_source.blank?) ? "Commencement Camp 2015" : contact.referral_source
