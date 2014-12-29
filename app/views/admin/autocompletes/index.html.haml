@@ -1,0 +1,17 @@
+= styles_for :autocomplete
+
+.title_tools
+  = link_to_inline(:create_autocomplete, new_admin_autocomplete_path, :text => t(:create_autocomplete))
+
+.title
+  %span#create_autocomplete_title #{t :autocompletes}
+  = image_tag("loading.gif", :size => :thumb, :id => "loading", :style => "display: none;")
+.remote#create_autocomplete{ hidden }
+
+.list#autocompletes
+  - if @autocompletes.any?
+    = render :partial => "admin/autocompletes/autocomplete", :collection => @autocompletes
+  - else
+    = render "shared/empty"
+
+#export= render "shared/export"

@@ -1,0 +1,7 @@
+crm.flip_form('create_autocomplete');
+
+- unless params[:cancel].true?
+  $('#create_autocomplete').html('#{ j render(:partial => "new") }');
+  crm.set_title('create_autocomplete', '#{t(:create_autocomplete)}');
+- else
+  crm.set_title('create_autocomplete', '#{t(:autocompletes)}');

@@ -281,6 +281,11 @@ Rails.application.routes.draw do
     end
   end
   
+  resources :autocompletes, only: [], :id => /[a-zA-Z0-9]+/ do
+      get :get_results, :on => :member
+  end
+  
+  
   namespace :admin do
     resources :groups
     
@@ -322,6 +327,12 @@ Rails.application.routes.draw do
     end
 
     resources :tags, :except => [:show] do
+      member do
+        get :confirm
+      end
+    end
+    
+    resources :autocompletes, :except => [:show] do
       member do
         get :confirm
       end

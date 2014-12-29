@@ -1,0 +1,11 @@
+- if @autocomplete.valid?
+  $('#create_autocomplete_arrow').html(crm.COLLAPSED);
+  $('#create_autocomplete_title').html('#{ j t(:autocompletes) }');
+  $('#create_autocomplete').slideUp(250);
+  $('#autocompletes').prepend('#{ j (render :partial => "autocomplete", :collection => [ @autocomplete ]) }');
+  $('##{dom_id(@autocomplete)}').effect("highlight", { duration:1500 });
+  crm.flick('empty', 'remove');
+- else
+  $('#create_autocomplete').html('#{ j render(:partial => 'new') }');
+  $('#create_autocomplete').effect("shake", { duration:250, distance: 6 });
+  $('#autocomplete_name').focus();

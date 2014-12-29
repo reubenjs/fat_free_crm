@@ -1,0 +1,20 @@
+- id = dom_id(@autocomplete)
+
+- if params[:cancel].true?     # <----------------- Hide [Edit autocomplete]
+  $('##{id}').replaceWith('#{ j render(:partial => "autocomplete", :collection => [ @autocomplete ]) }');
+
+- else # <----------------------------------------  Show [Edit autocomplete] form.
+
+  - if @previous                                    # Hide open [Edit autocomplete] form if any.
+    - if @previous.is_a?(Autocomplete)                       # Previous autocomplete still exists?
+      $('##{dom_id(@previous)}').replaceWith('#{ j render(:partial => "autocomplete", :collection => [ @previous ]) }');
+    - else
+      crm.flick('autocomplete_#{@previous}', 'remove');
+
+  -# Disable onMouseOver for the list item.
+  -# Hide [Create autocomplete] form if any.
+  -# Show [Edit autocomplete] form.
+  crm.highlight_off('#{id}');
+  crm.hide_form('create_autocomplete');
+  $('##{id}').html('#{ j render(:partial => "edit") }');
+  $('#autocomplete_name').focus();
