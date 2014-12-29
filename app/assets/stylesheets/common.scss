@@ -261,6 +261,8 @@ $sidebar_width: 210px;
       input, select, textarea {
         width: 240px;
         display: block; }
+      input.input-wide {
+        width: 495px; }
       input[type="checkbox"], input[type="radio"] {
         display: inline;
         width: auto; }

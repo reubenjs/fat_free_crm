@@ -652,7 +652,7 @@ namespace :ffcrm do
         
       contact.cf_faculty = row[:cf_faculty]
       contact.cf_course_1 = row[:cf_course_1]
-      contact.cf_course_2 = row[:cf_course_2]
+      #contact.cf_course_2 = row[:cf_course_2]
         
       puts (contact.first_name + " " + contact.last_name)
         

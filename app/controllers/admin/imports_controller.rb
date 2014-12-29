@@ -53,7 +53,7 @@ class Admin::ImportsController < Admin::ApplicationController
           h[:cf_campus] = row[:campus]
           h[:cf_faculty] = row[:faculty]
           h[:cf_course_1] = row[:course_1]
-          h[:cf_course_2] = row[:course_2]
+          #h[:cf_course_2] = row[:course_2]
           h[:cf_church_affiliation] = row[:church_affiliation]
         end
         contact = Contact.find_or_initialize_by_email_and_last_name(row[:email_1], row[:last_name])

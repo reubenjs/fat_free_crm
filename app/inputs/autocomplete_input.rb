@@ -25,7 +25,7 @@ class AutocompleteInput < SimpleForm::Inputs::Base
   # Autocomplete latches onto the 'text_with_autocomplete' class.
   #------------------------------------------------------------------------------
   def input_html_classes
-    super.push('text_with_autocomplete')
+    super.push('text_with_autocomplete input-wide')
   end
   
   # Returns the field as field1
