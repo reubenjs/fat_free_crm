@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141208230747) do
+ActiveRecord::Schema.define(:version => 20141229005411) do
 
   create_table "account_aliases", :force => true do |t|
     t.integer  "account_id"
@@ -123,6 +123,11 @@ ActiveRecord::Schema.define(:version => 20141208230747) do
   add_index "attendances", ["contact_id", "event_instance_id"], :name => "index_attendances_on_contact_id_and_event_instance_id"
   add_index "attendances", ["contact_id"], :name => "index_attendances_on_contact_id"
   add_index "attendances", ["event_instance_id"], :name => "index_attendances_on_event_instance_id"
+
+  create_table "autocompletes", :force => true do |t|
+    t.string "name"
+    t.text   "terms", :limit => 16777215
+  end
 
   create_table "avatars", :force => true do |t|
     t.integer  "user_id"

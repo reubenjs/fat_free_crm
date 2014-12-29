@@ -40,6 +40,7 @@ en-US:
   admin_tab_settings: Settings
   admin_tab_plugins: Plugins
   admin_tab_imports: Import
+  admin_tab_autocompletes: Autocomplete
 
   affiliate: Affiliate
   competitor: Competitor
@@ -973,6 +974,13 @@ en-US:
         version: Version
         description: Description
 
+  # Views -> Admin -> Autocompletes
+  #----------------------------------------------------------------------------
+  autocompletes: Autocomplete lists
+  autocomplete_small: autocomplete
+  create_autocomplete: Create Autocomplete
+  save_autocomplete: Save Autocomplete
+
   # Simple Form translations
   #----------------------------------------------------------------------------
   simple_form:
@@ -1024,6 +1032,8 @@ en-US:
       title: Number (Integer)
     float:
       title: Number (Floating Point)
+    autocomplete:
+      title: Autocomplete list
   pair:
     start: Start
     end: End

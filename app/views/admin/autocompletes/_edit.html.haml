@@ -1,0 +1,9 @@
+.remote
+  = form_for([:admin, @autocomplete], :as => :autocomplete, :html => one_submit_only.merge(:class => "edit_autocomplete", :id => "edit_autocomplete_#{@autocomplete.id}"), :remote => true) do |f|
+    = link_to_close edit_admin_autocomplete_path(@autocomplete)
+    = f.error_messages
+    = render :partial => "top_section", :locals => { :f => f, :edit => true }
+    .buttonbar
+      = f.submit t(:save_autocomplete), :id => :autocomplete_submit
+      or
+      = link_to_cancel edit_admin_autocomplete_path(@autocomplete)

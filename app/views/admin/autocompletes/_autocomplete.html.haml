@@ -1,0 +1,8 @@
+%li.highlight[autocomplete]
+  .tools
+    = link_to_edit(autocomplete, :url => edit_admin_autocomplete_path(autocomplete)) << " |"
+    = link_to_confirm(autocomplete)
+
+  %span.black= autocomplete.name
+  %tt
+  %dt

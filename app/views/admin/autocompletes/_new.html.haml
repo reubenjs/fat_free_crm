@@ -1,0 +1,10 @@
+- path = new_admin_autocomplete_path
+
+= form_for([:admin, @autocomplete], :html => one_submit_only, :remote => true) do |f|
+  = link_to_close path
+  = f.error_messages
+  = render :partial => "top_section", :locals => { :f => f }
+  .buttonbar
+    = f.submit t(:create_autocomplete), :id => :autocomplete_submit
+    or
+    = link_to_cancel path

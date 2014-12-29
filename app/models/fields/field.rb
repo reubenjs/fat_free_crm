@@ -53,7 +53,8 @@ class Field < ActiveRecord::Base
     'datetime'    => {:klass => 'CustomField', :type => 'timestamp'},
     'decimal'     => {:klass => 'CustomField', :type => 'decimal', :column_options => {:precision => 15, :scale => 2} },
     'integer'     => {:klass => 'CustomField', :type => 'integer'},
-    'float'       => {:klass => 'CustomField', :type => 'float'}
+    'float'       => {:klass => 'CustomField', :type => 'float'},
+    'autocomplete'=> {:klass => 'CustomField', :type => 'string'}
   }.with_indifferent_access
 
   validates_presence_of :label, :message => "^Please enter a field label."

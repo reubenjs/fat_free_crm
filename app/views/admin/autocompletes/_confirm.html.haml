@@ -1,0 +1,5 @@
+.confirm[@autocomplete, :confirm]
+  #{t :autocomplete_confirm_delete}
+  #{t :delete} <b>#{@autocomplete.name}</b>?
+  = link_to_confirm_delete(@autocomplete) << " : "
+  = link_to_function(t(:no_button), "crm.flick('#{dom_id(@autocomplete, :confirm)}', 'remove')")
