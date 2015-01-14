@@ -13,9 +13,6 @@
 
 ActiveRecord::Schema.define(version: 20141230205455) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
   create_table "account_contacts", force: true do |t|
     t.integer  "account_id"
     t.integer  "contact_id"
@@ -107,7 +104,7 @@ ActiveRecord::Schema.define(version: 20141230205455) do
     t.string   "status",              limit: 64
     t.decimal  "budget",                         precision: 12, scale: 2
     t.integer  "target_leads"
-    t.float    "target_conversion"
+    t.float    "target_conversion",   limit: 24
     t.decimal  "target_revenue",                 precision: 12, scale: 2
     t.integer  "leads_count"
     t.integer  "opportunities_count"
