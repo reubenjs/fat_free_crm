@@ -1,0 +1,54 @@
+//Screen widths - Same as bootstrap default settings
+@screen-xs: 480px;
+@screen-sm: 767px;
+@screen-md: 992px;
+@screen-lg: 1200px;
+
+//border radius creator
+.border-radius(@radius) {
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+    border-radius: @radius;
+}
+
+// Content Header 
+.right-side > .content-header {
+    > .breadcrumb {
+        float: right;
+        background: transparent;
+        margin-top: 0px;
+        margin-bottom: 0;
+        font-size: 12px;
+        padding: 7px 5px;
+        position: absolute;
+        top: 15px;
+        right: 10px;
+        .border-radius(2px);
+        > li > a {
+            color: #444;
+            text-decoration: none;
+            > .fa, > .glyphicon, > .ion {
+                margin-right: 5px;
+            }            
+        }
+        > li + li:before {
+            content: '|\00a0';
+        }
+    }
+
+    @media screen and (max-width: @screen-sm) {
+        > .breadcrumb {
+            position: relative;
+            margin-top: 5px;
+            top: 0;
+            right: 0;
+            float: none;
+            background: #efefef;
+        }
+    }
+}
+
+body > .header .logo {
+  font-family: "Lucida Grande", Geneva, Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}

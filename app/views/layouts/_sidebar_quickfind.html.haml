@@ -1,0 +1,12 @@
+- current_auto_complete = session[:auto_complete] || :contacts     
+%form.sidebar-form{action: "#", method: :get }
+  .input-group
+    = text_field_tag "auto_complete_query", nil, :class => "form-control", :type => "text", :placeholder => "Quick find...", :autocomplete => :off
+    -#%input.form-control{placeholder: "Quick find...", type: "text", name: "q", }
+    %span.input-group-btn
+      %button.btn.btn-flat.dropdown-toggle#search-btn{type: "button", name: "search", data: {toggle: "dropdown"}}
+        %i.fa.fa-search
+        %span.fa.fa-caret-down
+      %ul.dropdown-menu= jumpbox(current_auto_complete)
+:javascript
+  crm.auto_complete("#{current_auto_complete}");

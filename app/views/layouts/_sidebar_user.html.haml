@@ -1,0 +1,11 @@
+- if current_user
+  .user-panel
+    .pull-left.image
+      = link_to avatar_for(current_user, :size => :user, :class => "img-circle"), user_path(current_user)
+    .pull-left.info
+      %p#welcome_text
+        #{t :welcome},
+        -# This span gets updated on the fly if user changes her name.
+        = current_user.first_name
+      %a
+        %i.fa.fa-circle.text-success= " Online"

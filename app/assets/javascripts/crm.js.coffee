@@ -401,6 +401,8 @@
         focus: (event, ui) =>
           event.preventDefault()
           $("#auto_complete_query").val(ui.item.label)
+          
+        appendTo: ".input-group"
       )
 
       $.extend $.ui.autocomplete::,

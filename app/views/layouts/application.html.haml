@@ -33,13 +33,18 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-  %body
-    = render "layouts/header"
+  %body.skin-blue
+    %header.header
+      = render "layouts/header"
     - if tabless_layout?
       = render "layouts/tabless"
     - else
-      = render "layouts/tabbed"
-      = render "layouts/footer"
+      %div.wrapper.row-offcanvas.row-offcanvas-left
+        %aside.left-side.sidebar-offcanvas
+          = render "layouts/tabbed"
+        %aside.right-side
+          = render "layouts/content"
+          = render "layouts/footer"
 
     %script{:type => "text/javascript"}
       = "crm.base_url = '#{Setting.base_url}';" unless Setting.base_url.blank?
