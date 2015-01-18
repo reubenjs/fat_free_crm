@@ -434,25 +434,32 @@ $sidebar_width: 210px;
     float: left;
     margin: 0px 4px 0px 0px; } }
 
-// Two-row lists.
+// Two-row lists. [LTE]
 //------------------------------------------------------------------------------
 .list {
-  padding: 8px 0px 7px 0px;
+  padding: 0;
   li {
-    border-bottom: 1px silver dotted;
+    //border-bottom: 1px silver solid;
     color: #3f3f3f;
-    font-size: 12px;
+    //font-size: 12px;
     list-style: none;
-    padding: 6px 0px 6px 0px;
+    padding: 0px 0px 3px 0px;
     .gravatar {
       float: left;
       padding: 0px 8px 0px 0px; }
+    span {
+     margin-left: 3px; 
+    }
+    .name {
+      
+    }
     tt {
       color: dimgray;
-      font-size: 11px; }
+      //font-size: 11px; 
+    }
     dt {
       color: #3f3f3f;
-      font-size: 11px;
+      //font-size: 11px;
       padding: 2px 0px 0px 0px; } } }
 
 // Sidebar, filters, and selectors.
