@@ -1,16 +1,18 @@
-#search
-  .tabs
-    %ul
-      %li
-        = link_to t('basic_search'), '#',    :"data-search-form" => "basic_search",    :class => (params[:q]  ? "" : " active")
-      %li
-        = link_to t('advanced_search'), '#', :"data-search-form" => "advanced_search", :class => (!params[:q] ? "" : " active")
+.row#search
+  .col-md-12
+    .nav-tabs-custom
+      %ul.nav.nav-tabs
+        %li{:class => (params[:q]  ? "" : " active")}
+          = link_to t('basic_search'), '#basic_search', :"data-search-form" => "basic_search", :"data-toggle" => "tab",    :class => (params[:q]  ? "" : " active")
+        %li{:class => (!params[:q]  ? "" : " active")}
+          = link_to t('advanced_search'), '#advanced_search', :"data-search-form" => "advanced_search", :"data-toggle" => "tab", :class => (!params[:q] ? "" : " active")
 
-    #search_results_count
-      = t('search_results_count', :count => @search_results_count)
+        %li.pull-right#search_results_count
+          = t('search_results_count', :count => @search_results_count)
+      
+      .tab-content
+        .tab-pane#basic_search{ :class => (params[:q] ? '' : 'active') }
+          = render "basic_search"
 
-  .search_form#basic_search{ :style => (params[:q] ? 'display: none;' : '') }
-    = render "basic_search"
-
-  .search_form#advanced_search{ :style => (!params[:q] ? 'display: none;' : '') }
-    = ransack_ui_search :remote => true
+        .tab-pane#advanced_search{ :class => (!params[:q] ? '' : 'active') }
+          = ransack_ui_search :remote => true

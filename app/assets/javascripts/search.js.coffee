@@ -21,7 +21,7 @@
 
     # Search tabs
     # -----------------------------------------------------
-    $(document).on 'click', '#search .tabs a', ->
+    $(document).on 'click', '#search .nav-tabs a', ->
       search_form = $(this).data('search-form')
       # Hide all
       $('#search .search_form').hide()

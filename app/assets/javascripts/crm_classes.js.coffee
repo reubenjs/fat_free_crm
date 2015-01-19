@@ -121,24 +121,12 @@
         after_hide: $.noop # after hide callback.
       , options)
       @build_menu()
-      @setup_show_observer()
-      @setup_hide_observer()
 
 
     #----------------------------------------------------------------------------
     build_menu: ->
-      @menu = $("<div>",
-        class: "menu"
-        style: "display:none;";
-        on:
-          click: (e) ->
-            e.preventDefault()
-      )
-      @menu.css width: @options.width + "px"  if @options.width
-      @menu.appendTo(document.body)
 
-      ul = $("<ul>")
-      ul.appendTo(@menu)
+      ul = $(@options.ul)
 
       for item in @options.menu_items
         li = $("<li>")
@@ -154,62 +142,10 @@
 
 
     #----------------------------------------------------------------------------
-    setup_hide_observer: ->
-      $(document).on "click", (e) =>
-        @hide_menu(e)  if @menu and @menu.css('display') isnt 'none'
-
-
-    #----------------------------------------------------------------------------
-    setup_show_observer: ->
-      $(@options.trigger).on "click", (e) =>
-        @show_menu(e)  if @menu and @menu.css('display') is 'none'
-
-
-    #----------------------------------------------------------------------------
-    hide_menu: (e) ->
-      @options.before_hide e
-      unless @options.fade
-        @menu.hide()
-        @options.after_hide e
-      else
-        @menu.fadeOut(
-          @options.fade
-          @options.after_hide
-        )
-
-
-    #----------------------------------------------------------------------------
-    show_menu: (e) ->
-      e.preventDefault()
-      e.stopPropagation()
-      $el = $(e.target)
-      offset = $el.offset()
-      x = offset.left + "px"
-      y = offset.top + $el.height() + "px"
-      x = (offset.left - (@options.width - $el.width() + 1)) + "px"  if @options.align is "right"
-      @menu.css
-        left: x
-        top: y
-        zIndex: @options.zindex
-      @options.before_show e
-      unless @options.appear
-        @menu.show()
-        @options.after_show e
-      else
-        @menu.fadeIn(
-          @options.appear
-          @options.after_show
-        )
-
-      @event = e
-
-
-    #----------------------------------------------------------------------------
     select_menu: (e) ->
       e.preventDefault()
       $el = $(e.target)
       if on_select = $el.data('on_select')
-        @hide_menu()
         on_select @event
 
 ) jQuery
