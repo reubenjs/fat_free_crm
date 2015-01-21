@@ -207,6 +207,7 @@ GEM
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.3)
       mime-types
+    pg (0.18.1)
     polyamorous (1.1.0)
       activerecord (>= 3.0)
     premailer (1.8.2)
@@ -417,6 +418,7 @@ DEPENDENCIES
   nokogiri
   paper_trail
   paperclip
+  pg
   premailer
   pry-nav
   pry-rails
