@@ -24,12 +24,12 @@
         %label.control-label #{t title}:
     - else
       %label.control-label #{t title}:
-    = a.input :street1, label: false, placeholder: "#{t(:street1)}...", wrapper: :vertical_full, wrapper_html: {class: "no-padding"}
+    = a.input :street1, label: false, placeholder: "#{t(:street1)}...", wrapper: :vertical_form_full, wrapper_html: {class: "no-padding"}
 
-    = a.input :street2, label: false, placeholder: "#{t(:street2)}...", wrapper: :vertical_full, wrapper_html: {class: "no-padding"}
+    = a.input :street2, label: false, placeholder: "#{t(:street2)}...", wrapper: :vertical_form_full, wrapper_html: {class: "no-padding"}
 
-    = a.input :city, label: false, placeholder: "#{t(:city)}...", wrapper: :vertical_no_col, wrapper_html: {class: "no-padding col-xs-8"}
-    = a.input :state, label: false, placeholder: "#{t(:state)}...", wrapper: :vertical_no_col, wrapper_html: {class: "col-xs-4", style: "padding: 0 0 0 3px"}
+    = a.input :city, label: false, placeholder: "#{t(:city)}...", wrapper: :vertical_form, wrapper_html: {class: "no-padding col-xs-8"}
+    = a.input :state, label: false, placeholder: "#{t(:state)}...", wrapper: :vertical_form, wrapper_html: {class: "col-xs-4", style: "padding: 0 0 0 3px"}
 
-    = a.input :zipcode, label: false, placeholder: "#{t(:zipcode)}...", wrapper: :vertical_no_col, wrapper_html: {class: "col-xs-4", style: "padding: 0 3px 0 0"}
+    = a.input :zipcode, label: false, placeholder: "#{t(:zipcode)}...", wrapper: :vertical_form, wrapper_html: {class: "col-xs-4", style: "padding: 0 3px 0 0"}
     .form-group.col-xs-8.no-padding= a.country_select(:country, priority_countries, { :include_blank => "" }, {:"data-placeholder" => t(:select_a_country), :class => 'select2'})

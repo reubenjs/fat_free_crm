@@ -16,11 +16,11 @@
               .col-sm-6
                 = f.input :access, 
                 collection: [["Private", t(:keep_private)], ["Public", t(:make_public)], ["Shared", t(:share_with)]], value_method: :first, label_method: :last,
-                as: :radio_buttons, label: false, wrapper_html: {class: "col-sm-12"}
+                as: :radio_buttons, label: false, wrapper: :vertical_form_full
             .row
               .col-sm-6#people{ class: entity.access != "Shared" ? "hidden" : "" }
-                = f.input :user_ids, collection: user_options, input_html: {multiple: true, class: 'select2'}, label: "#{t(:users)}:", wrapper: :vertical_full
-                = f.input :group_ids, collection: group_options, input_html: {multiple: true, class: 'select2'}, label: "#{t(:groups)}:", wrapper: :vertical_full
+                = f.input :user_ids, collection: user_options, input_html: {multiple: true, class: 'select2'}, label: "#{t(:users)}:", wrapper: :vertical_form_full
+                = f.input :group_ids, collection: group_options, input_html: {multiple: true, class: 'select2'}, label: "#{t(:groups)}:", wrapper: :vertical_form_full
 
             - if !edit and entity.is_a?(Lead)
               .row

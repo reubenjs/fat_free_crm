@@ -26,7 +26,7 @@
   - if true || Setting.background_info && Setting.background_info.include?(:contact)
     .row
       .col-sm-12.two-col
-        = f.input :background_info, as: :text, wrapper_html: {class: "col-sm-12"}, label: t(:background_info) << ':'
+        = f.input :background_info, as: :text, wrapper: :vertical_form_full, label: t(:background_info) << ':'
 
   = render :partial => "/shared/tags", :locals => {:f => f, :span => 3}
 

@@ -26,7 +26,7 @@
                   .col-sm-6
                     = render "shared/address", :f => f, :asset => @contact, :type => 'business', :title => :address
                   .col-sm-6
-                    = f.input :fax, label: t(:fax), wrapper: :vertical_full, wrapper_html: {class: "no-padding"}
+                    = f.input :fax, label: t(:fax), wrapper: :vertical_form_full, wrapper_html: {class: "no-padding"}
                     %div{:style => "margin-top:6px"}
                       .check_box
                         = f.check_box :do_not_call, {}, true

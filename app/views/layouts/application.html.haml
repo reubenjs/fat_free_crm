@@ -1,5 +1,5 @@
 !!!5
-%html
+%html{class: tabless_layout? ? "bg-black" : ""}
   %head
     %meta{ "http-equiv" => "Content-Type", :content => "text/html; charset=utf-8" }
     %title Fat Free CRM
@@ -33,9 +33,8 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
-  %body.skin-blue
-    %header.header
-      = render "layouts/header"
+  %body{class: tabless_layout? ? "bg-black" : "skin-blue"}
+    = render "layouts/header"
     - if tabless_layout?
       = render "layouts/tabless"
     - else

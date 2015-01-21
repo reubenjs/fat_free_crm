@@ -1,19 +1,16 @@
-.standalone#standalone
+.form-box#login-box
+  .header.bg-blue= t(:login)
   -# The following form gets submitted to #create when @authentication is nil,
   -# or to #update when @authentication is not nil (ex. suspended).
-  = form_for @authentication, :url => authentication_path, :html => one_submit_only do |f|
-    - if can_signup?
-      .title_tools #{t :no_account} #{link_to t(:sign_up_now), signup_path}
-    .title= t(:login)
-    .section
-      .label= t(:username) + ':'
-      = f.text_field :username
-      .label= t(:password) + ':'
-      = f.password_field :password
-
-    %div(style="margin-left:12px") #{f.check_box(:remember_me)} #{t :remember_me}
-    %br
-    .buttonbar
-      = f.submit t(:login)
-      #{t :or}
-      = link_to t(:forgot_password) << '?', new_password_path
+  = simple_form_for @authentication, :url => authentication_path, :html => one_submit_only do |f|
+    .body.bg-gray
+      = f.input :username, placeholder: t(:username)
+      = f.input :password, placeholder: t(:password), as: :password
+      = f.input :remember_me, label: t(:remember_me), as: :boolean
+    .footer
+      = f.button :submit, t(:login), class: "bg-blue btn-block"
+      %p
+        = link_to t(:forgot_password) << '?', new_password_path
+      - if can_signup?
+        %p.text-center
+          = "#{t :no_account} #{link_to t(:sign_up_now), signup_path}".html_safe

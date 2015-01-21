@@ -4,7 +4,7 @@ SimpleForm.setup do |config|
   config.button_class = 'btn btn-default'
   config.boolean_label_class = nil
 
-  config.wrappers :vertical_form, tag: 'div', class: 'form-group col-sm-6', error_class: 'has-error' do |b|
+  config.wrappers :vertical_form_half, tag: 'div', class: 'form-group col-sm-6', error_class: 'has-error' do |b|
     b.use :html5
     b.use :placeholder
     b.optional :maxlength
@@ -18,7 +18,7 @@ SimpleForm.setup do |config|
     b.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
   end
   
-  config.wrappers :vertical_full, tag: 'div', class: 'form-group col-sm-12', error_class: 'has-error' do |b|
+  config.wrappers :vertical_form_full, tag: 'div', class: 'form-group col-sm-12', error_class: 'has-error' do |b|
     b.use :html5
     b.use :placeholder
     b.optional :maxlength
@@ -32,7 +32,7 @@ SimpleForm.setup do |config|
     b.use :hint,  wrap_with: { tag: 'p', class: 'help-block' }
   end
   
-  config.wrappers :vertical_no_col, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
+  config.wrappers :vertical_form, tag: 'div', class: 'form-group', error_class: 'has-error' do |b|
     b.use :html5
     b.use :placeholder
     b.optional :maxlength
@@ -160,6 +160,6 @@ SimpleForm.setup do |config|
     radio_buttons: :vertical_radio_and_checkboxes,
     file: :vertical_file_input,
     boolean: :vertical_boolean,
-    text: :vertical_full
+    text: :vertical_form_full
   }
 end

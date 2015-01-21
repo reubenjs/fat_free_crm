@@ -5,7 +5,7 @@
       %i.fa.fa-times
 .box-content{style: "margin-top: 15px;"}
   =# simple_form_for(@contact, :html => one_submit_only, :remote => true) do |f|
-  = simple_form_for(@contact, :remote => true) do |f|
+  = simple_form_for(@contact, :remote => true, defaults: {wrapper: :vertical_form_half}) do |f|
     = f.hidden_field :user_id
     = hidden_field_tag "opportunity", "#{@opportunity.id if @opportunity}"
 
