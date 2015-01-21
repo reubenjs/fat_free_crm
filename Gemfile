@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-
+ruby "2.1.2"
 # Uncomment the database that you have configured in config/database.yml
 # ----------------------------------------------------------------------
 gem 'mysql2'
@@ -58,6 +58,7 @@ group :development, :test do
   gem 'debugger', :platforms => 'mri_19' unless ENV["CI"]
   gem 'byebug', :platforms => ['mri_20', 'mri_21'] unless ENV["CI"]
   gem 'pry-rails' unless ENV["CI"]
+  gem 'pry-nav' unless ENV["CI"]
 end
 
 group :test do
