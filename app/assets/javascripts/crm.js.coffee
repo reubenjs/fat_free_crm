@@ -91,11 +91,11 @@
     # Hide accounts dropdown and show create new account edit field instead.
     #----------------------------------------------------------------------------
     create_account: ->
-      crm.makeAjaxChosen()
+      #crm.makeAjaxChosen()
       $("#account_disabled_title").hide()
       $("#account_select_title").hide()
       $("#account_create_title").show()
-      $("#account_id_chzn").hide()
+      $("#s2id_account").hide()
       $("#account_id").prop('disabled', true)
       $("#account_name").prop('disabled', false)
       $("#account_name").html ""
@@ -105,14 +105,14 @@
     # Hide create account edit field and show accounts dropdown instead.
     #----------------------------------------------------------------------------
     select_account: ->
-      crm.makeAjaxChosen()
+      #crm.makeAjaxChosen()
       $("#account_disabled_title").hide()
       $("#account_create_title").hide()
       $("#account_select_title").show()
       $("#account_name").hide()
       $("#account_name").prop('disabled', true)
       $("#account_id").prop('disabled', false)
-      $("#account_id_chzn").show()
+      $("#s2id_account").show()
 
 
     # Show accounts dropdown and disable it to prevent changing the account.
@@ -129,7 +129,7 @@
       # Disable chosen account select
       $("#account_id").prop('disabled', true)
       $("#account_id").trigger "liszt:updated"
-      $("#account_id_chzn").show()
+      $("#s2id_account").show()
 
       # Enable hidden account id select so that value is POSTed
       $("#account_id").prop('disabled', false)
@@ -379,8 +379,8 @@
           request = {auto_complete_query: request['term'], related: related}
           $.get @base_url + "/" + controller + "/auto_complete.json", request, (data) ->
             response $.map(data, (value, key) ->
-              label: value
-              value: key
+              label: value["text"]
+              value: value["id"]
             )
 
         # Attach to related asset.

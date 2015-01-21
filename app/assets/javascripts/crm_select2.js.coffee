@@ -12,7 +12,7 @@
   crm.make_select2 = ->
     $(".select2").not(".select2-container, .select2-offscreen").each ->
     #$(".select2").each ->
-      $(this).select2 'width':'resolve'
+      $(this).select2 'width':'100%'
 
     $(".select2_tag").not(".select2-container, .select2-offscreen").each ->
     #$(".select2_tag").each ->
@@ -21,6 +21,31 @@
         tags: $(this).data("tags")
         placeholder: $(this).data("placeholder")
         multiple: $(this).data("multiple")
+        
+    $(".select2_ajax").not(".select2-container, .select2-offscreen").each ->
+      $(this).select2
+        width: "100%"
+        ajax:
+          url: $(this).data('url')
+          dataType: 'json'
+          delay: 250
+          data: (params) ->
+            queryParams =
+              auto_complete_query: params # search term
+            return queryParams
+
+          results: (data) ->
+  
+            # parse the results into the format expected by Select2.
+            # since we are using custom formatting functions we do not need to
+            # alter the remote JSON data
+            results: data
+
+          cache: true
+
+        minimumInputLength: 2
+        #templateResult: formatRepo # omitted for brevity, see the source of this page
+        #templateSelection: formatRepoSelection # omitted for brevity, see the source of this page
 
   $(document).ready ->
     crm.make_select2()

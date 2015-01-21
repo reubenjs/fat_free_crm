@@ -28,11 +28,11 @@ module AccountsHelper
   def account_select(options = {})
       options[:selected] = (@account && @account.id) || 0
       accounts = ([@account] + Account.my.order(:name).limit(25)).compact.uniq
-      collection_select :account, :id, accounts, :id, :name, options,
+      hidden_field_tag :account, :id,
                         {:"data-placeholder" => t(:select_an_account),
                          :"data-url" => auto_complete_accounts_path(format: 'json'),
-                         style: "width:330px; display:none;",
-                         class: 'ajax_chosen' }
+                         style: "display:none;",
+                         class: 'select2_ajax'}
   end
 
   # Select an existing account or create a new one.
@@ -41,7 +41,7 @@ module AccountsHelper
     options = {}
     yield options if block_given?
 
-    content_tag(:div, class: 'label') do
+    content_tag(:label, class: 'control-label') do
       t(:account).html_safe +
 
       content_tag(:span, id: 'account_create_title') do
@@ -56,7 +56,7 @@ module AccountsHelper
     end +
 
     account_select(options) +
-    form.text_field(:name, style: 'width:324px; display:none;')
+    form.text_field(:name, class: "form-control", style: 'display:none;')
   end
 
   # Output account url for a given contact
