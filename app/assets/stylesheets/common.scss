@@ -139,14 +139,14 @@ $sidebar_width: 210px;
 .top {
   margin: 5px 0px 0px 0px; }
 
-.req, label.required {
-  background: image-url("asterisk.gif") no-repeat scroll center right transparent;
-  color: navy;
-  display: inline-block; }
-
-.required label {
-  padding: 0px 8px 0px 0px;
-}
+//.req, label.required {
+//  background: image-url("asterisk.gif") no-repeat scroll center right transparent;
+//  color: navy;
+//  display: inline-block; }
+//
+//.required label {
+//  padding: 0px 8px 0px 0px;
+//}
 
 .intro {
   color: dimgray;
@@ -179,8 +179,8 @@ $sidebar_width: 210px;
       input[type="checkbox"], input[type="radio"] {
         display: inline;
         width: auto; }
-      label {
-        vertical-align: bottom; }
+        //label {
+        //vertical-align: bottom; }
       div.input.check_boxes > span {
         display: block;
         padding-top: 2px;
@@ -464,24 +464,24 @@ $sidebar_width: 210px;
 
 // Sidebar, filters, and selectors.
 //------------------------------------------------------------------------------
-.filters, .panel {
-  background: snow;
-  margin: 0px 0px 12px 0px;
-  padding: 6px 8px 6px 8px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  -moz-box-shadow: 2px 2px 8px #bbbbbb, -2px 0px 8px #bbbbbb;
-  -webkit-box-shadow: 2px 2px 8px #bbbbbb, -2px 0px 8px #bbbbbb;
-
-  .caption {
-    border-bottom: 1px grey solid;
-    color: navy;
-    font: {
-      size: 12px;
-      weight: bold; };
-    margin: 4px 0px 5px 0px;
-    padding: 2px 0px 2px 0px; }
-  }
+//.filters, .panel {
+//  background: snow;
+//  margin: 0px 0px 12px 0px;
+//  padding: 6px 8px 6px 8px;
+//  -moz-border-radius: 4px;
+//  -webkit-border-radius: 4px;
+//  -moz-box-shadow: 2px 2px 8px #bbbbbb, -2px 0px 8px #bbbbbb;
+//  -webkit-box-shadow: 2px 2px 8px #bbbbbb, -2px 0px 8px #bbbbbb;
+//
+//  .caption {
+//    border-bottom: 1px grey solid;
+//    color: navy;
+//    font: {
+//      size: 12px;
+//      weight: bold; };
+//    margin: 4px 0px 5px 0px;
+//    padding: 2px 0px 2px 0px; }
+//  }
 
 .filters {
   h4 {
@@ -491,31 +491,31 @@ $sidebar_width: 210px;
   input[type=text] {
     margin-bottom: 4px; } }
 
-.panel {
-  div {
-    margin: 0px 0px 10px 0px; }
-  h4 {
-    font-size: 13px;
-    font-weight: bold; }
-  li {
-    border-bottom: 1px silver dotted;
-    font-size: 12px;
-    list-style: none;
-    padding: 2px 0px 3px 0px;
-    dt {
-      float: right;
-      font-size: 11px;
-      font-weight: bold; }
-    tt {
-      font-size: 11px; }
-    &.last {
-      border-bottom: none; } }
-  &#recently {
-    background: floralwhite; }
-  &#summary {
-    background: oldlace;
-    p {
-      margin: 4px 0px 4px 0px; } } }
+//.panel {
+//  div {
+//    margin: 0px 0px 10px 0px; }
+//  h4 {
+//    font-size: 13px;
+//    font-weight: bold; }
+//  li {
+//    border-bottom: 1px silver dotted;
+//    font-size: 12px;
+//    list-style: none;
+//    padding: 2px 0px 3px 0px;
+//    dt {
+//      float: right;
+//      font-size: 11px;
+//      font-weight: bold; }
+//    tt {
+//      font-size: 11px; }
+//    &.last {
+//      border-bottom: none; } }
+//  &#recently {
+//    background: floralwhite; }
+//  &#summary {
+//    background: oldlace;
+//    p {
+//      margin: 4px 0px 4px 0px; } } }
 
 .selector {
   color: black;

@@ -1,8 +1,14 @@
 - edit ||= false
 - collapsed = @comment_body.nil?  && f.object.errors.empty?
-= subtitle :comment, collapsed, t(:comment)
-.section
-  %small#comment_intro{ hidden_if(!collapsed) }
-    = t(:comment_intro)
-  #campaign_comment{ hidden_if(collapsed) }
-    = text_area_tag :comment_body, @comment_body
+.row
+  .col-md-12
+    .box-group#accordion
+      .panel.box.box-primary
+        .box-header
+          %h4.box-title
+            = subtitle :comment, collapsed, t(:comment)
+            %small.intro#comment_intro{ class: collapsed ? "" : "hidden" }
+              = t(:comment_intro)
+        .panel-collapse.collapse#collapse_comment{class: collapsed ? "" : "in"}
+          .box-body
+            = text_area_tag :comment_body, @comment_body, class: "form-control"

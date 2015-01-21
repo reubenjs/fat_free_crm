@@ -36,12 +36,12 @@ module ApplicationHelper
 
   #----------------------------------------------------------------------------
   def subtitle(id, hidden = true, text = id.to_s.split("_").last.capitalize)
-    content_tag("div",
-      link_to("<small>#{ hidden ? "&#9658;" : "&#9660;" }</small> #{sanitize text}".html_safe,
-        url_for(controller: :home, action: :toggle, id: id),
-        remote: true,
-        onclick: "crm.flip_subtitle(this)"
-      ), class: "subtitle")
+    link_to(
+      "#{sanitize text}".html_safe, 
+      url_for(:controller => :home, :action => :toggle, :id => id),
+      :remote => true, data: {toggle: "collapse", target: "#collapse_#{id}" }, 
+      class: "accordion-toggle #{hidden ? 'collapsed' : nil}"
+    )
   end
 
   #----------------------------------------------------------------------------
@@ -149,7 +149,7 @@ module ApplicationHelper
 
   #----------------------------------------------------------------------------
   def link_to_close(url)
-    link_to("x", url + "#{url.include?('?') ? '&' : '?'}cancel=true",
+    link_to("<i class=\"fa fa-times\"></i>".html_safe, url + "#{url.include?('?') ? '&' : '?'}cancel=true",
       remote: true,
       class: "close",
       title: t(:close_form)

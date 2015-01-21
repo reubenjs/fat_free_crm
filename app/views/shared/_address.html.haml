@@ -4,41 +4,32 @@
 
 - same_as_billing ||= false
 
-= f.fields_for(address_attr.to_sym) do |a|
+= f.simple_fields_for(address_attr.to_sym) do |a|
   = a.hidden_field :address_type, :value => address_type
   - unless Setting.compound_address
     - if same_as_billing
       %div
         %span(style="float:right")
           = link_to_function(t(:same_as_billing), "crm.copy_address('account_shipping_address', 'account_billing_address')")
-        .label #{t title}:
+        %label.control-label #{t title}:
     - else
-      .label #{t title}:
-    = a.text_area :full_address, :style =>"width:240px", :rows => 4
+      %label.control-label #{t title}:
+    = a.input :full_address, as: :text, :rows => 4, label: false, wrapper_html: {class: "no-padding"}
   - else
-    %table.address(cellpadding="0" cellspacing="0")
-      %tr
-        %td
-          - if same_as_billing
-            %div
-              %span(style="float:right")
-                = link_to_function(t(:same_as_billing), "crm.copy_compound_address('account_billing_address', 'account_shipping_address')")
-              .label #{t title}:
-          - else
-            .label #{t title}:
-          = address_field(a, address, :street1, "width:240px; margin-top:3px")
-          = address_field(a, address, :street2, "width:240px;")
-    %table.address(cellpadding="0" cellspacing="0")
-      %tr
-        %td
-          = address_field(a, address, :city, "width:165px;")
-        %td= spacer
-        %td
-          = address_field(a, address, :state, "width:60px;")
-    %table.address(cellpadding="0" cellspacing="0")
-      %tr
-        %td
-          = address_field(a, address, :zipcode, "width:80px;")
-        %td= spacer
-        %td
-          = a.country_select(:country, priority_countries, { :include_blank => "" }, {:"data-placeholder" => t(:select_a_country), :style => "width:150px; margin-top:6px", :class => 'select2'})
+
+    - if same_as_billing
+      %div
+        %span(style="float:right")
+          = link_to_function(t(:same_as_billing), "crm.copy_compound_address('account_billing_address', 'account_shipping_address')")
+        %label.control-label #{t title}:
+    - else
+      %label.control-label #{t title}:
+    = a.input :street1, label: false, placeholder: "#{t(:street1)}...", wrapper: :vertical_full, wrapper_html: {class: "no-padding"}
+
+    = a.input :street2, label: false, placeholder: "#{t(:street2)}...", wrapper: :vertical_full, wrapper_html: {class: "no-padding"}
+
+    = a.input :city, label: false, placeholder: "#{t(:city)}...", wrapper: :vertical_no_col, wrapper_html: {class: "no-padding col-xs-8"}
+    = a.input :state, label: false, placeholder: "#{t(:state)}...", wrapper: :vertical_no_col, wrapper_html: {class: "col-xs-4", style: "padding: 0 0 0 3px"}
+
+    = a.input :zipcode, label: false, placeholder: "#{t(:zipcode)}...", wrapper: :vertical_no_col, wrapper_html: {class: "col-xs-4", style: "padding: 0 3px 0 0"}
+    .form-group.col-xs-8.no-padding= a.country_select(:country, priority_countries, { :include_blank => "" }, {:"data-placeholder" => t(:select_a_country), :class => 'select2'})

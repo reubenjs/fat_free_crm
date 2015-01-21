@@ -56,3 +56,44 @@ body > .header .logo {
 ul.format-buttons {
   display: inline;
 }
+
+.box.box-solid.box-primary > .box-header a {
+  color: #fff;
+}
+
+.box-header .accordion-toggle:after {
+    /* symbol for "opening" panels */
+    font-family: 'FontAwesome';
+    content: "\f0d7";    /* adjust as needed, taken from bootstrap.css */
+    float: left;        /* adjust as needed */
+    color: grey;         /* adjust as needed */
+    padding-right: 4px;
+}
+
+.box-header .accordion-toggle.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\f0da";    /* adjust as needed, taken from bootstrap.css */
+}
+
+.box .box-header h4.box-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+#accordion > .box {
+  border-top: initial;
+  border-radius: 0;
+}
+
+.no-top-border {
+  border-top: initial !important;
+}
+
+.two-col {
+  max-width: 700px;
+}
+
+.icheckbox_minimal, .iradio_minimal {
+ margin-right: 10px; 
+}
+

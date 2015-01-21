@@ -1,31 +1,24 @@
 - edit ||= false
 - collapsed = session[:contact_presence].nil? # && @contact.errors.empty?
-= subtitle :contact_presence, collapsed, t(:web_presence)
-.section
-  %small#contact_presence_intro{ hidden_if(!collapsed) }
-    = t(:intro, t(:web_presence_small)) unless edit
-  #contact_presence{ hidden_if(collapsed) }
-    %table
-      %tr
-        %td
-          .label.top #{t :blog}:
-          = f.text_field :blog
-        %td= spacer
-        %td
-          .label.top #{t :twitter}:
-          = f.text_field :twitter
-      %tr
-        %td
-          .label #{t :linked_in}:
-          = f.text_field :linkedin
-        %td= spacer
-        %td
-          .label #{t :facebook}:
-          = f.text_field :facebook
-      %tr
-        %td
-          .label #{t :skype}:
-          = f.text_field :skype
-        %td= spacer
-        %td= spacer
-
+.row
+  .col-md-12
+    .box-group#accordion
+      .panel.box
+        .box-header
+          %h4.box-title
+            = subtitle :contact_presence, collapsed, t(:web_presence)
+            %small.intro#contact_presence_intro{ class: collapsed ? "" : "hidden" }
+              = t(:intro, t(:web_presence_small)) unless edit
+        .panel-collapse.collapse#collapse_contact_presence{ class: collapsed ? "" : "in" }
+          .box-content
+            .row
+              .col-sm-12.two-col
+                = f.input :blog, label: t(:blog)
+                = f.input :twitter, label: t(:twitter)
+            .row
+              .col-sm-12.two-col
+                = f.input :linkedin, label: t(:linked_in)
+                = f.input :facebook, label: t(:facebook)
+            .row
+              .col-sm-12.two-col
+                = f.input :skype, label: t(:skype)

@@ -637,7 +637,7 @@ en-US:
   zipcode: Zip Code
   state: State
   country: Country
-  select_a_country: Select a Country
+  select_a_country: Country
   expand_all: Expand all
   collapse_all: Collapse all
   expanded: Expanded
