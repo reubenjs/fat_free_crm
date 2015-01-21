@@ -2,20 +2,31 @@
 
 = render 'entities/title_bar'
 
-%section.content
+%section.content.bg-white
   .row
     .col-xs-12
       .box.box-primary.box-solid#create_contact{ hidden }
+  
+  .row
+    .col-xs-12
+      = render "search"
+  .row
+    .col-xs-12
+      .box.no-border
+        .box-content          
+          .row#entities
+            .col-md-12
+              %ul.entity-list.list#contacts
+                - if @contacts.any?
+                  = render @contacts
+                - else
+                  = render "shared/empty"
+        .box-footer
+          #paginate= render "shared/paginate_with_per_page"
+          #export= render "shared/export"
+  -#.remote#options{ hidden }
 
-  = render "search"
 
-  .remote#options{ hidden }
 
-  .list#contacts
-    - if @contacts.any?
-      = render @contacts
-    - else
-      = render "shared/empty"
 
-  #paginate= render "shared/paginate_with_per_page"
-  #export= render "shared/export"
+

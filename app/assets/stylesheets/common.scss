@@ -434,33 +434,33 @@ $sidebar_width: 210px;
     float: left;
     margin: 0px 4px 0px 0px; } }
 
-// Two-row lists. [LTE]
+// Two-row lists.
 //------------------------------------------------------------------------------
-.list {
-  padding: 0;
-  li {
-    //border-bottom: 1px silver solid;
-    color: #3f3f3f;
-    //font-size: 12px;
-    list-style: none;
-    padding: 0px 0px 3px 0px;
-    .gravatar {
-      float: left;
-      padding: 0px 8px 0px 0px; }
-    span {
-     margin-left: 3px; 
-    }
-    .name {
-      
-    }
-    tt {
-      color: dimgray;
-      //font-size: 11px; 
-    }
-    dt {
-      color: #3f3f3f;
-      //font-size: 11px;
-      padding: 2px 0px 0px 0px; } } }
+//.list {
+//  padding: 0;
+//  li {
+//    //border-bottom: 1px silver solid;
+//    color: #3f3f3f;
+//    //font-size: 12px;
+//    list-style: none;
+//    padding: 0px 0px 3px 0px;
+//    .gravatar {
+//      float: left;
+//      padding: 0px 8px 0px 0px; }
+//    span {
+//     margin-left: 3px;
+//    }
+//    .name {
+//
+//    }
+//    tt {
+//      color: dimgray;
+//      //font-size: 11px;
+//    }
+//    dt {
+//      color: #3f3f3f;
+//      //font-size: 11px;
+//      padding: 2px 0px 0px 0px; } } }
 
 // Sidebar, filters, and selectors.
 //------------------------------------------------------------------------------
@@ -714,10 +714,10 @@ ul.tools {
 .comment.highlight {
   background-color: #f2f2f2; }
 
-.highlight:hover {
-  background-color: seashell;
-  .tools {
-    visibility: visible; } }
+//.highlight:hover {
+//  background-color: aliceblue;
+//  .tools {
+//    visibility: visible; } }
 
 
 table.asset_attributes {

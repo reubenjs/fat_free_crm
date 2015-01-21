@@ -462,24 +462,20 @@ module ApplicationHelper
     action = (params['action'] == 'show') ? 'show' : 'index' # create update redraw filter index actions all use index view
     views = FatFreeCRM::ViewFactory.views_for(controller: controller, action: action)
     return nil unless views.size > 1
-    lis = ''.html_safe
-    content_tag :ul, class: 'format-buttons' do
-      views.collect do |view|
-        classes = if (current_view_name == view.name) or (current_view_name == nil and view.template == nil) # nil indicates default template.
-            "#{h view.name}-button active"
-          else
-            "#{h view.name}-button"
-          end
-        lis << content_tag(:li) do
-          url = (action == "index") ? send("redraw_#{controller}_path") : send("#{controller.singularize}_path")
-          link_to('#', title: t(view.name, default: h(view.title)), :"data-view" => h(view.name), :"data-url" => h(url), :"data-context" => action, class: classes) do
-            icon = view.icon || 'fa-bars'
-            content_tag(:i, nil, class: "fa #{h icon}")
-          end
+    links = ''.html_safe
+    views.collect do |view|
+      classes = if (current_view_name == view.name) or (current_view_name == nil and view.template == nil) # nil indicates default template.
+          "#{h view.name}-button btn btn-default btn-sm active"
+        else
+          "#{h view.name}-button btn btn-default btn-sm"
         end
+      url = (action == "index") ? send("redraw_#{controller}_path") : send("#{controller.singularize}_path")
+      links << link_to('#', title: t(view.name, default: h(view.title)), :"data-toggle" => "tooltip", :"data-placement" => "bottom", :"data-view" => h(view.name), :"data-url" => h(url), :"data-context" => action, class: classes) do
+        icon = view.icon || 'fa-bars'
+        content_tag(:i, nil, class: "fa #{h icon}")
       end
-      lis
     end
+    links
   end
 
   #----------------------------------------------------------------------------

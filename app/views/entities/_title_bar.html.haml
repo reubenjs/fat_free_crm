@@ -2,11 +2,11 @@
 - model_klass = model_name.camelcase.constantize
 
 %section.content-header
+  .btn-toolbar.pull-right
+    .btn-group
+      = view_buttons
+    .btn-group
+      = link_to_inline("create_#{model_name}".to_sym, send("new_#{model_name}_path"), :text => t("create_#{model_name}".to_sym), plain: true, class: "btn btn-sm btn-success")
   %h1{:id => "create_#{model_name}_title"} 
     #{t controller_name.to_sym}
     %span= image_tag("loading.gif", :size => :thumb, :id => "loading", :style => "display: none;")
-  %ol.breadcrumb
-    = view_buttons
-    %li
-      = link_to_inline("create_#{model_name}".to_sym, send("new_#{model_name}_path"), :text => t("create_#{model_name}".to_sym))
-      
