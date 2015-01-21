@@ -95,7 +95,7 @@
       $("#account_disabled_title").hide()
       $("#account_select_title").hide()
       $("#account_create_title").show()
-      $("#s2id_account").hide()
+      $("#s2id_s2_account").hide()
       $("#account_id").prop('disabled', true)
       $("#account_name").prop('disabled', false)
       $("#account_name").html ""
@@ -112,13 +112,14 @@
       $("#account_name").hide()
       $("#account_name").prop('disabled', true)
       $("#account_id").prop('disabled', false)
-      $("#s2id_account").show()
+      $("#s2_account").show()
+      $("#s2id_s2_account").show()
 
 
     # Show accounts dropdown and disable it to prevent changing the account.
     #----------------------------------------------------------------------------
     select_existing_account: ->
-      crm.makeAjaxChosen()
+      #crm.makeAjaxChosen()
       $("#account_create_title").hide()
       $("#account_select_title").hide()
       $("#account_id").hide()
@@ -129,7 +130,8 @@
       # Disable chosen account select
       $("#account_id").prop('disabled', true)
       $("#account_id").trigger "liszt:updated"
-      $("#s2id_account").show()
+      $("#s2_account").show()
+      $("#s2id_s2_account").show()
 
       # Enable hidden account id select so that value is POSTed
       $("#account_id").prop('disabled', false)

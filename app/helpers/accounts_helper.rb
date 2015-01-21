@@ -28,11 +28,13 @@ module AccountsHelper
   def account_select(options = {})
       options[:selected] = (@account && @account.id) || 0
       accounts = ([@account] + Account.my.order(:name).limit(25)).compact.uniq
-      hidden_field_tag :account, :id,
+      hidden_field :account, :id,
                         {:"data-placeholder" => t(:select_an_account),
                          :"data-url" => auto_complete_accounts_path(format: 'json'),
+                         value: options[:selected],
                          style: "display:none;",
-                         class: 'select2_ajax'}
+                         class: 'select2_ajax',
+                           id: 's2_account'}
   end
 
   # Select an existing account or create a new one.

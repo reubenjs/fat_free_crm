@@ -42,7 +42,20 @@
             results: data
 
           cache: true
+        initSelection: (element, callback) ->
+          # the input tag has a value attribute preloaded that points to a preselected repository's id
+          # this function resolves that id attribute to an object that select2 can render
+          # using its formatResult renderer - that way the repository name is shown preselected
+          id = $(element).val()
+          if id isnt ""
+            $.ajax($(element).data('url') + "?auto_complete_id=" + id,
+              dataType: "json"
+            ).done (data) ->
+              callback data[0]
+              return
 
+          return
+              
         minimumInputLength: 2
         #templateResult: formatRepo # omitted for brevity, see the source of this page
         #templateSelection: formatRepoSelection # omitted for brevity, see the source of this page

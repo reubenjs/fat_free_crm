@@ -29,13 +29,18 @@ class ApplicationController < ActionController::Base
   # Common auto_complete handler for all core controllers.
   #----------------------------------------------------------------------------
   def auto_complete
-    @query = params[:auto_complete_query] || ''
-    @auto_complete = hook(:auto_complete, self, query: @query, user: current_user)
-    if @auto_complete.empty?
-      exclude_ids = auto_complete_ids_to_exclude(params[:related])
-      @auto_complete = klass.my.text_search(@query).search(id_not_in: exclude_ids).result.limit(10)
+    if params[:auto_complete_id]
+      @auto_complete = klass.my.where(id: params[:auto_complete_id])
+      @auto_complete ||= [klass.new]
     else
-      @auto_complete = @auto_complete.last
+      @query = params[:auto_complete_query] || ''
+      @auto_complete = hook(:auto_complete, self, query: @query, user: current_user)
+      if @auto_complete.empty?
+        exclude_ids = auto_complete_ids_to_exclude(params[:related])
+        @auto_complete = klass.my.text_search(@query).search(id_not_in: exclude_ids).result.limit(10)
+      else
+        @auto_complete = @auto_complete.last
+      end
     end
 
     session[:auto_complete] = controller_name.to_sym
