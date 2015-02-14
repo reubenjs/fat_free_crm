@@ -1,4 +1,5 @@
-- if (template = template_for_current_view)
+- address = get_address(@contact, "business_address")
+- if false #(template = template_for_current_view)
   = render(template, :contact => @contact)
 - else
 
@@ -6,17 +7,28 @@
 
   = styles_for :task, :opportunity
   
-  = render 'contacts/title_bar', :contact => @contact
+  .box.no-border
+    .box-body
+      .row
+        .col-xs-3
+          = render :partial => "sidebar_show", :locals => {:object => @contact}
+        .col-xs-9
+          = render 'contacts/title_bar', :contact => @contact
+          .profile-position
+            %i.fa.fa-briefcase
+            = account_with_title_and_department(@contact)
+          .profile-location
+            %i.fa.fa-map-marker
+            = h "#{[address.city, address.state, address.country].reject(&:blank?).join(', ')}"
+          = render "comments/new", :commentable => @contact
+          = render :partial => "shared/timeline", :collection => @timeline
 
-  = render "comments/new", :commentable => @contact
-  = render :partial => "shared/timeline", :collection => @timeline
+          = hook(:show_contact_bottom, self, {entity: @contact}) do
 
-  = hook(:show_contact_bottom, self, {entity: @contact}) do
+            = render :partial => "tasks/tasks", :locals => {:object => @contact}
 
-    = render :partial => "tasks/tasks", :locals => {:object => @contact}
+            = render :partial => "opportunities/opportunities", :locals => {:object => @contact}
+  
+            = render :partial => "versions/versions", :locals => {:object => @contact}
 
-    = render :partial => "opportunities/opportunities", :locals => {:object => @contact}
-    
-    = render :partial => "versions/versions", :locals => {:object => @contact}
-
-    =# load_select_popups_for(@contact, :tasks, :opportunities)
+            =# load_select_popups_for(@contact, :tasks, :opportunities)

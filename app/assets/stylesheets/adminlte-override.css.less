@@ -11,6 +11,88 @@
     border-radius: @radius;
 }
 
+body {
+  background: #fff;
+}
+
+@media (min-width: 768px){
+  body, html {
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  #left {
+    position: absolute;
+    top: 180px;
+    bottom: 0;
+    left: 0;
+    &.menu-open{
+      left: 223px;
+    }
+    z-index: 100;
+    //width: 75%;
+    overflow-y: scroll; 
+  }
+  
+  #right {
+    position: absolute;
+    top: 110px;
+    bottom: 0;
+    right: 0;
+    &.menu-open {
+      padding-left:220px;
+    }
+    overflow-y: scroll;
+    //width: 25%;
+  }
+  
+  #basic-search {
+    position: fixed;
+    z-index: 300;
+    padding-top: 20px;
+    //padding-right: 260px;
+    //width: 100%;
+  }
+  
+  .full-height {
+    height: 100%;
+    margin-bottom: 0;
+  }
+}
+
+#left {
+  height:auto;
+}
+
+#right {
+  height:auto;
+}
+
+@media screen and (max-width: 992px) {
+  #left {
+    &.menu-open {
+      left:0;
+    }
+  }
+  
+  #right {
+    &.menu-open {
+      padding-left:0px;
+    }
+  }
+}
+
+.box {
+  z-index: 500;
+}
+
+.box .box-header .box-tools a {
+  &.btn-primary, &.btn-danger, &.btn-info, &.btn-danger, &.btn-warning {
+    color: #fff;
+  }
+  
+}
+
 // Content Header 
 .right-side > .content-header {
     padding: 10px 15px 10px 20px;   
@@ -104,6 +186,17 @@ ul.format-buttons {
   font-weight: bold;
 }
 
+.box .box-header h2.box-title {
+  font-size: 30px;
+  // font-weight: bold;
+  margin-top: 0;
+}
+
+.box .box-header .view-title {
+  padding-top: 0;
+  padding-left: 0;
+}
+
 #accordion > .box {
   border-top: initial;
   border-radius: 0;
@@ -173,12 +266,14 @@ ul.format-buttons {
 .list {
   padding: 8px 0px 7px 0px;
   li {
-    border-bottom: 1px silver dotted;
+    //border-bottom: 1px silver dotted;
+    border-left: white 5px solid;
     clear: both;
     color: #3f3f3f;
     //font-size: 12px;
     list-style: none;
-    padding: 8px 0px 5px 0px;
+    //padding: 8px 0px 5px 0px;
+    padding: 12px 0px 9px 0px;
     .tool-button {
       float: right; 
       margin-right:10px;
@@ -190,7 +285,8 @@ ul.format-buttons {
     }
     .gravatar {
       float: left;
-      padding: 0px 0px 0px 0px; }
+      padding: 0px 0px 0px 0px; 
+      margin-left: 4px; }
     tt {
       color: dimgray;
       font-size: 13px; 
@@ -247,3 +343,25 @@ ul.format-buttons {
 //   transition: all 0.1s linear;
 //   -webkit-transition: all 0.1s linear;
 // }
+
+.profile-position, .profile-location {
+  div {
+    display: inline-table;
+  } 
+  
+  .fa {
+    text-align: center;
+    margin-right: 8px;
+    width: 16px;
+  }
+}
+
+dt .fa {
+  margin-right: 4px;
+  margin-left: 4px;
+}
+
+.entity-selected {
+  border-left: lightblue 5px solid !important;
+  background: aliceblue;
+}

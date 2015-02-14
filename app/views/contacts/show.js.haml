@@ -1,5 +1,10 @@
 - entity_name = controller.controller_name.singularize.underscore #account
 - @entity = instance_variable_get("@#{entity_name}")
+- id = dom_id(@entity)
 
-$('#main').html('#{ j (render :template => "#{entity_name.pluralize}/show.html", entity_name => @entity) }');
+$('#right').removeClass('hidden-xs');
+$('#left').addClass('hidden-xs');
+$('.entity-selected').removeClass('entity-selected');
+$('##{id}').addClass('entity-selected');
+$('#form-pane').html('#{ j (render :template => "#{entity_name.pluralize}/show.html", entity_name => @entity) }');
 = raw generate_js_for_popups(@entity, :tasks, :opportunities)

@@ -1,24 +1,24 @@
 %li.highlight[contact]
   = avatar_for(contact, :size => "38x38", class: "gravatar img-circle")
 
-  .btn-group.tool-button
-    %button.btn.btn-sm.btn-default.dropdown-toggle{type: "button", data: {toggle: "dropdown"} }
-      %i.fa.fa-caret-down
-    %ul.dropdown-menu.pull-right{role: "menu"}
-  
-      = hook(:contact_tools_before, self, :contact => contact)
-
-      - if can?(:update, contact)
-        %li= link_to_edit(contact)
-
-      - if shown_on_landing_page?
-        %li= link_to_discard(contact)
-
-      - if can?(:destroy, contact)
-        %li= link_to_delete(contact)
+  / .btn-group.tool-button
+  /   %button.btn.btn-sm.btn-default.dropdown-toggle{type: "button", data: {toggle: "dropdown"} }
+  /     %i.fa.fa-caret-down
+  /   %ul.dropdown-menu.pull-right{role: "menu"}
+  /
+  /     = hook(:contact_tools_before, self, :contact => contact)
+  /
+  /     - if can?(:update, contact)
+  /       %li= link_to_edit(contact)
+  /
+  /     - if shown_on_landing_page?
+  /       %li= link_to_discard(contact)
+  /
+  /     - if can?(:destroy, contact)
+  /       %li= link_to_delete(contact)
 
   .indent
-    = link_to_if can?(:read, contact), contact.full_name(@current_user.preference[:contacts_naming]), contact
+    = link_to_if can?(:read, contact), contact.full_name(@current_user.preference[:contacts_naming]), contact, {remote: true}
     %tt
       = brief_account_info(contact)
 
@@ -29,17 +29,18 @@
     %dt{ :style => "padding: 2px 0px 0px 0px" }
       - if can?(:read, contact)
         - if contact.email.present?
+          %i.fa.fa-envelope-o{style: "margin-left:0"}
           = link_to_email(contact.email)
-          |
+          = " "
         - if contact.phone.present?
-          == #{t :phone_small}:
-          %b= contact.phone
-        |
+          %i.fa.fa-phone
+          = contact.phone
+          =" "
         - if contact.mobile.present?
-          == #{t :mobile_small}:
-          %b= contact.mobile
-          |
-      = t(:added_ago, value: timeago(contact.created_at)).html_safe
+          %i.fa.fa-mobile
+          = contact.mobile
+          
+      =# t(:added_ago, value: timeago(contact.created_at)).html_safe
 
     - if contact.tag_list.present?
       %dt

@@ -1,18 +1,12 @@
 = styles_for :contact
 
 = render 'entities/title_bar'
-
-%section.content.bg-white
+= render "search"
+%section.content.bg-white#main
   .row
-    .col-xs-12
-      .box.box-primary.box-solid#create_contact{ hidden }
-  
-  .row
-    .col-xs-12
-      = render "search"
-  .row
-    .col-xs-12
-      .box.no-border
+    .col-sm-4.col-xs-12.bg-white.menu-open#left
+      
+      .box.no-border.full-height
         .box-content          
           .row#entities
             .col-md-12
@@ -24,6 +18,9 @@
         .box-footer
           #paginate= render "shared/paginate_with_per_page"
           #export= render "shared/export"
+    .col-sm-8.col-xs-12.hidden-xs.bg-white.menu-open#right
+      .box.no-border.full-height
+        %div#form-pane
   -#.remote#options{ hidden }
 
 

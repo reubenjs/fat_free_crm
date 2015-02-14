@@ -1,13 +1,13 @@
 .row
   .col-xs-12
     .box.box-primary.box-solid#edit_contact
-      .box-header
-        %h3.box-title= "Edit Contact"
-        .box-tools.pull-right
-          %button.btn.btn-primary.btn-sm{data: { widget: "remove"}}
-            %i.fa.fa-times
-      .box-content{style: "margin-top: 15px;"}
-        = simple_form_for(@contact, :html => one_submit_only, :remote => true, defaults: {wrapper: :vertical_form_half}) do |f|
+      = simple_form_for(@contact, remote: true, defaults: {wrapper: :vertical_form_half}) do |f|
+        .box-header
+          %h3.box-title= "Edit Contact"
+          .box-tools.pull-right
+            /%button.btn.btn-primary.btn-sm{data: { widget: "remove"}}
+            /  %i.fa.fa-times
+        .box-content{style: "margin-top: 15px;"}
           = f.hidden_field :user_id
 
           = f.error_messages :object_name => t('contact')
@@ -20,7 +20,7 @@
           = render "entities/permissions", :f => f, :edit => true, :entity => @contact
           = hook(:entity_form, self, {f: f, entity: @contact})
 
-          .box-footer.no-top-border
-            = f.button :submit, t(:save_contact), :onclick => "crm.save_contact()"
-            #{t :or}
-            = link_to_cancel edit_contact_path(@contact)
+        .box-footer.no-top-border
+          = f.button :submit #, t(:save_contact), :onclick => "crm.save_contact()"
+          #{t :or}
+          = link_to_cancel edit_contact_path(@contact)
